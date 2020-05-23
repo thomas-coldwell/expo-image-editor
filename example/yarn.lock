@@ -4356,6 +4356,11 @@ react-timer-mixin@^0.13.4:
   resolved "https://registry.yarnpkg.com/react-timer-mixin/-/react-timer-mixin-0.13.4.tgz#75a00c3c94c13abe29b43d63b4c65a88fc8264d3"
   integrity sha512-4+ow23tp/Tv7hBM5Az5/Be/eKKF7DIvJ09voz5LyHGQaqqz9WV8YMs31eFvcYQs7d451LSg7kDJV70XYN/Ug/Q==
 
+react-tracked@^1.4.0:
+  version "1.4.0"
+  resolved "https://registry.yarnpkg.com/react-tracked/-/react-tracked-1.4.0.tgz#0eb5bb5057e4d45864731bf1e2e5746ee5caca10"
+  integrity sha512-Di1zoNLNa5F4ZHjALTLwaJLPa13R8htlTLyhqRZNkF3LB9ukQL9jgdFEjhaBHVaNzr1l3qE+45fUvXObJXS/ug==
+
 react@~16.9.0:
   version "16.9.0"
   resolved "https://registry.yarnpkg.com/react/-/react-16.9.0.tgz#40ba2f9af13bc1a38d75dbf2f4359a5185c4f7aa"

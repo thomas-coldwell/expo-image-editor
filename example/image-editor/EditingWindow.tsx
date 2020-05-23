@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
 import { Image, StyleSheet, LayoutRectangle, View } from 'react-native';
 import { ImageCropOverlay } from './ImageCropOverlay';
+import { useEditorState } from './EditorStore';
 
 interface EditingWindowProps {
   uri: string | undefined;
+  fixedCropAspectRatio: number;
 }
 
 function EditingWindow(props: EditingWindowProps) {
@@ -12,12 +14,7 @@ function EditingWindow(props: EditingWindowProps) {
     initialisedCropBounds: false
   });
 
-  const [cropBounds, setCropBounds] = useState({
-    x: 0, 
-    y: 0,
-    width: 0,
-    height: 0
-  });
+  const [editorState, setEditorState] = useEditorState();
 
   const { uri } = props;
 
@@ -40,21 +37,28 @@ function EditingWindow(props: EditingWindowProps) {
     //
     const imageAspectRatio = imageActualSize.height / imageActualSize.width;
     
-    let bounds = { x: 0, y: 0, width: 0, height: 0};
+    let bounds = { x: 0, y: 0, width: 0, height: 0 };
+    let imageScaleFactor = 1;
     // Check which is larger 
     if (imageAspectRatio > editingWindowAspectRatio) {
       // Then x is non-zero, y is zero; calculate x...
       bounds.x = (((imageAspectRatio - editingWindowAspectRatio) / (imageAspectRatio)) * layout.width) / 2;
       bounds.width = layout.height / imageAspectRatio;
       bounds.height = layout.height;
+      imageScaleFactor = imageActualSize.height / layout.height;
     }
     else {
       // Then y is non-zero, x is zero; calculate y...
       bounds.y = ((1/imageAspectRatio - 1/editingWindowAspectRatio) / (1/imageAspectRatio)) * layout.height / 2;
       bounds.width = layout.width;
       bounds.height = layout.width * imageAspectRatio;
+      imageScaleFactor = imageActualSize.width / layout.width;
     }
-    setCropBounds(bounds);
+    setEditorState({
+      ...editorState, 
+      cropBounds: bounds,
+      imageScaleFactor
+    });
     setState({...state, initialisedCropBounds: true});
   }
 
@@ -65,8 +69,8 @@ function EditingWindow(props: EditingWindowProps) {
              onLayout={({nativeEvent}) => getImageFrame(nativeEvent.layout)} />
       {
         state.initialisedCropBounds ?
-          <ImageCropOverlay cropBounds={cropBounds}
-                            fixedAspectRatio={1} />
+          <ImageCropOverlay cropBounds={editorState.cropBounds}
+                            fixedAspectRatio={props.fixedCropAspectRatio} />
         :
           null
       }

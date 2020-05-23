@@ -46,7 +46,8 @@ export default function App() {
               onPress={() => selectPhoto()}/>
       <ImageEditor visible={editorVisible}
                    onCloseEditor={() => setEditorVisible(false)}
-                   uri={uri} />
+                   uri={uri}
+                   fixedCropAspectRatio={1} />
     </View>
   );
 

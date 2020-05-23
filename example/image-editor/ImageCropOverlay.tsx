@@ -1,6 +1,7 @@
 import React, { useRef, useState, useEffect } from 'react';
 import { Animated, PanResponder, StyleSheet, View, TouchableWithoutFeedback, PanResponderGestureState } from 'react-native';
 import _ from 'lodash';
+import { useEditorState } from './EditorStore';
 
 interface ImageCropOverlayProps {
   cropBounds: {
@@ -14,6 +15,8 @@ interface ImageCropOverlayProps {
 
 function ImageCropOverlay(props: ImageCropOverlayProps) {
 
+  const [editorState, setEditorState] = useEditorState();
+
   const { cropBounds, fixedAspectRatio } = props;
 
   const pan = useRef(new Animated.ValueXY({
@@ -23,7 +26,7 @@ function ImageCropOverlay(props: ImageCropOverlayProps) {
 
   const panInstance = PanResponder.create({
     onMoveShouldSetPanResponder: () => true,
-    onPanResponderGrant: () => {
+    onPanResponderGrant: (e, gestureState) => {
       pan.setOffset({
         x: pan.x._value,
         y: pan.y._value
@@ -46,15 +49,10 @@ function ImageCropOverlay(props: ImageCropOverlayProps) {
     height: 0
   });
 
-  const [accumulatedPan, setAccumulatedPan] = useState({
-    x: 0,
-    y: 0
-  });
-
   useEffect(() => {
     // https://stackoverflow.com/questions/61014169/react-natives-panresponder-has-stale-value-from-usestate
     setPanResponder(panInstance);
-  }, [size, accumulatedPan]);
+  }, [size, editorState.accumulatedPan]);
 
   useEffect(() => {
     let newSize = { width: 0, height: 0 };
@@ -73,16 +71,18 @@ function ImageCropOverlay(props: ImageCropOverlayProps) {
     }
     // Set the size of the crop overlay
     setSize(newSize);
+    setEditorState({...editorState, cropSize: newSize})
   }, [cropBounds]);
 
-  const onOverlayRelease = (gestureState) => {
+  const onOverlayRelease = (gestureState: PanResponderGestureState) => {
     // Flatten the offset to reduce erratic behaviour
     pan.flattenOffset();
     // Ensure the cropping overlay has not been moved outside of the allowed bounds
     checkCropBounds(gestureState);
   }
 
-  const checkCropBounds = ({dx, dy}: PanResponderGestureState) => {
+  const checkCropBounds = ({dx, dy}: PanResponderGestureState | { dx: number, dy: number }) => {
+    const { accumulatedPan } = editorState;
     // Check if the pan in the x direction exceeds the bounds
     let accDx = accumulatedPan.x + dx;
     // Is the new x pos less than zero?
@@ -122,8 +122,15 @@ function ImageCropOverlay(props: ImageCropOverlayProps) {
     }
 
     // Record the accumulated pan
-    setAccumulatedPan({x: accDx, y: accDy})
+    setEditorState({...editorState, accumulatedPan: {x: accDx, y: accDy}});
   }
+
+  useEffect(() => {
+    // TODO - make this less hacky - editorState is stale in ControlBar otherwise...
+    setTimeout(() => {
+      checkCropBounds({dx: 0.0, dy: 0.0});
+    }, 30);
+  }, []);
 
   return(
     <View style={styles.container}
