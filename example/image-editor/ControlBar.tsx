@@ -11,7 +11,7 @@ import _ from 'lodash';
 
 interface ControlBarProps {
   onPressBack: () => void;
-  fixedCropAspectRatio: number;
+  onPerformCrop: () => void;
 }
 
 function ControlBar(props: ControlBarProps) {
@@ -37,7 +37,7 @@ function ControlBar(props: ControlBarProps) {
         <Ionicons name='md-arrow-back' size={32} color='#fff' />
       </TouchableOpacity>
       <TouchableOpacity style={styles.backButton}
-                        onPress={() => onPerformCrop()}>
+                        onPress={() => props.onPerformCrop()}>
         <Ionicons name='md-checkmark' size={32} color='#fff' />
       </TouchableOpacity>
     </View>

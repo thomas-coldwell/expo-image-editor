@@ -13,19 +13,40 @@ import { ImageCropOverlay } from './image-editor/ImageCropOverlay';
 
 export default function App() {
 
-  const [uri, setUri] = useState<string | undefined>(undefined);
+  const [imageData, setImageData] = useState({
+    uri: undefined,
+    width: 0, 
+    height: 0
+  });
   const [editorVisible, setEditorVisible] = useState(false);
+
+  const [croppedUri, setCroppedUri] = useState<string | undefined>(undefined);
 
   const selectPhoto = async () => {
     // Get the permission to access the camera roll
     await ImagePicker.requestCameraRollPermissionsAsync().then(async (response) => {
       // If they said yes then launch the image picker
       if (response.granted) {
-        await ImagePicker.launchImageLibraryAsync().then((pickerResult) => {
+        await ImagePicker.launchImageLibraryAsync().then(async (pickerResult) => {
           // Check they didn't cancel the picking
           if (!pickerResult.cancelled) {
+            // Check whether it is indeed portrait or landscape
+            let landscape = true;
+            await Image.getSize(
+              pickerResult.uri,
+              (width: number, height: number) => {
+                if (height > width) {
+                  landscape = false;
+                }
+              },
+              (error: any) => console.log(error)
+            ); 
             // Then set the image uri
-            setUri(pickerResult.uri);
+            setImageData({
+              uri: pickerResult.uri,
+              width: landscape ? pickerResult.width : pickerResult.height,
+              height: landscape ? pickerResult.height : pickerResult.width
+            });
             // And set the image editor to be visible
             setEditorVisible(true);
           }
@@ -41,13 +62,16 @@ export default function App() {
   return (
     <View style={styles.container}>
       <Image style={styles.image} 
-             source={{uri}} />
+             source={{uri: imageData.uri}} />
+      <Image style={[styles.image, {backgroundColor: '#333'}]} 
+             source={{uri: croppedUri}} />
       <Button title='Select Photo' 
               onPress={() => selectPhoto()}/>
       <ImageEditor visible={editorVisible}
                    onCloseEditor={() => setEditorVisible(false)}
-                   uri={uri}
-                   fixedCropAspectRatio={1} />
+                   imageData={imageData}
+                   fixedCropAspectRatio={1}
+                   onEditingComplete={result => setCroppedUri(result.uri)} />
     </View>
   );
 
@@ -62,7 +86,7 @@ const styles = StyleSheet.create({
   },
   image: {
     width: '90%',
-    height: 400,
+    height: 250,
     resizeMode: 'contain',
     backgroundColor: '#ccc',
     marginBottom: '5%'

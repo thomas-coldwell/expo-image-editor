@@ -4,24 +4,32 @@ import _ from 'lodash';
 import { useEditorState } from './EditorStore';
 
 interface ImageCropOverlayProps {
-  cropBounds: {
+  imageBounds: {
     x: number;
     y: number;
     width: number;
     height: number;
   },
   fixedAspectRatio: number;
+  accumulatedPan: {
+    x: number;
+    y: number;
+  };
+  onUpdateAccumulatedPan: (accumulatedPan: any) => void;
+  cropSize: {
+    width: number;
+    height: number;
+  };
+  onUpdateCropSize: (size: any) => void;
 }
 
 function ImageCropOverlay(props: ImageCropOverlayProps) {
 
-  const [editorState, setEditorState] = useEditorState();
-
-  const { cropBounds, fixedAspectRatio } = props;
+  const { imageBounds, fixedAspectRatio, accumulatedPan, cropSize } = props;
 
   const pan = useRef(new Animated.ValueXY({
-    x: cropBounds.x,
-    y: cropBounds.y
+    x: imageBounds.x,
+    y: imageBounds.y
   })).current;
 
   const panInstance = PanResponder.create({
@@ -44,19 +52,18 @@ function ImageCropOverlay(props: ImageCropOverlayProps) {
 
   const [panResponder, setPanResponder]  = useState(panInstance);
 
-  const [size, setSize] = useState({
-    width: 0,
-    height: 0
-  });
-
   useEffect(() => {
     // https://stackoverflow.com/questions/61014169/react-natives-panresponder-has-stale-value-from-usestate
     setPanResponder(panInstance);
-  }, [size, editorState.accumulatedPan]);
+  }, [cropSize, accumulatedPan]);
+
+  useEffect(() => {
+    checkCropBounds({dx: 0.0, dy: 0.0});
+  }, [cropSize])
 
   useEffect(() => {
     let newSize = { width: 0, height: 0 };
-    const { width, height } = cropBounds;
+    const { width, height } = imageBounds;
     const imageAspectRatio = height / width;
     // Then check if the cropping aspect ratio is smaller
     if (fixedAspectRatio < imageAspectRatio) {
@@ -70,9 +77,8 @@ function ImageCropOverlay(props: ImageCropOverlayProps) {
       newSize.height = height;
     }
     // Set the size of the crop overlay
-    setSize(newSize);
-    setEditorState({...editorState, cropSize: newSize})
-  }, [cropBounds]);
+    props.onUpdateCropSize(newSize);
+  }, [imageBounds]);
 
   const onOverlayRelease = (gestureState: PanResponderGestureState) => {
     // Flatten the offset to reduce erratic behaviour
@@ -82,19 +88,18 @@ function ImageCropOverlay(props: ImageCropOverlayProps) {
   }
 
   const checkCropBounds = ({dx, dy}: PanResponderGestureState | { dx: number, dy: number }) => {
-    const { accumulatedPan } = editorState;
     // Check if the pan in the x direction exceeds the bounds
     let accDx = accumulatedPan.x + dx;
     // Is the new x pos less than zero?
     if (accDx < 0) {
       // Then set it to be zero and set the pan to zero too
-      accDx = cropBounds.x;
-      pan.x.setValue(cropBounds.x);
+      accDx = imageBounds.x;
+      pan.x.setValue(imageBounds.x);
     }
     // Is the new x pos plus crop width going to exceed the right hand bound
-    else if ((accDx + size.width) > cropBounds.width) {
+    else if ((accDx + cropSize.width) > imageBounds.width) {
       // Then set the x pos so the crop frame touches the right hand edge
-      let limitedXPos = cropBounds.x + cropBounds.width - size.width;
+      let limitedXPos = imageBounds.x + imageBounds.width - cropSize.width;
       accDx = limitedXPos;
       pan.x.setValue(limitedXPos);
     }
@@ -105,15 +110,15 @@ function ImageCropOverlay(props: ImageCropOverlayProps) {
     // Check if the pan in the y direction exceeds the bounds
     let accDy = accumulatedPan.y + dy;
     // Is the new y pos less the top edge?
-    if (accDy < cropBounds.y) {
+    if (accDy < imageBounds.y) {
       // Then set it to be zero and set the pan to zero too
-      accDy = cropBounds.y;
-      pan.y.setValue(cropBounds.y);
+      accDy = imageBounds.y;
+      pan.y.setValue(imageBounds.y);
     }
     // Is the new y pos plus crop height going to exceed the bottom bound
-    else if ((accDy + size.height) > cropBounds.height) {
+    else if ((accDy + cropSize.height) > imageBounds.height) {
       // Then set the y pos so the crop frame touches the bottom edge
-      let limitedYPos = cropBounds.y + cropBounds.height - size.height;
+      let limitedYPos = imageBounds.y + imageBounds.height - cropSize.height;
       accDy = limitedYPos;
       pan.y.setValue(limitedYPos);
     }
@@ -122,15 +127,8 @@ function ImageCropOverlay(props: ImageCropOverlayProps) {
     }
 
     // Record the accumulated pan
-    setEditorState({...editorState, accumulatedPan: {x: accDx, y: accDy}});
+    props.onUpdateAccumulatedPan({x: accDx, y: accDy});
   }
-
-  useEffect(() => {
-    // TODO - make this less hacky - editorState is stale in ControlBar otherwise...
-    setTimeout(() => {
-      checkCropBounds({dx: 0.0, dy: 0.0});
-    }, 30);
-  }, []);
 
   return(
     <View style={styles.container}
@@ -139,7 +137,7 @@ function ImageCropOverlay(props: ImageCropOverlayProps) {
       <TouchableWithoutFeedback onPress={() => {}}>
         <Animated.View style={[
                         styles.overlay, 
-                        size,
+                        cropSize,
                         {transform: [
                           {translateX: pan.x}, 
                           {translateY: pan.y}

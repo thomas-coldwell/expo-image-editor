@@ -4,39 +4,45 @@ import { ImageCropOverlay } from './ImageCropOverlay';
 import { useEditorState } from './EditorStore';
 
 interface EditingWindowProps {
-  uri: string | undefined;
+  imageData: {
+    uri: string | undefined;
+    width: number;
+    height: number;
+  };
   fixedCropAspectRatio: number;
+  imageBounds: {
+    x: number;
+    y: number;
+    width: number;
+    height: number;
+  };
+  onUpdateImageBounds: (bounds: any) => void;
+  accumulatedPan: {
+    x: number;
+    y: number;
+  };
+  onUpdateAccumulatedPan: (accumulatedPan: any) => void;
+  cropSize: {
+    width: number;
+    height: number;
+  };
+  onUpdateCropSize: (size: any) => void;
 }
 
 function EditingWindow(props: EditingWindowProps) {
 
   const [state, setState] = useState({
-    initialisedCropBounds: false
+    initialisedImageBounds: false
   });
 
-  const [editorState, setEditorState] = useEditorState();
-
-  const { uri } = props;
+  const { imageData } = props;
 
   const getImageFrame = async (layout: LayoutRectangle) => {
     // Find the start point of the photo on the screen and its
     // width / height from there
     const editingWindowAspectRatio = layout.height / layout.width;
-    let imageActualSize = {
-      width: 0,
-      height: 0
-    };
-    await Image.getSize(
-      uri as string,
-      (width: number, height: number) => {
-        imageActualSize.width = width;
-        imageActualSize.height = height;
-      },
-      (error: any) => console.log(error)
-    );
     //
-    const imageAspectRatio = imageActualSize.height / imageActualSize.width;
-    
+    const imageAspectRatio = imageData.height / imageData.width;
     let bounds = { x: 0, y: 0, width: 0, height: 0 };
     let imageScaleFactor = 1;
     // Check which is larger 
@@ -45,32 +51,35 @@ function EditingWindow(props: EditingWindowProps) {
       bounds.x = (((imageAspectRatio - editingWindowAspectRatio) / (imageAspectRatio)) * layout.width) / 2;
       bounds.width = layout.height / imageAspectRatio;
       bounds.height = layout.height;
-      imageScaleFactor = imageActualSize.height / layout.height;
+      imageScaleFactor = imageData.height / layout.height;
     }
     else {
       // Then y is non-zero, x is zero; calculate y...
       bounds.y = ((1/imageAspectRatio - 1/editingWindowAspectRatio) / (1/imageAspectRatio)) * layout.height / 2;
       bounds.width = layout.width;
       bounds.height = layout.width * imageAspectRatio;
-      imageScaleFactor = imageActualSize.width / layout.width;
+      imageScaleFactor = imageData.width / layout.width;
     }
-    setEditorState({
-      ...editorState, 
-      cropBounds: bounds,
+    props.onUpdateImageBounds({
+      imageBounds: bounds,
       imageScaleFactor
     });
-    setState({...state, initialisedCropBounds: true});
+    setState({...state, initialisedImageBounds: true});
   }
 
   return(
     <View style={styles.container}>
       <Image style={styles.image}
-             source={{ uri }}
+             source={{ uri: imageData.uri }}
              onLayout={({nativeEvent}) => getImageFrame(nativeEvent.layout)} />
       {
-        state.initialisedCropBounds ?
-          <ImageCropOverlay cropBounds={editorState.cropBounds}
-                            fixedAspectRatio={props.fixedCropAspectRatio} />
+        state.initialisedImageBounds ?
+          <ImageCropOverlay imageBounds={props.imageBounds}
+                            fixedAspectRatio={props.fixedCropAspectRatio}
+                            accumulatedPan={props.accumulatedPan}
+                            onUpdateAccumulatedPan={accumulatedPan => props.onUpdateAccumulatedPan(accumulatedPan)}
+                            cropSize={props.cropSize}
+                            onUpdateCropSize={size => props.onUpdateCropSize(size)} />
         :
           null
       }
