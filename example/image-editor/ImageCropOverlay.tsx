@@ -85,9 +85,21 @@ function ImageCropOverlay(props: ImageCropOverlayProps) {
     props.onUpdateCropSize(newSize);
   }, [imageBounds]);
 
+  const isMovingSection = () => {
+    return (
+      selectedFrameSection == 'topmiddle' ||
+      selectedFrameSection == 'middleleft' ||
+      selectedFrameSection == 'middleright' ||
+      selectedFrameSection == 'middlemiddle' ||
+      selectedFrameSection == 'bottommiddle'
+    );
+  }
+
   const onOverlayMoveGrant = (e: any, gestureState: PanResponderGestureState) => {
-    console.log('Start tile: ' + selectedFrameSection)
-    if (selectedFrameSection == 'middlemiddle') {
+    // Check if the action is to move or resize based on the
+    // selected frame section
+    const moveAction = isMovingSection();
+    if (moveAction) {
       pan.setOffset({
         x: pan.x._value,
         y: pan.y._value
@@ -96,10 +108,10 @@ function ImageCropOverlay(props: ImageCropOverlayProps) {
   }
 
   const onOverlayMove = (e: any, gestureState: PanResponderGestureState) => {
-    console.log('Move tile: ' + selectedFrameSection)
     // Check if the action is to move or resize based on the
     // selected frame section
-    if (selectedFrameSection == 'middlemiddle') {
+    const moveAction = isMovingSection();
+    if (moveAction) {
       Animated.event(
         [
           null,
@@ -110,8 +122,10 @@ function ImageCropOverlay(props: ImageCropOverlayProps) {
   }
 
   const onOverlayRelease = (gestureState: PanResponderGestureState) => {
-    console.log('Release tile: ' + selectedFrameSection)
-    if (selectedFrameSection == 'middlemiddle') {
+    // Check if the action is to move or resize based on the
+    // selected frame section
+    const moveAction = isMovingSection();
+    if (moveAction) {
       // Flatten the offset to reduce erratic behaviour
       pan.flattenOffset();
       // Ensure the cropping overlay has not been moved outside of the allowed bounds
