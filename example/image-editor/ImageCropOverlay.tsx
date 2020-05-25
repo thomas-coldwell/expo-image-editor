@@ -1,6 +1,14 @@
 import React, { useRef, useState, useEffect } from 'react';
-import { Animated, PanResponder, StyleSheet, View, TouchableWithoutFeedback, PanResponderGestureState, TouchableOpacity } from 'react-native';
+import { 
+  Animated, 
+  PanResponder, 
+  StyleSheet, 
+  View, 
+  TouchableWithoutFeedback, 
+  PanResponderGestureState, 
+  TouchableOpacity } from 'react-native';
 import _ from 'lodash';
+import { Ionicons } from '@expo/vector-icons';
 
 const horizontalSections = ['top', 'middle', 'bottom'];
 const verticalSections = ['left', 'middle', 'right'];
@@ -29,6 +37,8 @@ function ImageCropOverlay(props: ImageCropOverlayProps) {
 
   const [selectedFrameSection, setSelectedFrameSection] = useState('middlemiddle');
 
+  const [panResponderEnabled, setPanResponderEnabled] = useState(false);
+
   const { imageBounds, fixedAspectRatio, accumulatedPan, cropSize } = props;
 
   const pan = useRef(new Animated.ValueXY({
@@ -38,18 +48,8 @@ function ImageCropOverlay(props: ImageCropOverlayProps) {
 
   const panInstance = PanResponder.create({
     onMoveShouldSetPanResponder: () => true,
-    onPanResponderGrant: (e, gestureState) => {
-      pan.setOffset({
-        x: pan.x._value,
-        y: pan.y._value
-      });
-    },
-    onPanResponderMove: Animated.event(
-      [
-        null,
-        { dx: pan.x, dy: pan.y }
-      ]
-    ),
+    onPanResponderGrant: (e, gestureState) => onOverlayMoveGrant(e, gestureState),
+    onPanResponderMove: (e, gestureState) => onOverlayMove(e, gestureState),
     onPanResponderRelease: (e, gestureState) => onOverlayRelease(gestureState),
     onPanResponderTerminationRequest: () => false
   });
@@ -59,7 +59,7 @@ function ImageCropOverlay(props: ImageCropOverlayProps) {
   useEffect(() => {
     // https://stackoverflow.com/questions/61014169/react-natives-panresponder-has-stale-value-from-usestate
     setPanResponder(panInstance);
-  }, [cropSize, accumulatedPan]);
+  }, [cropSize, accumulatedPan, selectedFrameSection]);
 
   useEffect(() => {
     // Reset the accumulated pan
@@ -85,11 +85,39 @@ function ImageCropOverlay(props: ImageCropOverlayProps) {
     props.onUpdateCropSize(newSize);
   }, [imageBounds]);
 
+  const onOverlayMoveGrant = (e: any, gestureState: PanResponderGestureState) => {
+    console.log('Start tile: ' + selectedFrameSection)
+    if (selectedFrameSection == 'middlemiddle') {
+      pan.setOffset({
+        x: pan.x._value,
+        y: pan.y._value
+      });
+    }
+  }
+
+  const onOverlayMove = (e: any, gestureState: PanResponderGestureState) => {
+    console.log('Move tile: ' + selectedFrameSection)
+    // Check if the action is to move or resize based on the
+    // selected frame section
+    if (selectedFrameSection == 'middlemiddle') {
+      Animated.event(
+        [
+          null,
+          { dx: pan.x, dy: pan.y }
+        ]
+      )(e, gestureState);
+    }
+  }
+
   const onOverlayRelease = (gestureState: PanResponderGestureState) => {
-    // Flatten the offset to reduce erratic behaviour
-    pan.flattenOffset();
-    // Ensure the cropping overlay has not been moved outside of the allowed bounds
-    checkCropBounds(gestureState);
+    console.log('Release tile: ' + selectedFrameSection)
+    if (selectedFrameSection == 'middlemiddle') {
+      // Flatten the offset to reduce erratic behaviour
+      pan.flattenOffset();
+      // Ensure the cropping overlay has not been moved outside of the allowed bounds
+      checkCropBounds(gestureState);
+    }
+    setPanResponderEnabled(false);
   }
 
   const checkCropBounds = ({dx, dy}: PanResponderGestureState | { dx: number, dy: number }) => {
@@ -134,9 +162,20 @@ function ImageCropOverlay(props: ImageCropOverlayProps) {
     props.onUpdateAccumulatedPan({x: accDx, y: accDy});
   }
 
+  // useEffect(() => {
+  //   console.log('selected Frame update')
+  //   // if (!panResponderEnabled) {
+  //     setPanResponderEnabled(true);
+  //   // }
+  // }, [selectedFrameSection]);
+
+  console.log(panResponderEnabled)
+
+  const panProps = panResponderEnabled ? {...panResponder.panHandlers} : {}
+
   return(
     <View style={styles.container}
-          {...panResponder.panHandlers}>
+          {...panProps}>
       {/* https://github.com/facebook/react-native/issues/14295#issuecomment-374012339 */}
       <TouchableWithoutFeedback onPress={() => {}}
                                 disabled>
@@ -149,6 +188,7 @@ function ImageCropOverlay(props: ImageCropOverlayProps) {
                         ]}
                        ]}>
             {
+              // For reendering out each section of the crop overlay frame
               horizontalSections.map((hsection) => {
                 return (
                   <View style={styles.sectionRow}
@@ -161,8 +201,18 @@ function ImageCropOverlay(props: ImageCropOverlayProps) {
                                               styles.defaultSection
                                             ]}
                                             key={key}
-                                            onPressIn={() => setSelectedFrameSection(hsection + vsection)}>
-                            {
+                                            onPressIn={ async () => {
+                                              setSelectedFrameSection(hsection + vsection);
+                                              // No good way to asynchronously enabled the pan responder
+                                              // after tile selection so using a timeout for now...
+                                              setTimeout(() => {
+                                                setPanResponderEnabled(true);
+                                              }, 30);
+                                            }}
+                                            activeOpacity={1.0}>
+                            { 
+                              // Add the corner markers to the topleft, 
+                              // topright, bottomleft and bottomright corners to indicate resizing
                               key == 'topleft' ||
                               key == 'topright' ||
                               key == 'bottomleft' ||
@@ -180,6 +230,13 @@ function ImageCropOverlay(props: ImageCropOverlayProps) {
                                       ]} />
                               : null
                             }
+                            {/* {
+                              key == 'middlemiddle' ? 
+                                <Ionicons name='ios-move' 
+                                          size={20}
+                                          color='#ffffff88' />
+                              : null
+                            } */}
                           </TouchableOpacity>
                         );
                       })
@@ -217,7 +274,9 @@ const styles = StyleSheet.create({
   defaultSection: {
     flex: 1, 
     borderWidth: 0.5, 
-    borderColor: '#ffffff88'
+    borderColor: '#ffffff88',
+    justifyContent: 'center',
+    alignItems: 'center'
   },
   cornerMarker: {
     position: 'absolute',
