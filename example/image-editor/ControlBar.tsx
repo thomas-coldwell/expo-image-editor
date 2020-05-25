@@ -6,7 +6,6 @@ import {
   Text
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { useEditorState } from './EditorStore';
 import _ from 'lodash';
 
 interface ControlBarProps {
@@ -15,20 +14,6 @@ interface ControlBarProps {
 }
 
 function ControlBar(props: ControlBarProps) {
-
-  const [editorState, setEditorState] = useEditorState();
-
-  const onPerformCrop = useCallback(() => {
-    // Calculate cropping bounds
-    const { cropBounds, accumulatedPan, imageScaleFactor, cropSize } = editorState;
-    const croppingBounds = {
-      originX: (accumulatedPan.x - cropBounds.x) * imageScaleFactor,
-      originY: (accumulatedPan.y - cropBounds.y) * imageScaleFactor,
-      width: cropSize.width * imageScaleFactor,
-      height: cropSize.height * imageScaleFactor
-    };
-    console.log(croppingBounds);
-  }, [editorState])
 
   return(
     <View style={styles.container}>

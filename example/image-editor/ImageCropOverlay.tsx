@@ -1,7 +1,6 @@
 import React, { useRef, useState, useEffect } from 'react';
 import { Animated, PanResponder, StyleSheet, View, TouchableWithoutFeedback, PanResponderGestureState } from 'react-native';
 import _ from 'lodash';
-import { useEditorState } from './EditorStore';
 
 interface ImageCropOverlayProps {
   imageBounds: {
@@ -58,6 +57,7 @@ function ImageCropOverlay(props: ImageCropOverlayProps) {
   }, [cropSize, accumulatedPan]);
 
   useEffect(() => {
+    // Reset the accumulated pan
     checkCropBounds({dx: 0.0, dy: 0.0});
   }, [cropSize])
 
@@ -91,7 +91,7 @@ function ImageCropOverlay(props: ImageCropOverlayProps) {
     // Check if the pan in the x direction exceeds the bounds
     let accDx = accumulatedPan.x + dx;
     // Is the new x pos less than zero?
-    if (accDx < 0) {
+    if (accDx <= 0) {
       // Then set it to be zero and set the pan to zero too
       accDx = imageBounds.x;
       pan.x.setValue(imageBounds.x);
@@ -110,7 +110,7 @@ function ImageCropOverlay(props: ImageCropOverlayProps) {
     // Check if the pan in the y direction exceeds the bounds
     let accDy = accumulatedPan.y + dy;
     // Is the new y pos less the top edge?
-    if (accDy < imageBounds.y) {
+    if (accDy <= imageBounds.y) {
       // Then set it to be zero and set the pan to zero too
       accDy = imageBounds.y;
       pan.y.setValue(imageBounds.y);
@@ -125,7 +125,7 @@ function ImageCropOverlay(props: ImageCropOverlayProps) {
     else {
       // It's somewhere in between - no formatting required
     }
-
+    console.log('checked crop bounds')
     // Record the accumulated pan
     props.onUpdateAccumulatedPan({x: accDx, y: accDy});
   }

@@ -9,7 +9,6 @@ import {
 } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import { ImageEditor } from './image-editor/ImageEditor';
-import { ImageCropOverlay } from './image-editor/ImageCropOverlay';
 
 export default function App() {
 
@@ -67,11 +66,14 @@ export default function App() {
              source={{uri: croppedUri}} />
       <Button title='Select Photo' 
               onPress={() => selectPhoto()}/>
+      
       <ImageEditor visible={editorVisible}
                    onCloseEditor={() => setEditorVisible(false)}
                    imageData={imageData}
                    fixedCropAspectRatio={1}
                    onEditingComplete={result => setCroppedUri(result.uri)} />
+
+        
     </View>
   );
 

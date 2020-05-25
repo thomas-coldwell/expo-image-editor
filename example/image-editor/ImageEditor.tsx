@@ -1,9 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Modal, StyleSheet, View, StatusBar } from 'react-native';
 import { ControlBar } from './ControlBar';
 import { EditingWindow } from './EditingWindow';
 import { ImageCropOverlay } from './ImageCropOverlay';
-import { EditorStateProvider, useEditorState } from './EditorStore';
 import * as ImageManipulator from 'expo-image-manipulator';
 
 interface ImageEditorProps {
@@ -33,12 +32,13 @@ interface ImageEditorStore {
   cropSize: {
     width: number;
     height: number;
-  }
+  },
+  ready: boolean;
 }
 
 function ImageEditor(props: ImageEditorProps) {
 
-  const [editorState, setEditorState] = useState<ImageEditorStore>({
+  const initialState = {
     imageScaleFactor: 1,
     imageBounds: {
       x: 0, 
@@ -53,13 +53,17 @@ function ImageEditor(props: ImageEditorProps) {
     cropSize: {
       width: 0,
       height: 0
-    }
-  })
+    },
+    ready: false
+  };
+
+  const [editorState, setEditorState] = useState<ImageEditorStore>(initialState);
 
   const onPerformCrop = async () => {
     // Calculate cropping bounds
     console.log(editorState)
     const { imageBounds, accumulatedPan, imageScaleFactor, cropSize } = editorState;
+    console.log({ imageBounds, accumulatedPan, imageScaleFactor, cropSize })
     const croppingBounds = {
       originX: Math.round((accumulatedPan.x - imageBounds.x) * imageScaleFactor),
       originY: Math.round((accumulatedPan.y - imageBounds.y) * imageScaleFactor),
@@ -74,24 +78,37 @@ function ImageEditor(props: ImageEditorProps) {
     });
   }
 
+  useEffect(() => {
+    // Reset the state of things and only render the UI
+    // when this state has been initialised
+    if (!props.visible) {
+      setEditorState({...initialState, ready: false});
+    }
+    else {
+      setEditorState({...initialState, ready: true});
+    }
+  }, [props.visible]);
+
   return(
     <Modal visible={props.visible}
            transparent>
-      <EditorStateProvider>
-        <StatusBar hidden />
-        <View style={styles.container}>
-          <ControlBar onPressBack={() => props.onCloseEditor()}
-                      onPerformCrop={() => onPerformCrop()} />
-          <EditingWindow imageData={props.imageData}
-                         fixedCropAspectRatio={props.fixedCropAspectRatio}
-                         imageBounds={editorState.imageBounds}
-                         onUpdateImageBounds={bounds => setEditorState({...editorState, ...bounds})}
-                         accumulatedPan={editorState.accumulatedPan}
-                         onUpdateAccumulatedPan={accumulatedPan => setEditorState({...editorState, accumulatedPan: accumulatedPan})}
-                         cropSize={editorState.cropSize}
-                         onUpdateCropSize={size => setEditorState({...editorState, cropSize: size})} />
-        </View>
-      </EditorStateProvider>
+      <StatusBar hidden />
+        { 
+          editorState.ready ? 
+            <View style={styles.container}>
+              <ControlBar onPressBack={() => props.onCloseEditor()}
+                          onPerformCrop={() => onPerformCrop()} />
+              <EditingWindow imageData={props.imageData}
+                              fixedCropAspectRatio={props.fixedCropAspectRatio}
+                              imageBounds={editorState.imageBounds}
+                              onUpdateImageBounds={bounds => setEditorState({...editorState, ...bounds})}
+                              accumulatedPan={editorState.accumulatedPan}
+                              onUpdateAccumulatedPan={accumulatedPan => setEditorState({...editorState, accumulatedPan: accumulatedPan})}
+                              cropSize={editorState.cropSize}
+                              onUpdateCropSize={size => setEditorState({...editorState, cropSize: size})} />
+            </View>
+          : null 
+        }
     </Modal>
   );
 

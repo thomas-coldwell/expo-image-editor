@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { Image, StyleSheet, LayoutRectangle, View } from 'react-native';
 import { ImageCropOverlay } from './ImageCropOverlay';
-import { useEditorState } from './EditorStore';
 
 interface EditingWindowProps {
   imageData: {
