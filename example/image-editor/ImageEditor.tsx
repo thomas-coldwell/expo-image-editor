@@ -61,7 +61,6 @@ function ImageEditor(props: ImageEditorProps) {
 
   const onPerformCrop = async () => {
     // Calculate cropping bounds
-    console.log(editorState)
     const { imageBounds, accumulatedPan, imageScaleFactor, cropSize } = editorState;
     console.log({ imageBounds, accumulatedPan, imageScaleFactor, cropSize })
     const croppingBounds = {
@@ -99,7 +98,7 @@ function ImageEditor(props: ImageEditorProps) {
               <ControlBar onPressBack={() => props.onCloseEditor()}
                           onPerformCrop={() => onPerformCrop()} />
               <EditingWindow imageData={props.imageData}
-                              fixedCropAspectRatio={props.fixedCropAspectRatio}
+                              fixedCropAspectRatio={1/props.fixedCropAspectRatio}
                               imageBounds={editorState.imageBounds}
                               onUpdateImageBounds={bounds => setEditorState({...editorState, ...bounds})}
                               accumulatedPan={editorState.accumulatedPan}

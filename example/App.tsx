@@ -66,14 +66,11 @@ export default function App() {
              source={{uri: croppedUri}} />
       <Button title='Select Photo' 
               onPress={() => selectPhoto()}/>
-      
       <ImageEditor visible={editorVisible}
                    onCloseEditor={() => setEditorVisible(false)}
                    imageData={imageData}
-                   fixedCropAspectRatio={1}
+                   fixedCropAspectRatio={16/9}
                    onEditingComplete={result => setCroppedUri(result.uri)} />
-
-        
     </View>
   );
 

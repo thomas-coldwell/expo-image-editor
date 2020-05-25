@@ -1,6 +1,9 @@
 import React, { useRef, useState, useEffect } from 'react';
-import { Animated, PanResponder, StyleSheet, View, TouchableWithoutFeedback, PanResponderGestureState } from 'react-native';
+import { Animated, PanResponder, StyleSheet, View, TouchableWithoutFeedback, PanResponderGestureState, TouchableOpacity } from 'react-native';
 import _ from 'lodash';
+
+const horizontalSections = ['top', 'middle', 'bottom'];
+const verticalSections = ['left', 'middle', 'right'];
 
 interface ImageCropOverlayProps {
   imageBounds: {
@@ -23,6 +26,8 @@ interface ImageCropOverlayProps {
 }
 
 function ImageCropOverlay(props: ImageCropOverlayProps) {
+
+  const [selectedFrameSection, setSelectedFrameSection] = useState('middlemiddle');
 
   const { imageBounds, fixedAspectRatio, accumulatedPan, cropSize } = props;
 
@@ -125,7 +130,6 @@ function ImageCropOverlay(props: ImageCropOverlayProps) {
     else {
       // It's somewhere in between - no formatting required
     }
-    console.log('checked crop bounds')
     // Record the accumulated pan
     props.onUpdateAccumulatedPan({x: accDx, y: accDy});
   }
@@ -134,7 +138,8 @@ function ImageCropOverlay(props: ImageCropOverlayProps) {
     <View style={styles.container}
           {...panResponder.panHandlers}>
       {/* https://github.com/facebook/react-native/issues/14295#issuecomment-374012339 */}
-      <TouchableWithoutFeedback onPress={() => {}}>
+      <TouchableWithoutFeedback onPress={() => {}}
+                                disabled>
         <Animated.View style={[
                         styles.overlay, 
                         cropSize,
@@ -143,7 +148,46 @@ function ImageCropOverlay(props: ImageCropOverlayProps) {
                           {translateY: pan.y}
                         ]}
                        ]}>
-
+            {
+              horizontalSections.map((hsection) => {
+                return (
+                  <View style={styles.sectionRow}
+                        key={hsection}>
+                    {
+                      verticalSections.map((vsection) => {
+                        const key = hsection + vsection;
+                        return (
+                          <TouchableOpacity style={[
+                                              styles.defaultSection
+                                            ]}
+                                            key={key}
+                                            onPressIn={() => setSelectedFrameSection(hsection + vsection)}>
+                            {
+                              key == 'topleft' ||
+                              key == 'topright' ||
+                              key == 'bottomleft' ||
+                              key == 'bottomright' ? 
+                                <View style={[
+                                        styles.cornerMarker,
+                                        hsection == 'top' ?
+                                          { top: -4, borderTopWidth: 7 }
+                                        : 
+                                          { bottom: -4, borderBottomWidth: 7 },
+                                        vsection == 'left' ?
+                                          { left: -4, borderLeftWidth: 7 }
+                                        : 
+                                          { right: -4, borderRightWidth: 7 },
+                                      ]} />
+                              : null
+                            }
+                          </TouchableOpacity>
+                        );
+                      })
+                    }
+                  </View>
+                );
+              })
+            }
         </Animated.View>
       </TouchableWithoutFeedback>
     </View>
@@ -162,6 +206,23 @@ const styles = StyleSheet.create({
   overlay: {
     height: 40, 
     width: 40, 
-    backgroundColor: '#ff00ff44'
+    backgroundColor: '#33333355',
+    borderColor: '#ffffff88',
+    borderWidth: 1
+  },
+  sectionRow: {
+    flexDirection: 'row',
+    flex: 1
+  },
+  defaultSection: {
+    flex: 1, 
+    borderWidth: 0.5, 
+    borderColor: '#ffffff88'
+  },
+  cornerMarker: {
+    position: 'absolute',
+    borderColor: '#ffffff',
+    height: 30, 
+    width: 30
   }
 })
