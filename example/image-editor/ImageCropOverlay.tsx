@@ -9,6 +9,8 @@ import {
   TouchableOpacity } from 'react-native';
 import _ from 'lodash';
 import { Ionicons } from '@expo/vector-icons';
+import { transformOrigin } from 'react-native-redash';
+import { acc } from 'react-native-reanimated';
 
 const horizontalSections = ['top', 'middle', 'bottom'];
 const verticalSections = ['left', 'middle', 'right'];
@@ -38,6 +40,12 @@ function ImageCropOverlay(props: ImageCropOverlayProps) {
   const [selectedFrameSection, setSelectedFrameSection] = useState('middlemiddle');
 
   const [panResponderEnabled, setPanResponderEnabled] = useState(false);
+
+  const [scale, setScale] = useState(new Animated.Value(1.0));
+
+  const [accumulatedScale, setAccumulatedScale] = useState(1.0);
+
+  const [scaleAnchorPoint, setScaleAnchorPoint] = useState({x: 0.0, y: 0.0});
 
   const { imageBounds, fixedAspectRatio, accumulatedPan, cropSize } = props;
 
@@ -99,11 +107,15 @@ function ImageCropOverlay(props: ImageCropOverlayProps) {
     // Check if the action is to move or resize based on the
     // selected frame section
     const moveAction = isMovingSection();
-    if (moveAction) {
+    if (true) {
       pan.setOffset({
         x: pan.x._value,
         y: pan.y._value
       });
+    }
+    else {
+      // // Else its a scaling operation - set an anchor point
+      // setScaleAnchorPoint({x: accumulatedPan.x, y: accumulatedPan.y});
     }
   }
 
@@ -111,7 +123,7 @@ function ImageCropOverlay(props: ImageCropOverlayProps) {
     // Check if the action is to move or resize based on the
     // selected frame section
     const moveAction = isMovingSection();
-    if (moveAction) {
+    if (true) {
       Animated.event(
         [
           null,
@@ -125,11 +137,14 @@ function ImageCropOverlay(props: ImageCropOverlayProps) {
     // Check if the action is to move or resize based on the
     // selected frame section
     const moveAction = isMovingSection();
-    if (moveAction) {
+    if (true) {
       // Flatten the offset to reduce erratic behaviour
       pan.flattenOffset();
       // Ensure the cropping overlay has not been moved outside of the allowed bounds
       checkCropBounds(gestureState);
+    }
+    else {
+      // setAccumulatedScale(scale._value)
     }
     setPanResponderEnabled(false);
   }
@@ -175,15 +190,6 @@ function ImageCropOverlay(props: ImageCropOverlayProps) {
     // Record the accumulated pan
     props.onUpdateAccumulatedPan({x: accDx, y: accDy});
   }
-
-  // useEffect(() => {
-  //   console.log('selected Frame update')
-  //   // if (!panResponderEnabled) {
-  //     setPanResponderEnabled(true);
-  //   // }
-  // }, [selectedFrameSection]);
-
-  console.log(panResponderEnabled)
 
   const panProps = panResponderEnabled ? {...panResponder.panHandlers} : {}
 
