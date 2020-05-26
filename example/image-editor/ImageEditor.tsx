@@ -62,19 +62,18 @@ function ImageEditor(props: ImageEditorProps) {
   const onPerformCrop = async () => {
     // Calculate cropping bounds
     const { imageBounds, accumulatedPan, imageScaleFactor, cropSize } = editorState;
-    console.log({ imageBounds, accumulatedPan, imageScaleFactor, cropSize })
     const croppingBounds = {
       originX: Math.round((accumulatedPan.x - imageBounds.x) * imageScaleFactor),
       originY: Math.round((accumulatedPan.y - imageBounds.y) * imageScaleFactor),
       width: Math.round(cropSize.width * imageScaleFactor),
       height: Math.round(cropSize.height * imageScaleFactor)
     };
-    // await ImageManipulator.manipulateAsync(props.imageData.uri as string, [
-    //   { crop: croppingBounds }
-    // ]).then(({uri}) => {
-    //   props.onEditingComplete({uri});
-    //   props.onCloseEditor();
-    // });
+    await ImageManipulator.manipulateAsync(props.imageData.uri as string, [
+      { crop: croppingBounds }
+    ]).then(({uri}) => {
+      props.onEditingComplete({uri});
+      props.onCloseEditor();
+    });
   }
 
   useEffect(() => {

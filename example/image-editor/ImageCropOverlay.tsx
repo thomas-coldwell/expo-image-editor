@@ -8,8 +8,6 @@ import {
   PanResponderGestureState, 
   TouchableOpacity } from 'react-native';
 import _ from 'lodash';
-import { Ionicons } from '@expo/vector-icons';
-import { transformOrigin } from 'react-native-redash';
 
 const horizontalSections = ['top', 'middle', 'bottom'];
 const verticalSections = ['left', 'middle', 'right'];
@@ -97,48 +95,34 @@ function ImageCropOverlay(props: ImageCropOverlayProps) {
   }
 
   const onOverlayMoveGrant = (e: any, gestureState: PanResponderGestureState) => {
-    // Check if the action is to move or resize based on the
+    // TODO - Check if the action is to move or resize based on the
     // selected frame section
-    const moveAction = isMovingSection();
-    if (true) {
-      pan.setOffset({
-        x: pan.x._value,
-        y: pan.y._value
-      });
-    }
-    else {
-      // // Else its a scaling operation - set an anchor point
-      // setScaleAnchorPoint({x: accumulatedPan.x, y: accumulatedPan.y});
-    }
+    pan.setOffset({
+      x: pan.x._value,
+      y: pan.y._value
+    });
   }
 
   const onOverlayMove = (e: any, gestureState: PanResponderGestureState) => {
-    // Check if the action is to move or resize based on the
+    // TODO - Check if the action is to move or resize based on the
     // selected frame section
-    const moveAction = isMovingSection();
-    if (true) {
-      Animated.event(
-        [
-          null,
-          { dx: pan.x, dy: pan.y }
-        ]
-      )(e, gestureState);
-    }
+    Animated.event(
+      [
+        null,
+        { dx: pan.x, dy: pan.y }
+      ]
+    )(e, gestureState);
   }
 
   const onOverlayRelease = (gestureState: PanResponderGestureState) => {
-    // Check if the action is to move or resize based on the
+    // TODO - Check if the action is to move or resize based on the
     // selected frame section
-    const moveAction = isMovingSection();
-    if (true) {
-      // Flatten the offset to reduce erratic behaviour
-      pan.flattenOffset();
-      // Ensure the cropping overlay has not been moved outside of the allowed bounds
-      checkCropBounds(gestureState);
-    }
-    else {
-      // setAccumulatedScale(scale._value)
-    }
+
+    // Flatten the offset to reduce erratic behaviour
+    pan.flattenOffset();
+    // Ensure the cropping overlay has not been moved outside of the allowed bounds
+    checkCropBounds(gestureState);
+    // Disable the pan responder so the section tile can be pressed
     setPanResponderEnabled(false);
   }
 
@@ -180,7 +164,6 @@ function ImageCropOverlay(props: ImageCropOverlayProps) {
     else {
       // It's somewhere in between - no formatting required
     }
-    console.log({accumulatedPan, dx, dy, cropSize, imageBounds});
     // Record the accumulated pan
     props.onUpdateAccumulatedPan({x: accDx, y: accDy});
   }
@@ -244,13 +227,6 @@ function ImageCropOverlay(props: ImageCropOverlayProps) {
                                       ]} />
                               : null
                             }
-                            {/* {
-                              key == 'middlemiddle' ? 
-                                <Ionicons name='ios-move' 
-                                          size={20}
-                                          color='#ffffff88' />
-                              : null
-                            } */}
                           </TouchableOpacity>
                         );
                       })
