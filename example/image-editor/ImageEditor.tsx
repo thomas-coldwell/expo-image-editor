@@ -6,7 +6,7 @@ import { ImageCropOverlay } from './ImageCropOverlay';
 import * as ImageManipulator from 'expo-image-manipulator';
 import { Processing } from './Processing';
 
-interface ImageEditorProps {
+export interface ImageEditorProps {
   visible: boolean;
   onCloseEditor: () => void;
   imageData: {
