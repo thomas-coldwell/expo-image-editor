@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { Modal, StyleSheet, View, StatusBar } from 'react-native';
+import { Modal, StyleSheet, View, StatusBar, Alert } from 'react-native';
 import { ControlBar } from './ControlBar';
 import { EditingWindow } from './EditingWindow';
 import { ImageCropOverlay } from './ImageCropOverlay';
 import * as ImageManipulator from 'expo-image-manipulator';
+import { Processing } from './Processing';
 
 interface ImageEditorProps {
   visible: boolean;
@@ -34,6 +35,7 @@ interface ImageEditorStore {
     height: number;
   },
   ready: boolean;
+  processing: boolean;
 }
 
 function ImageEditor(props: ImageEditorProps) {
@@ -54,7 +56,8 @@ function ImageEditor(props: ImageEditorProps) {
       width: 0,
       height: 0
     },
-    ready: false
+    ready: false,
+    processing: false
   };
 
   const [editorState, setEditorState] = useState<ImageEditorStore>(initialState);
@@ -68,11 +71,21 @@ function ImageEditor(props: ImageEditorProps) {
       width: Math.round(cropSize.width * imageScaleFactor),
       height: Math.round(cropSize.height * imageScaleFactor)
     };
+    // Set the editor state to processing and perform the crop
+    setEditorState({...editorState, processing: true});
     await ImageManipulator.manipulateAsync(props.imageData.uri as string, [
       { crop: croppingBounds }
-    ]).then(({uri}) => {
+    ])
+    .then(({uri}) => {
+      setEditorState({...editorState, processing: false});
       props.onEditingComplete({uri});
       props.onCloseEditor();
+    })
+    .catch((error) => {
+      // If there's an error dismiss the the editor and alert the user
+      setEditorState({...editorState, processing: false});
+      props.onCloseEditor();
+      Alert.alert('An error occurred while editing.');
     });
   }
 
@@ -106,6 +119,11 @@ function ImageEditor(props: ImageEditorProps) {
                               onUpdateCropSize={size => setEditorState({...editorState, cropSize: size})} />
             </View>
           : null 
+        }
+        {
+          editorState.processing ? 
+            <Processing />
+          : null
         }
     </Modal>
   );
