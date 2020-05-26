@@ -69,12 +69,12 @@ function ImageEditor(props: ImageEditorProps) {
       width: Math.round(cropSize.width * imageScaleFactor),
       height: Math.round(cropSize.height * imageScaleFactor)
     };
-    await ImageManipulator.manipulateAsync(props.imageData.uri as string, [
-      { crop: croppingBounds }
-    ]).then(({uri}) => {
-      props.onEditingComplete({uri});
-      props.onCloseEditor();
-    });
+    // await ImageManipulator.manipulateAsync(props.imageData.uri as string, [
+    //   { crop: croppingBounds }
+    // ]).then(({uri}) => {
+    //   props.onEditingComplete({uri});
+    //   props.onCloseEditor();
+    // });
   }
 
   useEffect(() => {

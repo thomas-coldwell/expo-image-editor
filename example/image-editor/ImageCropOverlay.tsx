@@ -10,7 +10,6 @@ import {
 import _ from 'lodash';
 import { Ionicons } from '@expo/vector-icons';
 import { transformOrigin } from 'react-native-redash';
-import { acc } from 'react-native-reanimated';
 
 const horizontalSections = ['top', 'middle', 'bottom'];
 const verticalSections = ['left', 'middle', 'right'];
@@ -40,12 +39,6 @@ function ImageCropOverlay(props: ImageCropOverlayProps) {
   const [selectedFrameSection, setSelectedFrameSection] = useState('middlemiddle');
 
   const [panResponderEnabled, setPanResponderEnabled] = useState(false);
-
-  const [scale, setScale] = useState(new Animated.Value(1.0));
-
-  const [accumulatedScale, setAccumulatedScale] = useState(1.0);
-
-  const [scaleAnchorPoint, setScaleAnchorPoint] = useState({x: 0.0, y: 0.0});
 
   const { imageBounds, fixedAspectRatio, accumulatedPan, cropSize } = props;
 
@@ -153,13 +146,13 @@ function ImageCropOverlay(props: ImageCropOverlayProps) {
     // Check if the pan in the x direction exceeds the bounds
     let accDx = accumulatedPan.x + dx;
     // Is the new x pos less than zero?
-    if (accDx <= 0) {
+    if (accDx <= imageBounds.x) {
       // Then set it to be zero and set the pan to zero too
       accDx = imageBounds.x;
       pan.x.setValue(imageBounds.x);
     }
     // Is the new x pos plus crop width going to exceed the right hand bound
-    else if ((accDx + cropSize.width) > imageBounds.width) {
+    else if ((accDx + cropSize.width) > (imageBounds.width + imageBounds.x)) {
       // Then set the x pos so the crop frame touches the right hand edge
       let limitedXPos = imageBounds.x + imageBounds.width - cropSize.width;
       accDx = limitedXPos;
@@ -178,7 +171,7 @@ function ImageCropOverlay(props: ImageCropOverlayProps) {
       pan.y.setValue(imageBounds.y);
     }
     // Is the new y pos plus crop height going to exceed the bottom bound
-    else if ((accDy + cropSize.height) > imageBounds.height) {
+    else if ((accDy + cropSize.height) > (imageBounds.height + imageBounds.y)) {
       // Then set the y pos so the crop frame touches the bottom edge
       let limitedYPos = imageBounds.y + imageBounds.height - cropSize.height;
       accDy = limitedYPos;
@@ -187,6 +180,7 @@ function ImageCropOverlay(props: ImageCropOverlayProps) {
     else {
       // It's somewhere in between - no formatting required
     }
+    console.log({accumulatedPan, dx, dy, cropSize, imageBounds});
     // Record the accumulated pan
     props.onUpdateAccumulatedPan({x: accDx, y: accDy});
   }
