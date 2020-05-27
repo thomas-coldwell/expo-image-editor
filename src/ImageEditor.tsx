@@ -1,10 +1,10 @@
 import * as React from 'react';
-import { Modal, StyleSheet, View, StatusBar, Alert } from 'react-native';
+import { StyleSheet, View, StatusBar, Alert } from 'react-native';
 import { ControlBar } from './ControlBar';
 import { EditingWindow } from './EditingWindow';
-import { ImageCropOverlay } from './ImageCropOverlay';
 import * as ImageManipulator from 'expo-image-manipulator';
 import { Processing } from './Processing';
+import Modal from 'modal-enhanced-react-native-web';
 
 export interface ImageEditorProps {
   visible: boolean;
