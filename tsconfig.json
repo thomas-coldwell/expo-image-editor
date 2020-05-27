@@ -4,9 +4,13 @@
     "esModuleInterop": true,
     "target": "es6",
     "moduleResolution": "node",
+    "allowJs": true,
     "sourceMap": true,
     "outDir": "dist",
     "jsx": "react-native"
   },
-  "lib": ["es2015"]
+  "lib": ["es2015"],
+  "exclude": [
+    "./node_modules/**/*"
+  ]
 }
