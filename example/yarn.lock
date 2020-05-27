@@ -2308,15 +2308,9 @@ expo-font@~8.1.0:
     fbjs "1.0.0"
     fontfaceobserver "^2.1.0"
 
-"expo-image-editor@git+https://github.com/Memory-Lane-Games/expo-image-cropping.git":
-  version "1.0.0"
-  resolved "git+https://github.com/Memory-Lane-Games/expo-image-cropping.git#6794a71d5b49fd0cf97c8a9a5c05442627b9f1f7"
-  dependencies:
-    expo-image-manipulator "^8.1.0"
-
 "expo-image-editor@git+https://github.com/Memory-Lane-Games/expo-image-cropping.git#web-support":
   version "1.0.0"
-  resolved "git+https://github.com/Memory-Lane-Games/expo-image-cropping.git#fe2aa3bf76e76acc7ee493aae0fc4ab4cb9ed43f"
+  resolved "git+https://github.com/Memory-Lane-Games/expo-image-cropping.git#15951bcbf565d613c3ab411ec101d618228ca4ab"
   dependencies:
     expo-image-manipulator "^8.1.0"
 

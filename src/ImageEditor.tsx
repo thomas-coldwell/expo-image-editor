@@ -1,9 +1,12 @@
 import * as React from 'react';
-import { Modal, StyleSheet, View, StatusBar, Alert } from 'react-native';
+import { Modal as RNModal, StyleSheet, View, StatusBar, Alert, Platform } from 'react-native';
 import { ControlBar } from './ControlBar';
 import { EditingWindow } from './EditingWindow';
 import * as ImageManipulator from 'expo-image-manipulator';
 import { Processing } from './Processing';
+import Modal from 'modal-react-native-web';
+
+const PlatformModal = Platform.OS == 'web' ? Modal : RNModal;
 
 export interface ImageEditorProps {
   visible: boolean;
@@ -100,7 +103,7 @@ function ImageEditor(props: ImageEditorProps) {
   }, [props.visible]);
 
   return(
-    <Modal visible={props.visible}
+    <PlatformModal visible={props.visible}
            transparent>
       <StatusBar hidden />
         { 
@@ -124,7 +127,7 @@ function ImageEditor(props: ImageEditorProps) {
             <Processing />
           : null
         }
-    </Modal>
+    </PlatformModal>
   );
 
 }
