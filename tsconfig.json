@@ -9,7 +9,8 @@
     "allowJs": true,
     "sourceMap": true,
     "outDir": "lib",
-    "jsx": "react-native"
+    "jsx": "react-native",
+    "allowSyntheticDefaultImports": true
   },
   "lib": ["es2015"],
   "include": [
