@@ -1,4 +1,4 @@
-import React from 'react';
+import * as React from 'react';
 import { View, StyleSheet, ActivityIndicator } from 'react-native';
 
 function Processing() {
