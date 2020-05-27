@@ -8,7 +8,7 @@ import {
   Alert
 } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
-import { ImageEditor } from './src/ImageEditor';
+import { ImageEditor } from 'expo-image-editor';
 
 export default function App() {
 
