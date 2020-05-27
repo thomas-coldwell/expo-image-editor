@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useCallback } from 'react';
+import * as React from 'react';
 import { 
   View, 
   StyleSheet, 

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import * as React from 'react';
 import { Image, StyleSheet, LayoutRectangle, View } from 'react-native';
 import { ImageCropOverlay } from './ImageCropOverlay';
 
@@ -30,7 +30,7 @@ interface EditingWindowProps {
 
 function EditingWindow(props: EditingWindowProps) {
 
-  const [state, setState] = useState({
+  const [state, setState] = React.useState({
     initialisedImageBounds: false
   });
 

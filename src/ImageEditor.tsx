@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import * as React from 'react';
 import { Modal, StyleSheet, View, StatusBar, Alert } from 'react-native';
 import { ControlBar } from './ControlBar';
 import { EditingWindow } from './EditingWindow';
@@ -60,7 +60,7 @@ function ImageEditor(props: ImageEditorProps) {
     processing: false
   };
 
-  const [editorState, setEditorState] = useState<ImageEditorStore>(initialState);
+  const [editorState, setEditorState] = React.useState<ImageEditorStore>(initialState);
 
   const onPerformCrop = async () => {
     // Calculate cropping bounds
@@ -89,7 +89,7 @@ function ImageEditor(props: ImageEditorProps) {
     });
   }
 
-  useEffect(() => {
+  React.useEffect(() => {
     // Reset the state of things and only render the UI
     // when this state has been initialised
     if (!props.visible) {

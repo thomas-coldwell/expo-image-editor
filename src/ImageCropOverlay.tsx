@@ -1,4 +1,4 @@
-import React, { useRef, useState, useEffect } from 'react';
+import * as React from 'react';
 import { 
   Animated, 
   PanResponder, 
@@ -34,13 +34,13 @@ interface ImageCropOverlayProps {
 
 function ImageCropOverlay(props: ImageCropOverlayProps) {
 
-  const [selectedFrameSection, setSelectedFrameSection] = useState('middlemiddle');
+  const [selectedFrameSection, setSelectedFrameSection] = React.useState('middlemiddle');
 
-  const [panResponderEnabled, setPanResponderEnabled] = useState(false);
+  const [panResponderEnabled, setPanResponderEnabled] = React.useState(false);
 
   const { imageBounds, fixedAspectRatio, accumulatedPan, cropSize } = props;
 
-  const pan = useRef(new Animated.ValueXY({
+  const pan = React.useRef(new Animated.ValueXY({
     x: imageBounds.x,
     y: imageBounds.y
   })).current;
@@ -53,19 +53,19 @@ function ImageCropOverlay(props: ImageCropOverlayProps) {
     onPanResponderTerminationRequest: () => false
   });
 
-  const [panResponder, setPanResponder]  = useState(panInstance);
+  const [panResponder, setPanResponder]  = React.useState(panInstance);
 
-  useEffect(() => {
+  React.useEffect(() => {
     // https://stackoverflow.com/questions/61014169/react-natives-panresponder-has-stale-value-from-usestate
     setPanResponder(panInstance);
   }, [cropSize, accumulatedPan, selectedFrameSection]);
 
-  useEffect(() => {
+  React.useEffect(() => {
     // Reset the accumulated pan
     checkCropBounds({dx: 0.0, dy: 0.0});
   }, [cropSize])
 
-  useEffect(() => {
+  React.useEffect(() => {
     let newSize = { width: 0, height: 0 };
     const { width, height } = imageBounds;
     const imageAspectRatio = height / width;
