@@ -103,34 +103,31 @@ function ImageEditor(props: ImageEditorProps) {
   }, [props.visible]);
 
   return(
-    props.visible ?
-      <PlatformModal visible={props.visible}
-                    transparent>
-        <StatusBar hidden />
-          { 
-            editorState.ready ? 
-              <View style={styles.container}>
-                <ControlBar onPressBack={() => props.onCloseEditor()}
-                            onPerformCrop={() => onPerformCrop()} />
-                <EditingWindow imageData={props.imageData}
-                                fixedCropAspectRatio={1/props.fixedCropAspectRatio}
-                                imageBounds={editorState.imageBounds}
-                                onUpdateImageBounds={bounds => setEditorState({...editorState, ...bounds})}
-                                accumulatedPan={editorState.accumulatedPan}
-                                onUpdateAccumulatedPan={accumulatedPan => setEditorState({...editorState, accumulatedPan: accumulatedPan})}
-                                cropSize={editorState.cropSize}
-                                onUpdateCropSize={size => setEditorState({...editorState, cropSize: size})} />
-              </View>
-            : null 
-          }
-          {
-            editorState.processing ? 
-              <Processing />
-            : null
-          }
-      </PlatformModal>
-    :
-      null
+    <PlatformModal visible={props.visible}
+                   transparent>
+      <StatusBar hidden />
+        { 
+          editorState.ready ? 
+            <View style={styles.container}>
+              <ControlBar onPressBack={() => props.onCloseEditor()}
+                          onPerformCrop={() => onPerformCrop()} />
+              <EditingWindow imageData={props.imageData}
+                              fixedCropAspectRatio={1/props.fixedCropAspectRatio}
+                              imageBounds={editorState.imageBounds}
+                              onUpdateImageBounds={bounds => setEditorState({...editorState, ...bounds})}
+                              accumulatedPan={editorState.accumulatedPan}
+                              onUpdateAccumulatedPan={accumulatedPan => setEditorState({...editorState, accumulatedPan: accumulatedPan})}
+                              cropSize={editorState.cropSize}
+                              onUpdateCropSize={size => setEditorState({...editorState, cropSize: size})} />
+            </View>
+          : null 
+        }
+        {
+          editorState.processing ? 
+            <Processing />
+          : null
+        }
+    </PlatformModal>
   );
 
 }

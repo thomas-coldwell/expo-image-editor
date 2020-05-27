@@ -66,6 +66,7 @@ export default function App() {
              source={{uri: croppedUri}} />
       <Button title='Select Photo' 
               onPress={() => selectPhoto()}/>
+      <View style={{height: 40, width: 40, backgroundColor: '#ff0'}}/>
       <ImageEditor visible={editorVisible}
                    onCloseEditor={() => setEditorVisible(false)}
                    imageData={imageData}
