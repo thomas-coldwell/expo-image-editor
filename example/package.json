@@ -9,6 +9,7 @@
   },
   "dependencies": {
     "expo": "~37.0.3",
+    "expo-image-editor": "git+https://github.com/Memory-Lane-Games/expo-image-cropping.git",
     "expo-image-manipulator": "~8.1.0",
     "expo-image-picker": "~8.1.0",
     "react": "~16.9.0",

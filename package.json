@@ -5,7 +5,7 @@
   "main": "lib/ImageEditor.js",
   "types": "lib/ImageEditor.d.ts",
   "scripts": {
-    "build": "cp -R ./src ./example/src  && tsc -p .",
+    "build": "tsc -p .",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
