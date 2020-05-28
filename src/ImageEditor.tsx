@@ -4,7 +4,7 @@ import { ControlBar } from './ControlBar';
 import { EditingWindow } from './EditingWindow';
 import * as ImageManipulator from 'expo-image-manipulator';
 import { Processing } from './Processing';
-import Modal from 'modal-enhanced-react-native-web';
+import Modal from 'modal-react-native-web';
 
 const PlatformModal = Platform.OS == 'web' ? Modal : RNModal;
 

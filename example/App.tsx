@@ -60,6 +60,7 @@ export default function App() {
 
   return (
     <View style={styles.container}>
+      <View style={styles.container}>
       <Image style={styles.image} 
              source={{uri: imageData.uri}} />
       <Image style={[styles.image, {backgroundColor: '#333'}]} 
@@ -67,6 +68,7 @@ export default function App() {
       <Button title='Select Photo' 
               onPress={() => selectPhoto()}/>
       <View style={{height: 40, width: 40, backgroundColor: '#ff0'}}/>
+      </View>
       <ImageEditor visible={editorVisible}
                    onCloseEditor={() => setEditorVisible(false)}
                    imageData={imageData}
@@ -81,8 +83,8 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#fff',
-    alignItems: 'center',
     justifyContent: 'center',
+    alignItems: 'center'
   },
   image: {
     width: '90%',

@@ -2310,7 +2310,7 @@ expo-font@~8.1.0:
 
 "expo-image-editor@git+https://github.com/Memory-Lane-Games/expo-image-cropping.git#web-support":
   version "1.0.0"
-  resolved "git+https://github.com/Memory-Lane-Games/expo-image-cropping.git#9a2c7dc471600226c4e2d8cdace87d2ce8ca3ef9"
+  resolved "git+https://github.com/Memory-Lane-Games/expo-image-cropping.git#17f3a77bd47e6b6eb72032120d4e52febcc153e5"
   dependencies:
     expo-image-manipulator "^8.1.0"
 
