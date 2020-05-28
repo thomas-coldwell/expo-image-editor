@@ -72,21 +72,44 @@ function ImageEditor(props: ImageEditorProps) {
   const onPerformCrop = async () => {
     // Calculate cropping bounds
     const { imageBounds, accumulatedPan, imageScaleFactor, cropSize } = editorState;
+    console.log({ imageBounds, accumulatedPan, imageScaleFactor, cropSize })
     const croppingBounds = {
       originX: Math.round((accumulatedPan.x - imageBounds.x) * imageScaleFactor),
       originY: Math.round((accumulatedPan.y - imageBounds.y) * imageScaleFactor),
       width: Math.round(cropSize.width * imageScaleFactor),
       height: Math.round(cropSize.height * imageScaleFactor)
     };
+    console.log(croppingBounds)
     // Set the editor state to processing and perform the crop
     setEditorState({...editorState, processing: true});
     await ImageManipulator.manipulateAsync(props.imageData.uri as string, [
       { crop: croppingBounds }
     ])
-    .then(({uri}) => {
-      setEditorState({...editorState, processing: false});
-      props.onEditingComplete({uri});
-      props.onCloseEditor();
+    .then(async ({uri, width, height}) => {
+      // Check if on web - currently there is a weird bug where it will keep
+      // the canvas from ImageManipualtor at originX + width and so we'll just crop
+      // the result again for now if on web - TODO write github issue!
+      if (Platform.OS == 'web') {
+        await ImageManipulator.manipulateAsync(uri, [
+          { crop: { ...croppingBounds, originX: 0, originY: 0 }}
+        ])
+        .then(({uri, width, height}) => {
+            setEditorState({...editorState, processing: false});
+            props.onEditingComplete({uri, width, height});
+            props.onCloseEditor();
+        })
+        .catch((error) => {
+          // If there's an error dismiss the the editor and alert the user
+          setEditorState({...editorState, processing: false});
+          props.onCloseEditor();
+          Alert.alert('An error occurred while editing.');
+        });
+      }
+      else {
+        setEditorState({...editorState, processing: false});
+        props.onEditingComplete({uri, width, height});
+        props.onCloseEditor();
+      }
     })
     .catch((error) => {
       // If there's an error dismiss the the editor and alert the user
