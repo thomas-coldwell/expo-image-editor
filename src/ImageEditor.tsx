@@ -72,14 +72,12 @@ function ImageEditor(props: ImageEditorProps) {
   const onPerformCrop = async () => {
     // Calculate cropping bounds
     const { imageBounds, accumulatedPan, imageScaleFactor, cropSize } = editorState;
-    console.log({ imageBounds, accumulatedPan, imageScaleFactor, cropSize })
     const croppingBounds = {
       originX: Math.round((accumulatedPan.x - imageBounds.x) * imageScaleFactor),
       originY: Math.round((accumulatedPan.y - imageBounds.y) * imageScaleFactor),
       width: Math.round(cropSize.width * imageScaleFactor),
       height: Math.round(cropSize.height * imageScaleFactor)
     };
-    console.log(croppingBounds)
     // Set the editor state to processing and perform the crop
     setEditorState({...editorState, processing: true});
     await ImageManipulator.manipulateAsync(props.imageData.uri as string, [
