@@ -5,20 +5,15 @@
   "main": "lib/ImageEditor.js",
   "types": "lib/ImageEditor.d.ts",
   "scripts": {
+    "develop": "tsc -p . -w & cpx './lib/*' ../expo-image-cropping-test/lib --watch",
     "build": "tsc -p .",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
   "license": "ISC",
-  "dependencies": {
-    "expo-image-manipulator": "^8.1.0"
-  },
   "peerDependencies": {
-    "expo-image-manipulator": "*",
     "react": "*",
-    "react-native": "*",
-    "react-native-gesture-handler": "*",
-    "react-native-reanimated": "*"
+    "react-native": "*"
   },
   "devDependencies": {
     "@babel/core": "^7.8.6",
@@ -27,6 +22,8 @@
     "@types/react-dom": "^16.9.8",
     "@types/react-native": "^0.62.11",
     "babel-preset-expo": "~8.1.0",
+    "cpx": "^1.5.0",
+    "expo-image-manipulator": "^8.1.0",
     "modal-enhanced-react-native-web": "^0.2.0",
     "modal-react-native-web": "^0.2.0",
     "react": "^16.13.1",

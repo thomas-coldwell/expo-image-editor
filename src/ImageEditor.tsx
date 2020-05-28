@@ -55,8 +55,8 @@ function ImageEditor(props: ImageEditorProps) {
       y: 0.0
     },
     cropSize: {
-      width: 0,
-      height: 0
+      width: 200,
+      height: 200
     },
     ready: false,
     processing: false
