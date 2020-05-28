@@ -924,13 +924,6 @@
     exec-sh "^0.3.2"
     minimist "^1.2.0"
 
-"@egjs/hammerjs@^2.0.17":
-  version "2.0.17"
-  resolved "https://registry.yarnpkg.com/@egjs/hammerjs/-/hammerjs-2.0.17.tgz#5dc02af75a6a06e4c2db0202cae38c9263895124"
-  integrity sha512-XQsZgjm2EcVUiZQf11UBJQfmZeEmOW8DpI1gsFeln6w0ae0ii4dMQEQ0kjl6DspdWX1aGY1/loyXnP0JS06e/A==
-  dependencies:
-    "@types/hammerjs" "^2.0.36"
-
 "@expo/vector-icons@^10.0.2":
   version "10.2.0"
   resolved "https://registry.yarnpkg.com/@expo/vector-icons/-/vector-icons-10.2.0.tgz#3c70656683a6a873e18efc00bc61fc160a80dc55"
@@ -1137,11 +1130,6 @@
   resolved "https://registry.yarnpkg.com/@types/fbemitter/-/fbemitter-2.0.32.tgz#8ed204da0f54e9c8eaec31b1eec91e25132d082c"
   integrity sha1-jtIE2g9U6cjq7DGx7skeJRMtCCw=
 
-"@types/hammerjs@^2.0.36":
-  version "2.0.36"
-  resolved "https://registry.yarnpkg.com/@types/hammerjs/-/hammerjs-2.0.36.tgz#17ce0a235e9ffbcdcdf5095646b374c2bf615a4c"
-  integrity sha512-7TUK/k2/QGpEAv/BCwSHlYu3NXZhQ9ZwBYpzr9tjlPIL2C5BeGhH3DmVavRx3ZNyELX5TLC91JTz/cen6AAtIQ==
-
 "@types/invariant@^2.2.29":
   version "2.2.33"
   resolved "https://registry.yarnpkg.com/@types/invariant/-/invariant-2.2.33.tgz#ec5eec29c63bf5e4ca164e9feb3ef7337cdcbadb"
@@ -1255,11 +1243,6 @@ abort-controller@^3.0.0:
   integrity sha512-h8lQ8tacZYnR3vNQTgibj+tODHI5/+l06Au2Pcriv/Gmet0eaj4TwWH41sO9wnHDiQsEj19q0drzdWdeAHtweg==
   dependencies:
     event-target-shim "^5.0.0"
-
-abs-svg-path@^0.1.1:
-  version "0.1.1"
-  resolved "https://registry.yarnpkg.com/abs-svg-path/-/abs-svg-path-0.1.1.tgz#df601c8e8d2ba10d4a76d625e236a9a39c2723bf"
-  integrity sha1-32Acjo0roQ1KdtYl4japo5wnI78=
 
 absolute-path@^0.0.0:
   version "0.0.0"
@@ -2310,7 +2293,7 @@ expo-font@~8.1.0:
 
 "expo-image-editor@git+https://github.com/Memory-Lane-Games/expo-image-cropping.git#web-support":
   version "1.0.0"
-  resolved "git+https://github.com/Memory-Lane-Games/expo-image-cropping.git#b3854b955bd928656fcf856004fa5a30e18e5f50"
+  resolved "git+https://github.com/Memory-Lane-Games/expo-image-cropping.git#251330fb7e73532ba93c0163ff2e7a988bf5e871"
   dependencies:
     expo-image-manipulator "^8.1.0"
 
@@ -2777,11 +2760,6 @@ hermes-engine@^0.2.1:
   version "0.2.1"
   resolved "https://registry.yarnpkg.com/hermes-engine/-/hermes-engine-0.2.1.tgz#25c0f1ff852512a92cb5c5cc47cf967e1e722ea2"
   integrity sha512-eNHUQHuadDMJARpaqvlCZoK/Nitpj6oywq3vQ3wCwEsww5morX34mW5PmKWQTO7aU0ck0hgulxR+EVDlXygGxQ==
-
-hoist-non-react-statics@^2.3.1:
-  version "2.5.5"
-  resolved "https://registry.yarnpkg.com/hoist-non-react-statics/-/hoist-non-react-statics-2.5.5.tgz#c5903cf409c0dfd908f388e619d86b9c1174cb47"
-  integrity sha512-rqcy4pJo55FTTLWt+bU8ukscqHeE/e9KWvsOW2b/a3afxQZhwkQdT1rPPCJ0rYXdj4vNcasY8zHTH+jF/qStxw==
 
 hosted-git-info@^2.1.4:
   version "2.8.8"
@@ -3858,13 +3836,6 @@ normalize-path@^2.1.1:
   dependencies:
     remove-trailing-separator "^1.0.1"
 
-normalize-svg-path@^1.0.1:
-  version "1.0.1"
-  resolved "https://registry.yarnpkg.com/normalize-svg-path/-/normalize-svg-path-1.0.1.tgz#6f729ad6b70bb4ca4eff2fe4b107489efe1d56fe"
-  integrity sha1-b3Ka1rcLtMpO/y/ksQdInv4dVv4=
-  dependencies:
-    svg-arc-to-cubic-bezier "^3.0.0"
-
 normalize-url@^2.0.1:
   version "2.0.1"
   resolved "https://registry.yarnpkg.com/normalize-url/-/normalize-url-2.0.1.tgz#835a9da1551fa26f70e92329069a23aa6574d7e6"
@@ -4091,11 +4062,6 @@ parse-node-version@^1.0.0:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/parse-node-version/-/parse-node-version-1.0.1.tgz#e2b5dbede00e7fa9bc363607f53327e8b073189b"
   integrity sha512-3YHlOa/JgH6Mnpr05jP9eDG254US9ek25LyIxZlDItp2iJtwyaXQb57lBYLdT3MowkUFYEV2XXNAYIPlESvJlA==
-
-parse-svg-path@^0.1.2:
-  version "0.1.2"
-  resolved "https://registry.yarnpkg.com/parse-svg-path/-/parse-svg-path-0.1.2.tgz#7a7ec0d1eb06fa5325c7d3e009b859a09b5d49eb"
-  integrity sha1-en7A0esG+lMlx9PgCbhZoJtdSes=
 
 parseurl@~1.3.3:
   version "1.3.3"
@@ -4324,39 +4290,6 @@ react-is@^16.12.0, react-is@^16.8.1, react-is@^16.8.4:
   resolved "https://registry.yarnpkg.com/react-is/-/react-is-16.13.1.tgz#789729a4dc36de2999dc156dd6c1d9c18cea56a4"
   integrity sha512-24e6ynE2H+OKt4kqsOvNd8kBpV65zoxbA4BVsEOB3ARVWQki/DHzaUoC5KuON/BiccDaCCTZBuOcfZs70kR8bQ==
 
-react-native-gesture-handler@^1.6.1:
-  version "1.6.1"
-  resolved "https://registry.yarnpkg.com/react-native-gesture-handler/-/react-native-gesture-handler-1.6.1.tgz#678e2dce250ed66e93af409759be22cd6375dd17"
-  integrity sha512-gQgIKhDiYf754yzhhliagLuLupvGb6ZyBdzYzr7aus3Fyi87TLOw63ers+r4kGw0h26oAWTAdHd34JnF4NeL6Q==
-  dependencies:
-    "@egjs/hammerjs" "^2.0.17"
-    hoist-non-react-statics "^2.3.1"
-    invariant "^2.2.4"
-    prop-types "^15.7.2"
-
-react-native-reanimated@^1.9.0:
-  version "1.9.0"
-  resolved "https://registry.yarnpkg.com/react-native-reanimated/-/react-native-reanimated-1.9.0.tgz#38676c99dd585504fdc7331efb45e5f48ec7339a"
-  integrity sha512-Aj+spgIHRiVv7ezGADxnSH1EoKrQRD2+XaSiGY0MiB/pvRNNrZPSJ+3NVpvLwWf9lZMOP7dwqqyJIzoZgBDt8w==
-  dependencies:
-    fbjs "^1.0.0"
-
-react-native-redash@^14.1.1:
-  version "14.1.1"
-  resolved "https://registry.yarnpkg.com/react-native-redash/-/react-native-redash-14.1.1.tgz#b3a45652160746df8766bcb7251f7747c5863934"
-  integrity sha512-xjTmEEnDKXa7DlGhKpL7HUksSGS6RFY8duig1YWrADnatTKBiwRBTymLJplqs9jE9rSOEeqISRYhtkB9iRlfRA==
-  dependencies:
-    abs-svg-path "^0.1.1"
-    normalize-svg-path "^1.0.1"
-    parse-svg-path "^0.1.2"
-
-react-native-screens@~2.2.0:
-  version "2.2.0"
-  resolved "https://registry.yarnpkg.com/react-native-screens/-/react-native-screens-2.2.0.tgz#cc4cdf17426fdda97ad93a5e812a1899390f1978"
-  integrity sha512-a0VzxOWot7F9B/GQyDSssBRd3jUJazFnTQS61IiyReWB6aHlFhf3Xz10jBRoURXy1EMCDCHgenmTVTkKHpKyqQ==
-  dependencies:
-    debounce "^1.2.0"
-
 react-native-view-shot@3.1.2:
   version "3.1.2"
   resolved "https://registry.yarnpkg.com/react-native-view-shot/-/react-native-view-shot-3.1.2.tgz#8c8e84c67a4bc8b603e697dbbd59dbc9b4f84825"
@@ -4421,11 +4354,6 @@ react-timer-mixin@^0.13.4:
   version "0.13.4"
   resolved "https://registry.yarnpkg.com/react-timer-mixin/-/react-timer-mixin-0.13.4.tgz#75a00c3c94c13abe29b43d63b4c65a88fc8264d3"
   integrity sha512-4+ow23tp/Tv7hBM5Az5/Be/eKKF7DIvJ09voz5LyHGQaqqz9WV8YMs31eFvcYQs7d451LSg7kDJV70XYN/Ug/Q==
-
-react-tracked@^1.4.0:
-  version "1.4.0"
-  resolved "https://registry.yarnpkg.com/react-tracked/-/react-tracked-1.4.0.tgz#0eb5bb5057e4d45864731bf1e2e5746ee5caca10"
-  integrity sha512-Di1zoNLNa5F4ZHjALTLwaJLPa13R8htlTLyhqRZNkF3LB9ukQL9jgdFEjhaBHVaNzr1l3qE+45fUvXObJXS/ug==
 
 react@~16.9.0:
   version "16.9.0"
@@ -5042,11 +4970,6 @@ supports-color@^7.1.0:
   integrity sha512-oRSIpR8pxT1Wr2FquTNnGet79b3BWljqOuoW/h4oBhxJ/HUbX5nX6JSruTkvXDCFMwDPvsaTTbvMLKZWSy0R5g==
   dependencies:
     has-flag "^4.0.0"
-
-svg-arc-to-cubic-bezier@^3.0.0:
-  version "3.2.0"
-  resolved "https://registry.yarnpkg.com/svg-arc-to-cubic-bezier/-/svg-arc-to-cubic-bezier-3.2.0.tgz#390c450035ae1c4a0104d90650304c3bc814abe6"
-  integrity sha512-djbJ/vZKZO+gPoSDThGNpKDO+o+bAeA4XQKovvkNCqnIS2t+S4qnLAGQhyyrulhCFRl1WWzAp0wUDV8PpTVU3g==
 
 symbol-observable@1.0.1:
   version "1.0.1"

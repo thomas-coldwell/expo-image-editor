@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Modal as RNModal, StyleSheet, View, StatusBar, Alert, Platform } from 'react-native';
-// import { ControlBar } from './ControlBar';
-// import { EditingWindow } from './EditingWindow';
+import { ControlBar } from './ControlBar';
+import { EditingWindow } from './EditingWindow';
 import * as ImageManipulator from 'expo-image-manipulator';
 import { Processing } from './Processing';
 import Modal from 'modal-react-native-web';
@@ -109,7 +109,7 @@ function ImageEditor(props: ImageEditorProps) {
         { 
           editorState.ready ? 
             <View style={styles.container}>
-              {/* <ControlBar onPressBack={() => props.onCloseEditor()}
+              <ControlBar onPressBack={() => props.onCloseEditor()}
                           onPerformCrop={() => onPerformCrop()} />
               <EditingWindow imageData={props.imageData}
                               fixedCropAspectRatio={1/props.fixedCropAspectRatio}
@@ -118,7 +118,7 @@ function ImageEditor(props: ImageEditorProps) {
                               accumulatedPan={editorState.accumulatedPan}
                               onUpdateAccumulatedPan={accumulatedPan => setEditorState({...editorState, accumulatedPan: accumulatedPan})}
                               cropSize={editorState.cropSize}
-                              onUpdateCropSize={size => setEditorState({...editorState, cropSize: size})} /> */}
+                              onUpdateCropSize={size => setEditorState({...editorState, cropSize: size})} />
             </View>
           : null 
         }
