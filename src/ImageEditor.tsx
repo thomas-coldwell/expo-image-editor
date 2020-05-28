@@ -8,6 +8,11 @@ import Modal from 'modal-react-native-web';
 
 const PlatformModal = Platform.OS == 'web' ? Modal : RNModal;
 
+// Stop ARIA errors
+if (Platform.OS == 'web') {
+  PlatformModal.setAppElement('#root');
+}
+
 export interface ImageEditorProps {
   visible: boolean;
   onCloseEditor: () => void;
@@ -55,8 +60,8 @@ function ImageEditor(props: ImageEditorProps) {
       y: 0.0
     },
     cropSize: {
-      width: 200,
-      height: 200
+      width: 0,
+      height: 0
     },
     ready: false,
     processing: false
@@ -104,7 +109,8 @@ function ImageEditor(props: ImageEditorProps) {
 
   return(
     <PlatformModal visible={props.visible}
-                   transparent>
+                   transparent
+                   animationType='slide'>
       <StatusBar hidden />
         { 
           editorState.ready ? 
