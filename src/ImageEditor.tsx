@@ -22,6 +22,10 @@ export interface ImageEditorProps {
     height: number;
   };
   fixedCropAspectRatio: number;
+  minimumCropDimensions: {
+    width: number;
+    height: number;
+  };
   onEditingComplete: (result: any) => void;
 }
 
@@ -141,6 +145,7 @@ function ImageEditor(props: ImageEditorProps) {
               <EditingWindow imageData={props.imageData}
                               fixedCropAspectRatio={1/props.fixedCropAspectRatio}
                               imageBounds={editorState.imageBounds}
+                              minimumCropDimensions={props.minimumCropDimensions}
                               onUpdateImageBounds={bounds => setEditorState({...editorState, ...bounds})}
                               accumulatedPan={editorState.accumulatedPan}
                               onUpdateAccumulatedPan={accumulatedPan => setEditorState({...editorState, accumulatedPan: accumulatedPan})}

@@ -24,6 +24,10 @@ interface ImageCropOverlayProps {
     x: number;
     y: number;
   };
+  minimumCropDimensions: {
+    width: number;
+    height: number;
+  };
   onUpdateAccumulatedPan: (accumulatedPan: any) => void;
   cropSize: {
     width: number;
@@ -51,7 +55,8 @@ function ImageCropOverlay(props: ImageCropOverlayProps) {
     imageBounds, 
     fixedAspectRatio, 
     accumulatedPan, 
-    cropSize
+    cropSize,
+    minimumCropDimensions
   } = props;
 
   const pan = React.useRef(new Animated.ValueXY({
@@ -150,25 +155,60 @@ function ImageCropOverlay(props: ImageCropOverlayProps) {
           animatedCropSize.height.setValue(newHeight);
           animatedCropSize.width.setValue(newHeight / fixedAspectRatio);
         }
-      } 
-      // else if (selectedFrameSection == 'topright') {
-      //   if (dx < dy) {  
-      //     const newWidth = cropSize.width + dx 
-      //     animatedCropSize.width.setValue(newWidth);
-      //     animatedCropSize.height.setValue(newWidth * fixedAspectRatio);
-      //   }
-      //   else {
-      //     const newHeight = cropSize.height - dy;
-      //     animatedCropSize.height.setValue(newHeight);
-      //     animatedCropSize.width.setValue(newHeight / fixedAspectRatio);
-      //   }
-      // } 
+      }
+      else if (selectedFrameSection == 'topright') {
+        if (true) {  
+          const newWidth = cropSize.width + dx 
+          animatedCropSize.width.setValue(newWidth);
+          // pan.y.setValue(accumulatedPan.y + cropSize.height - (newWidth * fixedAspectRatio));
+          animatedCropSize.height.setValue(newWidth * fixedAspectRatio);
+        }
+        else {
+          const newHeight = cropSize.height - dy;
+          animatedCropSize.height.setValue(newHeight);
+          Animated.event(
+            [
+              null,
+              { dy: pan.y }
+            ]
+          )(e, {dy});
+          animatedCropSize.width.setValue(newHeight / fixedAspectRatio);
+        }
+      }
+      else if (selectedFrameSection == 'topleft') {
+        if (dx < dy) {  
+          const newWidth = cropSize.width + dx 
+          animatedCropSize.width.setValue(newWidth);
+          animatedCropSize.height.setValue(newWidth * fixedAspectRatio);
+        }
+        else {
+          const newHeight = cropSize.height + dy
+          animatedCropSize.height.setValue(newHeight);
+          animatedCropSize.width.setValue(newHeight / fixedAspectRatio);
+        }
+      }
+      else if (selectedFrameSection == 'bottomleft') {
+        if (dx < dy) {  
+          const newWidth = cropSize.width + dx 
+          animatedCropSize.width.setValue(newWidth);
+          animatedCropSize.height.setValue(newWidth * fixedAspectRatio);
+        }
+        else {
+          const newHeight = cropSize.height + dy
+          animatedCropSize.height.setValue(newHeight);
+          animatedCropSize.width.setValue(newHeight / fixedAspectRatio);
+        }
+      }
+      else {
+
+      }
     }
   }
 
   const onOverlayRelease = (gestureState: PanResponderGestureState) => {
     // TODO - Check if the action is to move or resize based on the
     // selected frame section
+
     if (isMovingSection()) {
       // Flatten the offset to reduce erratic behaviour
       pan.flattenOffset();
@@ -178,6 +218,11 @@ function ImageCropOverlay(props: ImageCropOverlayProps) {
     else {
       // Else its a scaling op
       checkResizeBounds(gestureState);
+      //
+      // props.onUpdateAccumulatedPan({
+      //   x: accumulatedPan.x + pan.x._value,
+      //   y: accumulatedPan.y + pan.y._value
+      // });
     }
     // Disable the pan responder so the section tile can be pressed
     setPanResponderEnabled(false);
@@ -227,21 +272,34 @@ function ImageCropOverlay(props: ImageCropOverlayProps) {
 
   const checkResizeBounds = ({dx, dy}: PanResponderGestureState | { dx: number, dy: number }) => {
     const { width: maxWidth, height: maxHeight } = imageBounds;
+    const { width: minWidth, height: minHeight } = minimumCropDimensions
     const animatedWidth = animatedCropSize.width._value;
     const animatedHeight = animatedCropSize.height._value;
     const finalSize = {
       width: animatedWidth,
       height: animatedHeight
     };
-    console.log({animatedHeight, pan: accumulatedPan.y, maxHeight})
+    // Ensure the width / height does not exceed the boundaries - 
+    // resize to the max it can be if so
     if (animatedHeight > maxHeight) {
       finalSize.height = maxHeight;
       finalSize.width = finalSize.height / fixedAspectRatio;
     }
+    else if (animatedHeight < minHeight) {
+      finalSize.height = minHeight;
+      finalSize.width = finalSize.height / fixedAspectRatio;
+    }
+
+
     if (animatedWidth > maxWidth) {
       finalSize.width = maxWidth;
       finalSize.height = finalSize.width * fixedAspectRatio;
     }
+    else if (animatedWidth < minWidth) {
+      finalSize.width = minWidth;
+      finalSize.height = finalSize.width * fixedAspectRatio;
+    }
+    
 
     props.onUpdateCropSize(finalSize);
   }

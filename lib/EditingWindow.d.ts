@@ -12,6 +12,10 @@ interface EditingWindowProps {
         width: number;
         height: number;
     };
+    minimumCropDimensions: {
+        width: number;
+        height: number;
+    };
     onUpdateImageBounds: (bounds: any) => void;
     accumulatedPan: {
         x: number;

@@ -11,6 +11,10 @@ interface ImageCropOverlayProps {
         x: number;
         y: number;
     };
+    minimumCropDimensions: {
+        width: number;
+        height: number;
+    };
     onUpdateAccumulatedPan: (accumulatedPan: any) => void;
     cropSize: {
         width: number;

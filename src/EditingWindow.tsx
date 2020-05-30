@@ -15,6 +15,10 @@ interface EditingWindowProps {
     width: number;
     height: number;
   };
+  minimumCropDimensions: {
+    width: number;
+    height: number;
+  };
   onUpdateImageBounds: (bounds: any) => void;
   accumulatedPan: {
     x: number;
@@ -76,6 +80,7 @@ function EditingWindow(props: EditingWindowProps) {
           <ImageCropOverlay imageBounds={props.imageBounds}
                             fixedAspectRatio={props.fixedCropAspectRatio}
                             accumulatedPan={props.accumulatedPan}
+                            minimumCropDimensions={props.minimumCropDimensions}
                             onUpdateAccumulatedPan={accumulatedPan => props.onUpdateAccumulatedPan(accumulatedPan)}
                             cropSize={props.cropSize}
                             onUpdateCropSize={size => props.onUpdateCropSize(size)} />
