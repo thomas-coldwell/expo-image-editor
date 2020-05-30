@@ -40,6 +40,11 @@ function ImageCropOverlay(props: ImageCropOverlayProps) {
 
   const [accumulatedScale, setAccumulatedScale] = React.useState(1.0);
 
+  const [animatedCropSize] = React.useState({
+    width: new Animated.Value(props.cropSize.width),
+    height: new Animated.Value(props.cropSize.height)
+  });
+
   const [panResponderEnabled, setPanResponderEnabled] = React.useState(false);
 
   const { 
@@ -72,6 +77,9 @@ function ImageCropOverlay(props: ImageCropOverlayProps) {
   React.useEffect(() => {
     // Reset the accumulated pan
     checkCropBounds({dx: 0.0, dy: 0.0});
+    // When the crop size updates make sure the animated value does too!
+    animatedCropSize.height.setValue(cropSize.height);
+    animatedCropSize.width.setValue(cropSize.width);
   }, [cropSize])
 
   React.useEffect(() => {
@@ -131,17 +139,30 @@ function ImageCropOverlay(props: ImageCropOverlayProps) {
     else {
       // Else its a scaling operation
       const { dx, dy } = gestureState;
-      const { width, height } = imageBounds;
-      let scaleFactor = accumulatedScale;
       if (selectedFrameSection == 'bottomright') {
-        if (dx < dy) {
-          scaleFactor /= ((width - dx) / width)
+        if (dx < dy) {  
+          const newWidth = cropSize.width + dx 
+          animatedCropSize.width.setValue(newWidth);
+          animatedCropSize.height.setValue(newWidth * fixedAspectRatio);
         }
         else {
-          scaleFactor /= ((height - dy) / height)
+          const newHeight = cropSize.height + dy
+          animatedCropSize.height.setValue(newHeight);
+          animatedCropSize.width.setValue(newHeight / fixedAspectRatio);
         }
-        scale.setValue(scaleFactor);
       } 
+      // else if (selectedFrameSection == 'topright') {
+      //   if (dx < dy) {  
+      //     const newWidth = cropSize.width + dx 
+      //     animatedCropSize.width.setValue(newWidth);
+      //     animatedCropSize.height.setValue(newWidth * fixedAspectRatio);
+      //   }
+      //   else {
+      //     const newHeight = cropSize.height - dy;
+      //     animatedCropSize.height.setValue(newHeight);
+      //     animatedCropSize.width.setValue(newHeight / fixedAspectRatio);
+      //   }
+      // } 
     }
   }
 
@@ -153,14 +174,13 @@ function ImageCropOverlay(props: ImageCropOverlayProps) {
       pan.flattenOffset();
       // Ensure the cropping overlay has not been moved outside of the allowed bounds
       checkCropBounds(gestureState);
-      // Disable the pan responder so the section tile can be pressed
-      setPanResponderEnabled(false);
     }
     else {
-      console.log(scale._value)
       // Else its a scaling op
-      setAccumulatedScale(scale._value);
+      checkResizeBounds(gestureState);
     }
+    // Disable the pan responder so the section tile can be pressed
+    setPanResponderEnabled(false);
   }
 
   const checkCropBounds = ({dx, dy}: PanResponderGestureState | { dx: number, dy: number }) => {
@@ -205,6 +225,27 @@ function ImageCropOverlay(props: ImageCropOverlayProps) {
     props.onUpdateAccumulatedPan({x: accDx, y: accDy});
   }
 
+  const checkResizeBounds = ({dx, dy}: PanResponderGestureState | { dx: number, dy: number }) => {
+    const { width: maxWidth, height: maxHeight } = imageBounds;
+    const animatedWidth = animatedCropSize.width._value;
+    const animatedHeight = animatedCropSize.height._value;
+    const finalSize = {
+      width: animatedWidth,
+      height: animatedHeight
+    };
+    console.log({animatedHeight, pan: accumulatedPan.y, maxHeight})
+    if (animatedHeight > maxHeight) {
+      finalSize.height = maxHeight;
+      finalSize.width = finalSize.height / fixedAspectRatio;
+    }
+    if (animatedWidth > maxWidth) {
+      finalSize.width = maxWidth;
+      finalSize.height = finalSize.width * fixedAspectRatio;
+    }
+
+    props.onUpdateCropSize(finalSize);
+  }
+
   const panProps = panResponderEnabled ? {...panResponder.panHandlers} : {}
 
   return(
@@ -215,11 +256,11 @@ function ImageCropOverlay(props: ImageCropOverlayProps) {
                                 disabled>
         <Animated.View style={[
                         styles.overlay, 
-                        cropSize,
+                        animatedCropSize,
                         {transform: [
                           {translateX: pan.x}, 
                           {translateY: pan.y},
-                          {scale}
+                          // {scale}
                         ]}
                        ]}>
             {
