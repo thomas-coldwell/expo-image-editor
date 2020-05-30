@@ -1,10 +1,17 @@
 import * as React from 'react';
-import { Modal, StyleSheet, View, StatusBar, Alert } from 'react-native';
+import { Modal as RNModal, StyleSheet, View, StatusBar, Alert, Platform } from 'react-native';
 import { ControlBar } from './ControlBar';
 import { EditingWindow } from './EditingWindow';
-import { ImageCropOverlay } from './ImageCropOverlay';
 import * as ImageManipulator from 'expo-image-manipulator';
 import { Processing } from './Processing';
+import Modal from 'modal-react-native-web';
+
+const PlatformModal = Platform.OS == 'web' ? Modal : RNModal;
+
+// Stop ARIA errors
+if (Platform.OS == 'web') {
+  PlatformModal.setAppElement('#root');
+}
 
 export interface ImageEditorProps {
   visible: boolean;
@@ -76,10 +83,31 @@ function ImageEditor(props: ImageEditorProps) {
     await ImageManipulator.manipulateAsync(props.imageData.uri as string, [
       { crop: croppingBounds }
     ])
-    .then(({uri}) => {
-      setEditorState({...editorState, processing: false});
-      props.onEditingComplete({uri});
-      props.onCloseEditor();
+    .then(async ({uri, width, height}) => {
+      // Check if on web - currently there is a weird bug where it will keep
+      // the canvas from ImageManipualtor at originX + width and so we'll just crop
+      // the result again for now if on web - TODO write github issue!
+      if (Platform.OS == 'web') {
+        await ImageManipulator.manipulateAsync(uri, [
+          { crop: { ...croppingBounds, originX: 0, originY: 0 }}
+        ])
+        .then(({uri, width, height}) => {
+            setEditorState({...editorState, processing: false});
+            props.onEditingComplete({uri, width, height});
+            props.onCloseEditor();
+        })
+        .catch((error) => {
+          // If there's an error dismiss the the editor and alert the user
+          setEditorState({...editorState, processing: false});
+          props.onCloseEditor();
+          Alert.alert('An error occurred while editing.');
+        });
+      }
+      else {
+        setEditorState({...editorState, processing: false});
+        props.onEditingComplete({uri, width, height});
+        props.onCloseEditor();
+      }
     })
     .catch((error) => {
       // If there's an error dismiss the the editor and alert the user
@@ -101,8 +129,9 @@ function ImageEditor(props: ImageEditorProps) {
   }, [props.visible]);
 
   return(
-    <Modal visible={props.visible}
-           transparent>
+    <PlatformModal visible={props.visible}
+                   transparent
+                   animationType='slide'>
       <StatusBar hidden />
         { 
           editorState.ready ? 
@@ -125,7 +154,7 @@ function ImageEditor(props: ImageEditorProps) {
             <Processing />
           : null
         }
-    </Modal>
+    </PlatformModal>
   );
 
 }
