@@ -36,9 +36,18 @@ function ImageCropOverlay(props: ImageCropOverlayProps) {
 
   const [selectedFrameSection, setSelectedFrameSection] = React.useState('middlemiddle');
 
+  const [scale, setScale] = React.useState(new Animated.Value(1.0));
+
+  const [accumulatedScale, setAccumulatedScale] = React.useState(1.0);
+
   const [panResponderEnabled, setPanResponderEnabled] = React.useState(false);
 
-  const { imageBounds, fixedAspectRatio, accumulatedPan, cropSize } = props;
+  const { 
+    imageBounds, 
+    fixedAspectRatio, 
+    accumulatedPan, 
+    cropSize
+  } = props;
 
   const pan = React.useRef(new Animated.ValueXY({
     x: imageBounds.x,
@@ -58,7 +67,7 @@ function ImageCropOverlay(props: ImageCropOverlayProps) {
   React.useEffect(() => {
     // https://stackoverflow.com/questions/61014169/react-natives-panresponder-has-stale-value-from-usestate
     setPanResponder(panInstance);
-  }, [cropSize, accumulatedPan, selectedFrameSection]);
+  }, [cropSize, accumulatedPan, selectedFrameSection, accumulatedScale]);
 
   React.useEffect(() => {
     // Reset the accumulated pan
@@ -97,33 +106,61 @@ function ImageCropOverlay(props: ImageCropOverlayProps) {
   const onOverlayMoveGrant = (e: any, gestureState: PanResponderGestureState) => {
     // TODO - Check if the action is to move or resize based on the
     // selected frame section
-    pan.setOffset({
-      x: pan.x._value,
-      y: pan.y._value
-    });
+    if (isMovingSection()) {
+      pan.setOffset({
+        x: pan.x._value,
+        y: pan.y._value
+      });
+    }
+    else {
+      // Do nothing
+    }
   }
 
   const onOverlayMove = (e: any, gestureState: PanResponderGestureState) => {
     // TODO - Check if the action is to move or resize based on the
     // selected frame section
-    Animated.event(
-      [
-        null,
-        { dx: pan.x, dy: pan.y }
-      ]
-    )(e, gestureState);
+    if (isMovingSection()) {
+      Animated.event(
+        [
+          null,
+          { dx: pan.x, dy: pan.y }
+        ]
+      )(e, gestureState);
+    }
+    else {
+      // Else its a scaling operation
+      const { dx, dy } = gestureState;
+      const { width, height } = imageBounds;
+      let scaleFactor = accumulatedScale;
+      if (selectedFrameSection == 'bottomright') {
+        if (dx < dy) {
+          scaleFactor /= ((width - dx) / width)
+        }
+        else {
+          scaleFactor /= ((height - dy) / height)
+        }
+        scale.setValue(scaleFactor);
+      } 
+    }
   }
 
   const onOverlayRelease = (gestureState: PanResponderGestureState) => {
     // TODO - Check if the action is to move or resize based on the
     // selected frame section
-
-    // Flatten the offset to reduce erratic behaviour
-    pan.flattenOffset();
-    // Ensure the cropping overlay has not been moved outside of the allowed bounds
-    checkCropBounds(gestureState);
-    // Disable the pan responder so the section tile can be pressed
-    setPanResponderEnabled(false);
+    if (isMovingSection()) {
+      // Flatten the offset to reduce erratic behaviour
+      pan.flattenOffset();
+      // Ensure the cropping overlay has not been moved outside of the allowed bounds
+      checkCropBounds(gestureState);
+      // Disable the pan responder so the section tile can be pressed
+      setPanResponderEnabled(false);
+    }
+    else {
+      console.log(scale._value)
+      // Else its a scaling op
+      setAccumulatedScale(scale._value);
+    }
   }
 
   const checkCropBounds = ({dx, dy}: PanResponderGestureState | { dx: number, dy: number }) => {
@@ -181,7 +218,8 @@ function ImageCropOverlay(props: ImageCropOverlayProps) {
                         cropSize,
                         {transform: [
                           {translateX: pan.x}, 
-                          {translateY: pan.y}
+                          {translateY: pan.y},
+                          {scale}
                         ]}
                        ]}>
             {
@@ -199,8 +237,8 @@ function ImageCropOverlay(props: ImageCropOverlayProps) {
                                             ]}
                                             key={key}
                                             onPressIn={ async () => {
-                                              setSelectedFrameSection(hsection + vsection);
-                                              // No good way to asynchronously enabled the pan responder
+                                              setSelectedFrameSection(key);
+                                              // No good way to asynchronously enable the pan responder
                                               // after tile selection so using a timeout for now...
                                               setTimeout(() => {
                                                 setPanResponderEnabled(true);
