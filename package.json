@@ -31,5 +31,8 @@
     "react-native": "^0.62.2",
     "react-native-web": "^0.12.2",
     "typescript": "^3.9.3"
+  },
+  "dependencies": {
+    "@types/lodash": "^4.14.157"
   }
 }

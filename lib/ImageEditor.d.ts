@@ -8,7 +8,12 @@ export interface ImageEditorProps {
         height: number;
     };
     fixedCropAspectRatio: number;
+    minimumCropDimensions: {
+        width: number;
+        height: number;
+    };
     onEditingComplete: (result: any) => void;
+    lockAspectRatio: boolean;
 }
 declare function ImageEditor(props: ImageEditorProps): JSX.Element;
 export { ImageEditor };

@@ -20,9 +20,14 @@ interface ImageCropOverlayProps {
     height: number;
   },
   fixedAspectRatio: number;
+  lockAspectRatio: boolean;
   accumulatedPan: {
     x: number;
     y: number;
+  };
+  minimumCropDimensions: {
+    width: number;
+    height: number;
   };
   onUpdateAccumulatedPan: (accumulatedPan: any) => void;
   cropSize: {
@@ -30,15 +35,28 @@ interface ImageCropOverlayProps {
     height: number;
   };
   onUpdateCropSize: (size: any) => void;
+  onUpdatePanAndSize: ({size, accumulatedPan}: { size: any, accumulatedPan: any}) => void;
 }
 
 function ImageCropOverlay(props: ImageCropOverlayProps) {
 
   const [selectedFrameSection, setSelectedFrameSection] = React.useState('middlemiddle');
 
+  const [animatedCropSize] = React.useState({
+    width: new Animated.Value(props.cropSize.width),
+    height: new Animated.Value(props.cropSize.height)
+  });
+
   const [panResponderEnabled, setPanResponderEnabled] = React.useState(false);
 
-  const { imageBounds, fixedAspectRatio, accumulatedPan, cropSize } = props;
+  const { 
+    imageBounds, 
+    fixedAspectRatio, 
+    lockAspectRatio,
+    accumulatedPan, 
+    cropSize,
+    minimumCropDimensions
+  } = props;
 
   const pan = React.useRef(new Animated.ValueXY({
     x: imageBounds.x,
@@ -53,7 +71,7 @@ function ImageCropOverlay(props: ImageCropOverlayProps) {
     onPanResponderTerminationRequest: () => false
   });
 
-  const [panResponder, setPanResponder]  = React.useState(panInstance);
+  const [panResponder, setPanResponder] = React.useState(panInstance);
 
   React.useEffect(() => {
     // https://stackoverflow.com/questions/61014169/react-natives-panresponder-has-stale-value-from-usestate
@@ -62,7 +80,10 @@ function ImageCropOverlay(props: ImageCropOverlayProps) {
 
   React.useEffect(() => {
     // Reset the accumulated pan
-    checkCropBounds({dx: 0.0, dy: 0.0});
+    checkCropBounds({dx: pan.x._value - accumulatedPan.x, dy: pan.y._value - accumulatedPan.y})
+    // When the crop size updates make sure the animated value does too!
+    animatedCropSize.height.setValue(cropSize.height);
+    animatedCropSize.width.setValue(cropSize.width);
   }, [cropSize])
 
   React.useEffect(() => {
@@ -97,31 +118,100 @@ function ImageCropOverlay(props: ImageCropOverlayProps) {
   const onOverlayMoveGrant = (e: any, gestureState: PanResponderGestureState) => {
     // TODO - Check if the action is to move or resize based on the
     // selected frame section
-    pan.setOffset({
-      x: pan.x._value,
-      y: pan.y._value
-    });
+    if (isMovingSection()) {
+      pan.setOffset({
+        x: accumulatedPan.x,
+        y: accumulatedPan.y
+      });
+    }
+    else {
+      // Do nothing
+    }
   }
 
   const onOverlayMove = (e: any, gestureState: PanResponderGestureState) => {
     // TODO - Check if the action is to move or resize based on the
     // selected frame section
-    Animated.event(
-      [
-        null,
-        { dx: pan.x, dy: pan.y }
-      ]
-    )(e, gestureState);
+    if (isMovingSection()) {
+      Animated.event(
+        [
+          null,
+          { dx: pan.x, dy: pan.y }
+        ]
+      )(e, gestureState);
+    }
+    else {
+      // Else its a scaling operation
+      const { dx, dy } = gestureState;
+      // Get the new target height / width
+      let newWidth = cropSize.width;
+      let newHeight = cropSize.height;
+      // Check what resizing / translation needs to be performed based on which section was pressed
+      if (selectedFrameSection == 'bottomright') {
+        if (dx < dy) {
+          newWidth += dx;
+          lockAspectRatio ? newHeight = newWidth * fixedAspectRatio : newHeight += dy;
+        }
+        else {
+          newHeight += dy;
+          lockAspectRatio ? newWidth = newHeight / fixedAspectRatio : newWidth += dx;
+        }
+      }
+      else if (selectedFrameSection == 'topright') {
+        if (dx < dy) {
+          newWidth += dx;
+          lockAspectRatio ? newHeight = newWidth * fixedAspectRatio : newHeight -= dy;
+        }
+        else {
+          newHeight -= dy;
+          lockAspectRatio ? newWidth = newHeight / fixedAspectRatio : newWidth += dx;
+        }
+        pan.y.setValue(accumulatedPan.y + (cropSize.height - newHeight));
+      }
+      else if (selectedFrameSection == 'bottomleft') {
+        if (dx < dy) {
+          newWidth -= dx;
+          lockAspectRatio ? newHeight = newWidth * fixedAspectRatio : newHeight += dy;
+        }
+        else {
+          newHeight += dy;
+          lockAspectRatio ? newWidth = newHeight / fixedAspectRatio : newWidth -= dx;
+        }
+        pan.x.setValue(accumulatedPan.x + (cropSize.width - newWidth));
+      }
+      else if (selectedFrameSection == 'topleft') {
+        if (dx < dy) {
+          newWidth -= dx;
+          lockAspectRatio ? newHeight = newWidth * fixedAspectRatio : newHeight -= dy;
+        }
+        else {
+          newHeight -= dy;
+          lockAspectRatio ? newWidth = newHeight / fixedAspectRatio : newWidth -= dx;
+        }
+        pan.x.setValue(accumulatedPan.x + (cropSize.width - newWidth));
+        pan.y.setValue(accumulatedPan.y + (cropSize.height - newHeight));
+      }
+      // Finally set the new height and width ready for checking if valid in onRelease
+      animatedCropSize.width.setValue(newWidth);
+      animatedCropSize.height.setValue(newHeight);
+    }
   }
 
   const onOverlayRelease = (gestureState: PanResponderGestureState) => {
     // TODO - Check if the action is to move or resize based on the
     // selected frame section
 
-    // Flatten the offset to reduce erratic behaviour
-    pan.flattenOffset();
-    // Ensure the cropping overlay has not been moved outside of the allowed bounds
-    checkCropBounds(gestureState);
+    if (isMovingSection()) {
+      // Flatten the offset to reduce erratic behaviour
+      pan.flattenOffset();
+      // Ensure the cropping overlay has not been moved outside of the allowed bounds
+      checkCropBounds(gestureState);
+    }
+    else {
+      // Else its a scaling op
+      checkResizeBounds(gestureState);
+      //
+    }
     // Disable the pan responder so the section tile can be pressed
     setPanResponderEnabled(false);
   }
@@ -168,6 +258,44 @@ function ImageCropOverlay(props: ImageCropOverlayProps) {
     props.onUpdateAccumulatedPan({x: accDx, y: accDy});
   }
 
+  const checkResizeBounds = ({dx, dy}: PanResponderGestureState | { dx: number, dy: number }) => {
+    const { width: maxWidth, height: maxHeight } = imageBounds;
+    const { width: minWidth, height: minHeight } = minimumCropDimensions
+    const animatedWidth = animatedCropSize.width._value;
+    const animatedHeight = animatedCropSize.height._value;
+    const finalSize = {
+      width: animatedWidth,
+      height: animatedHeight
+    };
+
+    // Ensure the width / height does not exceed the boundaries - 
+    // resize to the max it can be if so
+    if (animatedHeight > maxHeight) {
+      finalSize.height = maxHeight;
+      finalSize.width = lockAspectRatio ? finalSize.height / fixedAspectRatio : finalSize.width;
+    }
+    else if (animatedHeight < minHeight) {
+      finalSize.height = minHeight;
+      finalSize.width = lockAspectRatio ? finalSize.height / fixedAspectRatio : finalSize.width;
+    }
+    if (animatedWidth > maxWidth) {
+      finalSize.width = maxWidth;
+      finalSize.height = lockAspectRatio ? finalSize.width * fixedAspectRatio : finalSize.height;
+    }
+    else if (animatedWidth < minWidth) {
+      finalSize.width = minWidth;
+      finalSize.height = lockAspectRatio ? finalSize.width * fixedAspectRatio : finalSize.height;
+    }
+    // Update together else one gets replaced with stale state
+    props.onUpdatePanAndSize({
+      size: finalSize,
+      accumulatedPan: {
+        x: pan.x._value,
+        y: pan.y._value
+      }
+    });
+  }
+
   const panProps = panResponderEnabled ? {...panResponder.panHandlers} : {}
 
   return(
@@ -178,7 +306,7 @@ function ImageCropOverlay(props: ImageCropOverlayProps) {
                                 disabled>
         <Animated.View style={[
                         styles.overlay, 
-                        cropSize,
+                        animatedCropSize,
                         {transform: [
                           {translateX: pan.x}, 
                           {translateY: pan.y}
@@ -199,8 +327,8 @@ function ImageCropOverlay(props: ImageCropOverlayProps) {
                                             ]}
                                             key={key}
                                             onPressIn={ async () => {
-                                              setSelectedFrameSection(hsection + vsection);
-                                              // No good way to asynchronously enabled the pan responder
+                                              setSelectedFrameSection(key);
+                                              // No good way to asynchronously enable the pan responder
                                               // after tile selection so using a timeout for now...
                                               setTimeout(() => {
                                                 setPanResponderEnabled(true);

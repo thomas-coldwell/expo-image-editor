@@ -7,9 +7,14 @@ interface ImageCropOverlayProps {
         height: number;
     };
     fixedAspectRatio: number;
+    lockAspectRatio: boolean;
     accumulatedPan: {
         x: number;
         y: number;
+    };
+    minimumCropDimensions: {
+        width: number;
+        height: number;
     };
     onUpdateAccumulatedPan: (accumulatedPan: any) => void;
     cropSize: {
@@ -17,6 +22,10 @@ interface ImageCropOverlayProps {
         height: number;
     };
     onUpdateCropSize: (size: any) => void;
+    onUpdatePanAndSize: ({ size, accumulatedPan }: {
+        size: any;
+        accumulatedPan: any;
+    }) => void;
 }
 declare function ImageCropOverlay(props: ImageCropOverlayProps): JSX.Element;
 export { ImageCropOverlay };
