@@ -38,17 +38,26 @@ interface EditingWindowProps {
 function EditingWindow(props: EditingWindowProps) {
 
   const [state, setState] = React.useState({
-    initialisedImageBounds: false
+    initialisedImageBounds: false,
+    imageScaleFactor: null,
+    imageLayout: {
+      height: null,
+      width: null
+    }
   });
 
   const { imageData } = props;
 
-  const getImageFrame = async (layout: LayoutRectangle) => {
-    console.log('layout')
+  const getImageFrame = (layout: {width: number, height: number, [key: string]: any}) => {
+    onUpdateCropLayout(layout);
+  }
+
+  const onUpdateCropLayout = (layout) => {
+    console.log('layout: ', layout)
     // Find the start point of the photo on the screen and its
     // width / height from there
     const editingWindowAspectRatio = layout.height / layout.width;
-    //
+    // 
     const imageAspectRatio = imageData.height / imageData.width;
     let bounds = { x: 0, y: 0, width: 0, height: 0 };
     let imageScaleFactor = 1;
@@ -71,10 +80,21 @@ function EditingWindow(props: EditingWindowProps) {
       imageBounds: bounds,
       imageScaleFactor
     });
-    setState({...state, initialisedImageBounds: true});
+    setState({
+      ...state, 
+      initialisedImageBounds: true, 
+      imageScaleFactor,
+      imageLayout: {
+        height: layout.height,
+        width: layout.width
+      }
+    });
   }
 
-  console.log(imageData.uri)
+  React.useEffect(() => {
+    onUpdateCropLayout(state.imageLayout)
+  }, [props.imageData]);
+
   return(
     <View style={styles.container}>
       <Image style={styles.image}

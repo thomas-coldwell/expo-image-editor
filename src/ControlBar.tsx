@@ -36,7 +36,7 @@ function ControlBar(props: ControlBarProps) {
                     onPress={() => props.onRotate(-90)} />
             <Button iconID='rotate-right'
                     source='md'
-                    onPress={() => {}} />
+                    onPress={() => props.onRotate(90)} />
           </View>
         :
           <Button iconID='md-checkmark'

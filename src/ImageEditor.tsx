@@ -93,7 +93,7 @@ function ImageEditor(props: ImageEditorProps) {
     };
     // Set the editor state to processing and perform the crop
     setEditorState({...editorState, processing: true});
-    await ImageManipulator.manipulateAsync(props.imageData.uri as string, [
+    await ImageManipulator.manipulateAsync(editorState.imageData.uri as string, [
       { crop: croppingBounds }
     ])
     .then(async ({uri, width, height}) => {
@@ -133,10 +133,10 @@ function ImageEditor(props: ImageEditorProps) {
   const onRotate = async (angle: number) => {
     // Rotate the image by the specified angle
     setEditorState({...editorState, processing: true});
-    await ImageManipulator.manipulateAsync(props.imageData.uri as string, [
+    await ImageManipulator.manipulateAsync(editorState.imageData.uri as string, [
       { rotate: angle }
     ])
-    .then(({uri, width, height}) => {
+    .then(async({uri, width, height}) => {
       // Set the image data
       setEditorState({
         ...editorState,
