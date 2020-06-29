@@ -27,6 +27,7 @@ export interface ImageEditorProps {
     height: number;
   };
   onEditingComplete: (result: any) => void;
+  lockAspectRatio: boolean;
 }
 
 interface ImageEditorStore {
@@ -144,13 +145,17 @@ function ImageEditor(props: ImageEditorProps) {
                           onPerformCrop={() => onPerformCrop()} />
               <EditingWindow imageData={props.imageData}
                               fixedCropAspectRatio={1/props.fixedCropAspectRatio}
+                              lockAspectRatio={props.lockAspectRatio}
                               imageBounds={editorState.imageBounds}
                               minimumCropDimensions={props.minimumCropDimensions}
                               onUpdateImageBounds={bounds => setEditorState({...editorState, ...bounds})}
                               accumulatedPan={editorState.accumulatedPan}
-                              onUpdateAccumulatedPan={accumulatedPan => setEditorState({...editorState, accumulatedPan: accumulatedPan})}
+                              onUpdateAccumulatedPan={accumulatedPan => {
+                                setEditorState({...editorState, accumulatedPan: accumulatedPan});
+                              }}
                               cropSize={editorState.cropSize}
-                              onUpdateCropSize={size => setEditorState({...editorState, cropSize: size})} />
+                              onUpdateCropSize={size => setEditorState({...editorState, cropSize: size})}
+                              onUpdatePanAndSize={({accumulatedPan, size}) => setEditorState({...editorState, cropSize: size, accumulatedPan})} />
             </View>
           : null 
         }

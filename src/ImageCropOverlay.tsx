@@ -20,6 +20,7 @@ interface ImageCropOverlayProps {
     height: number;
   },
   fixedAspectRatio: number;
+  lockAspectRatio: boolean;
   accumulatedPan: {
     x: number;
     y: number;
@@ -34,15 +35,12 @@ interface ImageCropOverlayProps {
     height: number;
   };
   onUpdateCropSize: (size: any) => void;
+  onUpdatePanAndSize: ({size, accumulatedPan}: { size: any, accumulatedPan: any}) => void;
 }
 
 function ImageCropOverlay(props: ImageCropOverlayProps) {
 
   const [selectedFrameSection, setSelectedFrameSection] = React.useState('middlemiddle');
-
-  const [scale, setScale] = React.useState(new Animated.Value(1.0));
-
-  const [accumulatedScale, setAccumulatedScale] = React.useState(1.0);
 
   const [animatedCropSize] = React.useState({
     width: new Animated.Value(props.cropSize.width),
@@ -54,6 +52,7 @@ function ImageCropOverlay(props: ImageCropOverlayProps) {
   const { 
     imageBounds, 
     fixedAspectRatio, 
+    lockAspectRatio,
     accumulatedPan, 
     cropSize,
     minimumCropDimensions
@@ -72,16 +71,16 @@ function ImageCropOverlay(props: ImageCropOverlayProps) {
     onPanResponderTerminationRequest: () => false
   });
 
-  const [panResponder, setPanResponder]  = React.useState(panInstance);
+  const [panResponder, setPanResponder] = React.useState(panInstance);
 
   React.useEffect(() => {
     // https://stackoverflow.com/questions/61014169/react-natives-panresponder-has-stale-value-from-usestate
     setPanResponder(panInstance);
-  }, [cropSize, accumulatedPan, selectedFrameSection, accumulatedScale]);
+  }, [cropSize, accumulatedPan, selectedFrameSection]);
 
   React.useEffect(() => {
     // Reset the accumulated pan
-    checkCropBounds({dx: 0.0, dy: 0.0});
+    checkCropBounds({dx: pan.x._value - accumulatedPan.x, dy: pan.y._value - accumulatedPan.y})
     // When the crop size updates make sure the animated value does too!
     animatedCropSize.height.setValue(cropSize.height);
     animatedCropSize.width.setValue(cropSize.width);
@@ -121,8 +120,8 @@ function ImageCropOverlay(props: ImageCropOverlayProps) {
     // selected frame section
     if (isMovingSection()) {
       pan.setOffset({
-        x: pan.x._value,
-        y: pan.y._value
+        x: accumulatedPan.x,
+        y: accumulatedPan.y
       });
     }
     else {
@@ -144,64 +143,57 @@ function ImageCropOverlay(props: ImageCropOverlayProps) {
     else {
       // Else its a scaling operation
       const { dx, dy } = gestureState;
+      // Get the new target height / width
+      let newWidth = cropSize.width;
+      let newHeight = cropSize.height;
+      // Check what resizing / translation needs to be performed based on which section was pressed
       if (selectedFrameSection == 'bottomright') {
-        if (dx < dy) {  
-          const newWidth = cropSize.width + dx 
-          animatedCropSize.width.setValue(newWidth);
-          animatedCropSize.height.setValue(newWidth * fixedAspectRatio);
+        if (dx < dy) {
+          newWidth += dx;
+          lockAspectRatio ? newHeight = newWidth * fixedAspectRatio : newHeight += dy;
         }
         else {
-          const newHeight = cropSize.height + dy
-          animatedCropSize.height.setValue(newHeight);
-          animatedCropSize.width.setValue(newHeight / fixedAspectRatio);
+          newHeight += dy;
+          lockAspectRatio ? newWidth = newHeight / fixedAspectRatio : newWidth += dx;
         }
       }
       else if (selectedFrameSection == 'topright') {
-        if (true) {  
-          const newWidth = cropSize.width + dx 
-          animatedCropSize.width.setValue(newWidth);
-          // pan.y.setValue(accumulatedPan.y + cropSize.height - (newWidth * fixedAspectRatio));
-          animatedCropSize.height.setValue(newWidth * fixedAspectRatio);
+        if (dx < dy) {
+          newWidth += dx;
+          lockAspectRatio ? newHeight = newWidth * fixedAspectRatio : newHeight -= dy;
         }
         else {
-          const newHeight = cropSize.height - dy;
-          animatedCropSize.height.setValue(newHeight);
-          Animated.event(
-            [
-              null,
-              { dy: pan.y }
-            ]
-          )(e, {dy});
-          animatedCropSize.width.setValue(newHeight / fixedAspectRatio);
+          newHeight -= dy;
+          lockAspectRatio ? newWidth = newHeight / fixedAspectRatio : newWidth += dx;
         }
-      }
-      else if (selectedFrameSection == 'topleft') {
-        if (dx < dy) {  
-          const newWidth = cropSize.width + dx 
-          animatedCropSize.width.setValue(newWidth);
-          animatedCropSize.height.setValue(newWidth * fixedAspectRatio);
-        }
-        else {
-          const newHeight = cropSize.height + dy
-          animatedCropSize.height.setValue(newHeight);
-          animatedCropSize.width.setValue(newHeight / fixedAspectRatio);
-        }
+        pan.y.setValue(accumulatedPan.y + (cropSize.height - newHeight));
       }
       else if (selectedFrameSection == 'bottomleft') {
-        if (dx < dy) {  
-          const newWidth = cropSize.width + dx 
-          animatedCropSize.width.setValue(newWidth);
-          animatedCropSize.height.setValue(newWidth * fixedAspectRatio);
+        if (dx < dy) {
+          newWidth -= dx;
+          lockAspectRatio ? newHeight = newWidth * fixedAspectRatio : newHeight += dy;
         }
         else {
-          const newHeight = cropSize.height + dy
-          animatedCropSize.height.setValue(newHeight);
-          animatedCropSize.width.setValue(newHeight / fixedAspectRatio);
+          newHeight += dy;
+          lockAspectRatio ? newWidth = newHeight / fixedAspectRatio : newWidth -= dx;
         }
+        pan.x.setValue(accumulatedPan.x + (cropSize.width - newWidth));
       }
-      else {
-
+      else if (selectedFrameSection == 'topleft') {
+        if (dx < dy) {
+          newWidth -= dx;
+          lockAspectRatio ? newHeight = newWidth * fixedAspectRatio : newHeight -= dy;
+        }
+        else {
+          newHeight -= dy;
+          lockAspectRatio ? newWidth = newHeight / fixedAspectRatio : newWidth -= dx;
+        }
+        pan.x.setValue(accumulatedPan.x + (cropSize.width - newWidth));
+        pan.y.setValue(accumulatedPan.y + (cropSize.height - newHeight));
       }
+      // Finally set the new height and width ready for checking if valid in onRelease
+      animatedCropSize.width.setValue(newWidth);
+      animatedCropSize.height.setValue(newHeight);
     }
   }
 
@@ -219,10 +211,6 @@ function ImageCropOverlay(props: ImageCropOverlayProps) {
       // Else its a scaling op
       checkResizeBounds(gestureState);
       //
-      // props.onUpdateAccumulatedPan({
-      //   x: accumulatedPan.x + pan.x._value,
-      //   y: accumulatedPan.y + pan.y._value
-      // });
     }
     // Disable the pan responder so the section tile can be pressed
     setPanResponderEnabled(false);
@@ -279,29 +267,33 @@ function ImageCropOverlay(props: ImageCropOverlayProps) {
       width: animatedWidth,
       height: animatedHeight
     };
+
     // Ensure the width / height does not exceed the boundaries - 
     // resize to the max it can be if so
     if (animatedHeight > maxHeight) {
       finalSize.height = maxHeight;
-      finalSize.width = finalSize.height / fixedAspectRatio;
+      finalSize.width = lockAspectRatio ? finalSize.height / fixedAspectRatio : finalSize.width;
     }
     else if (animatedHeight < minHeight) {
       finalSize.height = minHeight;
-      finalSize.width = finalSize.height / fixedAspectRatio;
+      finalSize.width = lockAspectRatio ? finalSize.height / fixedAspectRatio : finalSize.width;
     }
-
-
     if (animatedWidth > maxWidth) {
       finalSize.width = maxWidth;
-      finalSize.height = finalSize.width * fixedAspectRatio;
+      finalSize.height = lockAspectRatio ? finalSize.width * fixedAspectRatio : finalSize.height;
     }
     else if (animatedWidth < minWidth) {
       finalSize.width = minWidth;
-      finalSize.height = finalSize.width * fixedAspectRatio;
+      finalSize.height = lockAspectRatio ? finalSize.width * fixedAspectRatio : finalSize.height;
     }
-    
-
-    props.onUpdateCropSize(finalSize);
+    // Update together else one gets replaced with stale state
+    props.onUpdatePanAndSize({
+      size: finalSize,
+      accumulatedPan: {
+        x: pan.x._value,
+        y: pan.y._value
+      }
+    });
   }
 
   const panProps = panResponderEnabled ? {...panResponder.panHandlers} : {}
@@ -317,8 +309,7 @@ function ImageCropOverlay(props: ImageCropOverlayProps) {
                         animatedCropSize,
                         {transform: [
                           {translateX: pan.x}, 
-                          {translateY: pan.y},
-                          // {scale}
+                          {translateY: pan.y}
                         ]}
                        ]}>
             {
