@@ -79,7 +79,6 @@ function ImageCropOverlay(props: ImageCropOverlayProps) {
 
   React.useEffect(() => {
     // Reset the accumulated pan
-    // checkCropBounds({dx: 0.0, dy: 0.0});
     checkCropBounds({dx: pan.x._value - accumulatedPan.x, dy: pan.y._value - accumulatedPan.y})
     // When the crop size updates make sure the animated value does too!
     animatedCropSize.height.setValue(cropSize.height);
@@ -126,8 +125,6 @@ function ImageCropOverlay(props: ImageCropOverlayProps) {
     }
     else {
       // Do nothing
-      // pan.x.setValue(accumulatedPan.x);
-      // pan.y.setValue(accumulatedPan.y)
     }
   }
 
@@ -170,8 +167,29 @@ function ImageCropOverlay(props: ImageCropOverlayProps) {
         }
         pan.y.setValue(accumulatedPan.y + (cropSize.height - newHeight));
       }
-      console.log('Accumulated pan: ', accumulatedPan.y)
-      console.log('Pan value: ', accumulatedPan.y + (cropSize.height - newHeight))
+      else if (selectedFrameSection == 'bottomleft') {
+        if (dx < dy) {
+          newWidth -= dx;
+          newHeight = fixedAspectRatio ? newWidth * fixedAspectRatio : newHeight;
+        }
+        else {
+          newHeight += dy;
+          newWidth = fixedAspectRatio ? newHeight / fixedAspectRatio : newWidth;
+        }
+        pan.x.setValue(accumulatedPan.x + (cropSize.width - newWidth));
+      }
+      else if (selectedFrameSection == 'topleft') {
+        if (dx < dy) {
+          newWidth -= dx;
+          newHeight = fixedAspectRatio ? newWidth * fixedAspectRatio : newHeight;
+        }
+        else {
+          newHeight -= dy;
+          newWidth = fixedAspectRatio ? newHeight / fixedAspectRatio : newWidth;
+        }
+        pan.x.setValue(accumulatedPan.x + (cropSize.width - newWidth));
+        pan.y.setValue(accumulatedPan.y + (cropSize.height - newHeight));
+      }
       // Finally set the new height and width ready for checking if valid in onRelease
       animatedCropSize.width.setValue(newWidth);
       animatedCropSize.height.setValue(newHeight);
@@ -267,7 +285,7 @@ function ImageCropOverlay(props: ImageCropOverlayProps) {
       finalSize.width = minWidth;
       finalSize.height = fixedAspectRatio ? finalSize.width * fixedAspectRatio : finalSize.width;
     }
-
+    // Update together else one gets replaced with stale state
     props.onUpdatePanAndSize({
       size: finalSize,
       accumulatedPan: {
