@@ -7,6 +7,7 @@ interface ImageCropOverlayProps {
         height: number;
     };
     fixedAspectRatio: number;
+    lockAspectRatio: boolean;
     accumulatedPan: {
         x: number;
         y: number;

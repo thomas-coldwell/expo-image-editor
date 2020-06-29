@@ -9,6 +9,7 @@ interface EditingWindowProps {
     height: number;
   };
   fixedCropAspectRatio: number;
+  lockAspectRatio: boolean;
   imageBounds: {
     x: number;
     y: number;
@@ -80,6 +81,7 @@ function EditingWindow(props: EditingWindowProps) {
         state.initialisedImageBounds ?
           <ImageCropOverlay imageBounds={props.imageBounds}
                             fixedAspectRatio={props.fixedCropAspectRatio}
+                            lockAspectRatio={props.lockAspectRatio}
                             accumulatedPan={props.accumulatedPan}
                             minimumCropDimensions={props.minimumCropDimensions}
                             onUpdateAccumulatedPan={accumulatedPan => props.onUpdateAccumulatedPan(accumulatedPan)}

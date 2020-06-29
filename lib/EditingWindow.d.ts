@@ -6,6 +6,7 @@ interface EditingWindowProps {
         height: number;
     };
     fixedCropAspectRatio: number;
+    lockAspectRatio: boolean;
     imageBounds: {
         x: number;
         y: number;

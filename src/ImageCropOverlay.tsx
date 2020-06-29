@@ -20,6 +20,7 @@ interface ImageCropOverlayProps {
     height: number;
   },
   fixedAspectRatio: number;
+  lockAspectRatio: boolean;
   accumulatedPan: {
     x: number;
     y: number;
@@ -51,6 +52,7 @@ function ImageCropOverlay(props: ImageCropOverlayProps) {
   const { 
     imageBounds, 
     fixedAspectRatio, 
+    lockAspectRatio,
     accumulatedPan, 
     cropSize,
     minimumCropDimensions
@@ -72,7 +74,6 @@ function ImageCropOverlay(props: ImageCropOverlayProps) {
   const [panResponder, setPanResponder] = React.useState(panInstance);
 
   React.useEffect(() => {
-    console.log('Use effect update: ', accumulatedPan)
     // https://stackoverflow.com/questions/61014169/react-natives-panresponder-has-stale-value-from-usestate
     setPanResponder(panInstance);
   }, [cropSize, accumulatedPan, selectedFrameSection]);
@@ -149,43 +150,43 @@ function ImageCropOverlay(props: ImageCropOverlayProps) {
       if (selectedFrameSection == 'bottomright') {
         if (dx < dy) {
           newWidth += dx;
-          newHeight = fixedAspectRatio ? newWidth * fixedAspectRatio : newHeight;
+          lockAspectRatio ? newHeight = newWidth * fixedAspectRatio : newHeight += dy;
         }
         else {
           newHeight += dy;
-          newWidth = fixedAspectRatio ? newHeight / fixedAspectRatio : newWidth;
+          lockAspectRatio ? newWidth = newHeight / fixedAspectRatio : newWidth += dx;
         }
       }
       else if (selectedFrameSection == 'topright') {
         if (dx < dy) {
           newWidth += dx;
-          newHeight = fixedAspectRatio ? newWidth * fixedAspectRatio : newHeight;
+          lockAspectRatio ? newHeight = newWidth * fixedAspectRatio : newHeight -= dy;
         }
         else {
           newHeight -= dy;
-          newWidth = fixedAspectRatio ? newHeight / fixedAspectRatio : newWidth;
+          lockAspectRatio ? newWidth = newHeight / fixedAspectRatio : newWidth += dx;
         }
         pan.y.setValue(accumulatedPan.y + (cropSize.height - newHeight));
       }
       else if (selectedFrameSection == 'bottomleft') {
         if (dx < dy) {
           newWidth -= dx;
-          newHeight = fixedAspectRatio ? newWidth * fixedAspectRatio : newHeight;
+          lockAspectRatio ? newHeight = newWidth * fixedAspectRatio : newHeight += dy;
         }
         else {
           newHeight += dy;
-          newWidth = fixedAspectRatio ? newHeight / fixedAspectRatio : newWidth;
+          lockAspectRatio ? newWidth = newHeight / fixedAspectRatio : newWidth -= dx;
         }
         pan.x.setValue(accumulatedPan.x + (cropSize.width - newWidth));
       }
       else if (selectedFrameSection == 'topleft') {
         if (dx < dy) {
           newWidth -= dx;
-          newHeight = fixedAspectRatio ? newWidth * fixedAspectRatio : newHeight;
+          lockAspectRatio ? newHeight = newWidth * fixedAspectRatio : newHeight -= dy;
         }
         else {
           newHeight -= dy;
-          newWidth = fixedAspectRatio ? newHeight / fixedAspectRatio : newWidth;
+          lockAspectRatio ? newWidth = newHeight / fixedAspectRatio : newWidth -= dx;
         }
         pan.x.setValue(accumulatedPan.x + (cropSize.width - newWidth));
         pan.y.setValue(accumulatedPan.y + (cropSize.height - newHeight));
@@ -271,19 +272,19 @@ function ImageCropOverlay(props: ImageCropOverlayProps) {
     // resize to the max it can be if so
     if (animatedHeight > maxHeight) {
       finalSize.height = maxHeight;
-      finalSize.width = fixedAspectRatio ? finalSize.height / fixedAspectRatio : finalSize.width;
+      finalSize.width = lockAspectRatio ? finalSize.height / fixedAspectRatio : finalSize.width;
     }
     else if (animatedHeight < minHeight) {
       finalSize.height = minHeight;
-      finalSize.width = fixedAspectRatio ? finalSize.height / fixedAspectRatio : finalSize.height;
+      finalSize.width = lockAspectRatio ? finalSize.height / fixedAspectRatio : finalSize.width;
     }
     if (animatedWidth > maxWidth) {
       finalSize.width = maxWidth;
-      finalSize.height = fixedAspectRatio ? finalSize.width * fixedAspectRatio : finalSize.width;
+      finalSize.height = lockAspectRatio ? finalSize.width * fixedAspectRatio : finalSize.height;
     }
     else if (animatedWidth < minWidth) {
       finalSize.width = minWidth;
-      finalSize.height = fixedAspectRatio ? finalSize.width * fixedAspectRatio : finalSize.width;
+      finalSize.height = lockAspectRatio ? finalSize.width * fixedAspectRatio : finalSize.height;
     }
     // Update together else one gets replaced with stale state
     props.onUpdatePanAndSize({
