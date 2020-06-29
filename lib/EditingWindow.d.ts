@@ -27,6 +27,10 @@ interface EditingWindowProps {
         height: number;
     };
     onUpdateCropSize: (size: any) => void;
+    onUpdatePanAndSize: ({ size, accumulatedPan }: {
+        size: any;
+        accumulatedPan: any;
+    }) => void;
 }
 declare function EditingWindow(props: EditingWindowProps): JSX.Element;
 export { EditingWindow };

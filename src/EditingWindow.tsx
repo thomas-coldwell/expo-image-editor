@@ -30,6 +30,7 @@ interface EditingWindowProps {
     height: number;
   };
   onUpdateCropSize: (size: any) => void;
+  onUpdatePanAndSize: ({size, accumulatedPan}: { size: any, accumulatedPan: any}) => void;
 }
 
 function EditingWindow(props: EditingWindowProps) {
@@ -83,7 +84,8 @@ function EditingWindow(props: EditingWindowProps) {
                             minimumCropDimensions={props.minimumCropDimensions}
                             onUpdateAccumulatedPan={accumulatedPan => props.onUpdateAccumulatedPan(accumulatedPan)}
                             cropSize={props.cropSize}
-                            onUpdateCropSize={size => props.onUpdateCropSize(size)} />
+                            onUpdateCropSize={size => props.onUpdateCropSize(size)}
+                            onUpdatePanAndSize={panAndSize => props.onUpdatePanAndSize(panAndSize)} />
         :
           null
       }

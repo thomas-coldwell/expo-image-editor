@@ -21,6 +21,10 @@ interface ImageCropOverlayProps {
         height: number;
     };
     onUpdateCropSize: (size: any) => void;
+    onUpdatePanAndSize: ({ size, accumulatedPan }: {
+        size: any;
+        accumulatedPan: any;
+    }) => void;
 }
 declare function ImageCropOverlay(props: ImageCropOverlayProps): JSX.Element;
 export { ImageCropOverlay };

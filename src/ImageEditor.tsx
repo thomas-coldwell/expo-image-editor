@@ -148,9 +148,13 @@ function ImageEditor(props: ImageEditorProps) {
                               minimumCropDimensions={props.minimumCropDimensions}
                               onUpdateImageBounds={bounds => setEditorState({...editorState, ...bounds})}
                               accumulatedPan={editorState.accumulatedPan}
-                              onUpdateAccumulatedPan={accumulatedPan => setEditorState({...editorState, accumulatedPan: accumulatedPan})}
+                              onUpdateAccumulatedPan={accumulatedPan => {
+                                console.log('onUpdatePan: ', accumulatedPan)
+                                setEditorState({...editorState, accumulatedPan: accumulatedPan});
+                              }}
                               cropSize={editorState.cropSize}
-                              onUpdateCropSize={size => setEditorState({...editorState, cropSize: size})} />
+                              onUpdateCropSize={size => setEditorState({...editorState, cropSize: size})}
+                              onUpdatePanAndSize={({accumulatedPan, size}) => setEditorState({...editorState, cropSize: size, accumulatedPan})} />
             </View>
           : null 
         }
