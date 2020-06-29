@@ -18,6 +18,7 @@
   "devDependencies": {
     "@babel/core": "^7.8.6",
     "@expo/webpack-config": "^0.12.11",
+    "@types/expo__vector-icons": "^9.0.1",
     "@types/react": "^16.9.35",
     "@types/react-dom": "^16.9.8",
     "@types/react-native": "^0.62.11",

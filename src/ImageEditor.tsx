@@ -48,11 +48,17 @@ interface ImageEditorStore {
   },
   ready: boolean;
   processing: boolean;
+  mode: 'operation-select' | 'crop';
+  imageData: {
+    uri: string,
+    height: number,
+    width: number
+  }
 }
 
 function ImageEditor(props: ImageEditorProps) {
 
-  const initialState = {
+  const initialState: ImageEditorStore = {
     imageScaleFactor: 1,
     imageBounds: {
       x: 0, 
@@ -69,7 +75,9 @@ function ImageEditor(props: ImageEditorProps) {
       height: 0
     },
     ready: false,
-    processing: false
+    processing: false,
+    mode: 'operation-select',
+    imageData: props.imageData
   };
 
   const [editorState, setEditorState] = React.useState<ImageEditorStore>(initialState);
@@ -122,6 +130,29 @@ function ImageEditor(props: ImageEditorProps) {
     });
   }
 
+  const onRotate = async (angle: number) => {
+    // Rotate the image by the specified angle
+    setEditorState({...editorState, processing: true});
+    await ImageManipulator.manipulateAsync(props.imageData.uri as string, [
+      { rotate: angle }
+    ])
+    .then(({uri, width, height}) => {
+      // Set the image data
+      setEditorState({
+        ...editorState,
+        imageData: {
+          uri,
+          height,
+          width
+        },
+        processing: false
+      });
+    })
+    .catch((error) => {
+      alert('An error occured while editing.');
+    });
+  }
+
   React.useEffect(() => {
     // Reset the state of things and only render the UI
     // when this state has been initialised
@@ -142,8 +173,11 @@ function ImageEditor(props: ImageEditorProps) {
           editorState.ready ? 
             <View style={styles.container}>
               <ControlBar onPressBack={() => props.onCloseEditor()}
-                          onPerformCrop={() => onPerformCrop()} />
-              <EditingWindow imageData={props.imageData}
+                          onPerformCrop={() => onPerformCrop()}
+                          mode={editorState.mode}
+                          onChangeMode={mode => setEditorState({...editorState, mode})}
+                          onRotate={angle => onRotate(angle)} />
+              <EditingWindow imageData={editorState.imageData}
                               fixedCropAspectRatio={1/props.fixedCropAspectRatio}
                               lockAspectRatio={props.lockAspectRatio}
                               imageBounds={editorState.imageBounds}
@@ -155,7 +189,8 @@ function ImageEditor(props: ImageEditorProps) {
                               }}
                               cropSize={editorState.cropSize}
                               onUpdateCropSize={size => setEditorState({...editorState, cropSize: size})}
-                              onUpdatePanAndSize={({accumulatedPan, size}) => setEditorState({...editorState, cropSize: size, accumulatedPan})} />
+                              onUpdatePanAndSize={({accumulatedPan, size}) => setEditorState({...editorState, cropSize: size, accumulatedPan})}
+                              isCropping={editorState.mode == 'crop' ? true : false} />
             </View>
           : null 
         }

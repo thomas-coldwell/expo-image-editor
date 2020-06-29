@@ -32,6 +32,7 @@ interface EditingWindowProps {
   };
   onUpdateCropSize: (size: any) => void;
   onUpdatePanAndSize: ({size, accumulatedPan}: { size: any, accumulatedPan: any}) => void;
+  isCropping: boolean;
 }
 
 function EditingWindow(props: EditingWindowProps) {
@@ -43,6 +44,7 @@ function EditingWindow(props: EditingWindowProps) {
   const { imageData } = props;
 
   const getImageFrame = async (layout: LayoutRectangle) => {
+    console.log('layout')
     // Find the start point of the photo on the screen and its
     // width / height from there
     const editingWindowAspectRatio = layout.height / layout.width;
@@ -72,13 +74,14 @@ function EditingWindow(props: EditingWindowProps) {
     setState({...state, initialisedImageBounds: true});
   }
 
+  console.log(imageData.uri)
   return(
     <View style={styles.container}>
       <Image style={styles.image}
              source={{ uri: imageData.uri }}
              onLayout={({nativeEvent}) => getImageFrame(nativeEvent.layout)} />
       {
-        state.initialisedImageBounds ?
+        state.initialisedImageBounds && props.isCropping ?
           <ImageCropOverlay imageBounds={props.imageBounds}
                             fixedAspectRatio={props.fixedCropAspectRatio}
                             lockAspectRatio={props.lockAspectRatio}
