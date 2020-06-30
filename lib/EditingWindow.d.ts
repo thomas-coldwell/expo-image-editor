@@ -32,6 +32,7 @@ interface EditingWindowProps {
         size: any;
         accumulatedPan: any;
     }) => void;
+    isCropping: boolean;
 }
 declare function EditingWindow(props: EditingWindowProps): JSX.Element;
 export { EditingWindow };
