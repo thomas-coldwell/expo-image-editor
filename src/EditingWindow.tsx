@@ -53,7 +53,6 @@ function EditingWindow(props: EditingWindowProps) {
   }
 
   const onUpdateCropLayout = (layout) => {
-    console.log('layout: ', layout)
     // Find the start point of the photo on the screen and its
     // width / height from there
     const editingWindowAspectRatio = layout.height / layout.width;

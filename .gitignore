@@ -1,2 +1,18 @@
 node_modules/*
 lib/*
+
+example/node_modules/**/*
+example/.expo/*
+example/npm-debug.*
+example/*.jks
+example/*.p8
+example/*.p12
+example/*.key
+example/*.mobileprovision
+example/*.orig.*
+example/web-build/
+
+# macOS
+example/.DS_Store
+
+example/lib/*
