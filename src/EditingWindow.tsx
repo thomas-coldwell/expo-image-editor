@@ -38,7 +38,6 @@ interface EditingWindowProps {
 function EditingWindow(props: EditingWindowProps) {
 
   const [state, setState] = React.useState({
-    initialisedImageBounds: false,
     imageScaleFactor: null,
     imageLayout: {
       height: null,
@@ -49,6 +48,7 @@ function EditingWindow(props: EditingWindowProps) {
   const { imageData } = props;
 
   const getImageFrame = (layout: {width: number, height: number, [key: string]: any}) => {
+    console.log(layout)
     onUpdateCropLayout(layout);
   }
 
@@ -81,7 +81,6 @@ function EditingWindow(props: EditingWindowProps) {
     });
     setState({
       ...state, 
-      initialisedImageBounds: true, 
       imageScaleFactor,
       imageLayout: {
         height: layout.height,
@@ -100,7 +99,7 @@ function EditingWindow(props: EditingWindowProps) {
              source={{ uri: imageData.uri }}
              onLayout={({nativeEvent}) => getImageFrame(nativeEvent.layout)} />
       {
-        state.initialisedImageBounds && props.isCropping ?
+        props.isCropping && state.imageLayout.height != null ?
           <ImageCropOverlay imageBounds={props.imageBounds}
                             fixedAspectRatio={props.fixedCropAspectRatio}
                             lockAspectRatio={props.lockAspectRatio}

@@ -98,7 +98,8 @@ export default function App() {
                    onEditingComplete={result => {
                      setCroppedUri(result.uri);
                      console.log(result)
-                   }} />
+                   }}
+                   mode='full' />
     </View>
   );
 

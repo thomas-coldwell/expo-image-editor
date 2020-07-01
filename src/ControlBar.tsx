@@ -6,6 +6,7 @@ import {
   MaterialIcons,
 } from "@expo/vector-icons";
 import _ from "lodash";
+import { Mode } from "./ImageEditor";
 
 type EditingMode = "operation-select" | "crop";
 
@@ -16,9 +17,26 @@ interface ControlBarProps {
   onChangeMode: (mode: EditingMode) => void;
   onRotate: (angle: number) => void;
   onFinishEditing: () => void;
+  mode: Mode;
 }
 
 function ControlBar(props: ControlBarProps) {
+
+  const onPressDone = () => {
+    // handle what action should be performed when the user press done
+    if (props.mode == 'full') {
+      if (props.editingMode == 'crop') {
+        props.onPerformCrop()
+      }
+      else {
+        props.onFinishEditing();
+      }
+    }
+    else {
+      props.onFinishEditing();
+    }
+  }
+
   return (
     <View style={styles.container}>
       <Button
@@ -27,29 +45,37 @@ function ControlBar(props: ControlBarProps) {
         onPress={() => props.onPressBack()}
       />
       <View style={styles.buttonRow}>
-        {props.editingMode == "operation-select" ? (
-          <>
+        {
+          props.mode == 'full' && props.editingMode == 'operation-select' ? 
             <Button
-              iconID="crop"
-              source="md"
-              onPress={() => props.onChangeMode("crop")}
-            />
-            <Button
-              iconID="rotate-left"
-              source="md"
-              onPress={() => props.onRotate(Platform.OS == 'web' ? 90 : -90)}
-            />
-            <Button
-              iconID="rotate-right"
-              source="md"
-              onPress={() => props.onRotate(Platform.OS == 'web' ? -90 : 90)}
-            />
-          </>
-        ) : null}
+                iconID="crop"
+                source="md"
+                onPress={() => props.onChangeMode("crop")}
+              />
+          :
+            null
+        }
+        {
+          props.mode != 'crop-only' && props.editingMode != 'crop' ?
+            <>
+              <Button
+                iconID="rotate-left"
+                source="md"
+                onPress={() => props.onRotate(Platform.OS == 'web' ? 90 : -90)}
+              />
+              <Button
+                iconID="rotate-right"
+                source="md"
+                onPress={() => props.onRotate(Platform.OS == 'web' ? -90 : 90)}
+              />
+            </>
+          :
+            null
+        }
         <Button
           iconID="md-checkmark"
           source="ion"
-          onPress={() => props.editingMode == 'crop' ? props.onPerformCrop() : props.onFinishEditing()}
+          onPress={() => onPressDone()}
         />
       </View>
     </View>

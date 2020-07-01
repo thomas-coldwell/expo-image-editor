@@ -20,6 +20,7 @@ if (Platform.OS == "web") {
   PlatformModal.setAppElement("#root");
 }
 
+export type Mode = 'full' | 'crop-only' | 'rotate-only';
 
 export interface ImageEditorProps {
   visible: boolean;
@@ -36,7 +37,7 @@ export interface ImageEditorProps {
   };
   onEditingComplete: (result: any) => void;
   lockAspectRatio: boolean;
-  
+  mode: Mode;
 }
 
 interface ImageEditorStore {
@@ -84,7 +85,7 @@ function ImageEditor(props: ImageEditorProps) {
     },
     ready: false,
     processing: false,
-    editingMode: "operation-select",
+    editingMode: props.mode == 'crop-only' ? "crop" : 'operation-select',
     imageData: props.imageData,
   };
 
@@ -116,43 +117,43 @@ function ImageEditor(props: ImageEditorProps) {
       editorState.imageData.uri as string,
       [{ crop: croppingBounds }]
     )
-      .then(async ({ uri, width, height }) => {
-        // Check if on web - currently there is a weird bug where it will keep
-        // the canvas from ImageManipualtor at originX + width and so we'll just crop
-        // the result again for now if on web - TODO write github issue!
-        if (Platform.OS == "web") {
-          await ImageManipulator.manipulateAsync(uri, [
-            { crop: { ...croppingBounds, originX: 0, originY: 0 } },
-          ])
-            .then(({ uri, width, height }) => {
-              setEditorState({
-                ...editorState,
-                processing: false,
-                imageData: { uri, width, height },
-                editingMode: "operation-select",
-              });
-            })
-            .catch((error) => {
-              // If there's an error dismiss the the editor and alert the user
-              setEditorState({ ...editorState, processing: false });
-              props.onCloseEditor();
-              Alert.alert("An error occurred while editing.");
+    .then(async ({ uri, width, height }) => {
+      // Check if on web - currently there is a weird bug where it will keep
+      // the canvas from ImageManipualtor at originX + width and so we'll just crop
+      // the result again for now if on web - TODO write github issue!
+      if (Platform.OS == "web") {
+        await ImageManipulator.manipulateAsync(uri, [
+          { crop: { ...croppingBounds, originX: 0, originY: 0 } },
+        ])
+          .then(({ uri, width, height }) => {
+            setEditorState({
+              ...editorState,
+              processing: false,
+              imageData: { uri, width, height },
+              editingMode: "operation-select",
             });
-        } else {
-          setEditorState({
-            ...editorState,
-            processing: false,
-            imageData: { uri, width, height },
-            editingMode: "operation-select",
+          })
+          .catch((error) => {
+            // If there's an error dismiss the the editor and alert the user
+            setEditorState({ ...editorState, processing: false });
+            props.onCloseEditor();
+            Alert.alert("An error occurred while editing.");
           });
-        }
-      })
-      .catch((error) => {
-        // If there's an error dismiss the the editor and alert the user
-        setEditorState({ ...editorState, processing: false });
-        props.onCloseEditor();
-        Alert.alert("An error occurred while editing.");
-      });
+      } else {
+        setEditorState({
+          ...editorState,
+          processing: false,
+          imageData: { uri, width, height },
+          editingMode: "operation-select",
+        });
+      }
+    })
+    .catch((error) => {
+      // If there's an error dismiss the the editor and alert the user
+      setEditorState({ ...editorState, processing: false });
+      props.onCloseEditor();
+      Alert.alert("An error occurred while editing.");
+    });
   };
 
   const onRotate = async (angle: number) => {
@@ -211,6 +212,7 @@ function ImageEditor(props: ImageEditorProps) {
             onChangeMode={(editingMode) => setEditorState({ ...editorState, editingMode })}
             onRotate={(angle) => onRotate(angle)}
             onFinishEditing={() => onFinishEditing()}
+            mode={props.mode}
           />
           <EditingWindow
             imageData={editorState.imageData}
