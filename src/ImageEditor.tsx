@@ -20,6 +20,7 @@ if (Platform.OS == "web") {
   PlatformModal.setAppElement("#root");
 }
 
+
 export interface ImageEditorProps {
   visible: boolean;
   onCloseEditor: () => void;

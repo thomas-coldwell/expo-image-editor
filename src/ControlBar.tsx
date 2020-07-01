@@ -1,5 +1,5 @@
 import * as React from "react";
-import { View, StyleSheet, TouchableOpacity, Text } from "react-native";
+import { View, StyleSheet, TouchableOpacity, Text, Platform } from "react-native";
 import {
   Ionicons,
   MaterialCommunityIcons,
@@ -37,12 +37,12 @@ function ControlBar(props: ControlBarProps) {
             <Button
               iconID="rotate-left"
               source="md"
-              onPress={() => props.onRotate(-90)}
+              onPress={() => props.onRotate(Platform.OS == 'web' ? 90 : -90)}
             />
             <Button
               iconID="rotate-right"
               source="md"
-              onPress={() => props.onRotate(90)}
+              onPress={() => props.onRotate(Platform.OS == 'web' ? -90 : 90)}
             />
           </>
         ) : null}
