@@ -1,24 +1,45 @@
 import * as React from "react";
-import { View, StyleSheet, TouchableOpacity, Text } from "react-native";
+import { View, StyleSheet, TouchableOpacity, Text, Platform } from "react-native";
 import {
   Ionicons,
   MaterialCommunityIcons,
   MaterialIcons,
 } from "@expo/vector-icons";
 import _ from "lodash";
+import { Mode } from "./ImageEditor";
 
-type Mode = "operation-select" | "crop";
+type EditingMode = "operation-select" | "crop";
 
 interface ControlBarProps {
   onPressBack: () => void;
   onPerformCrop: () => void;
-  mode: Mode;
-  onChangeMode: (mode: Mode) => void;
+  editingMode: EditingMode;
+  onChangeMode: (mode: EditingMode) => void;
   onRotate: (angle: number) => void;
   onFinishEditing: () => void;
+  mode: Mode;
 }
 
 function ControlBar(props: ControlBarProps) {
+
+  const onPressDone = async () => {
+    // handle what action should be performed when the user press done
+    if (props.mode == 'full') {
+      if (props.editingMode == 'crop') {
+        props.onPerformCrop();
+      }
+      else {
+        props.onFinishEditing();
+      }
+    }
+    else if (props.mode == 'crop-only') {
+      props.onPerformCrop();
+    }
+    else {
+      props.onFinishEditing();
+    }
+  }
+
   return (
     <View style={styles.container}>
       <Button
@@ -27,29 +48,37 @@ function ControlBar(props: ControlBarProps) {
         onPress={() => props.onPressBack()}
       />
       <View style={styles.buttonRow}>
-        {props.mode == "operation-select" ? (
-          <>
+        {
+          props.mode == 'full' && props.editingMode == 'operation-select' ? 
             <Button
-              iconID="crop"
-              source="md"
-              onPress={() => props.onChangeMode("crop")}
-            />
-            <Button
-              iconID="rotate-left"
-              source="md"
-              onPress={() => props.onRotate(-90)}
-            />
-            <Button
-              iconID="rotate-right"
-              source="md"
-              onPress={() => props.onRotate(90)}
-            />
-          </>
-        ) : null}
+                iconID="crop"
+                source="md"
+                onPress={() => props.onChangeMode("crop")}
+              />
+          :
+            null
+        }
+        {
+          props.mode != 'crop-only' && props.editingMode != 'crop' ?
+            <>
+              <Button
+                iconID="rotate-left"
+                source="md"
+                onPress={() => props.onRotate(Platform.OS == 'web' ? 90 : -90)}
+              />
+              <Button
+                iconID="rotate-right"
+                source="md"
+                onPress={() => props.onRotate(Platform.OS == 'web' ? -90 : 90)}
+              />
+            </>
+          :
+            null
+        }
         <Button
           iconID="md-checkmark"
           source="ion"
-          onPress={() => props.mode == 'crop' ? props.onPerformCrop() : props.onFinishEditing()}
+          onPress={() => onPressDone()}
         />
       </View>
     </View>

@@ -38,7 +38,6 @@ interface EditingWindowProps {
 function EditingWindow(props: EditingWindowProps) {
 
   const [state, setState] = React.useState({
-    initialisedImageBounds: false,
     imageScaleFactor: null,
     imageLayout: {
       height: null,
@@ -53,7 +52,6 @@ function EditingWindow(props: EditingWindowProps) {
   }
 
   const onUpdateCropLayout = (layout) => {
-    console.log('layout: ', layout)
     // Find the start point of the photo on the screen and its
     // width / height from there
     const editingWindowAspectRatio = layout.height / layout.width;
@@ -82,7 +80,6 @@ function EditingWindow(props: EditingWindowProps) {
     });
     setState({
       ...state, 
-      initialisedImageBounds: true, 
       imageScaleFactor,
       imageLayout: {
         height: layout.height,
@@ -101,7 +98,7 @@ function EditingWindow(props: EditingWindowProps) {
              source={{ uri: imageData.uri }}
              onLayout={({nativeEvent}) => getImageFrame(nativeEvent.layout)} />
       {
-        state.initialisedImageBounds && props.isCropping ?
+        props.isCropping && state.imageLayout.height != null ?
           <ImageCropOverlay imageBounds={props.imageBounds}
                             fixedAspectRatio={props.fixedCropAspectRatio}
                             lockAspectRatio={props.lockAspectRatio}
