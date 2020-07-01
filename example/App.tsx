@@ -132,9 +132,8 @@ const styles = StyleSheet.create({
   container: {
     height: '100%',
     width: '100%',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingTop: '15%'
+    justifyContent: 'center',
+    alignItems: 'center'
   },
   image: {
     width: '90%',
