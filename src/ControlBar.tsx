@@ -22,15 +22,18 @@ interface ControlBarProps {
 
 function ControlBar(props: ControlBarProps) {
 
-  const onPressDone = () => {
+  const onPressDone = async () => {
     // handle what action should be performed when the user press done
     if (props.mode == 'full') {
       if (props.editingMode == 'crop') {
-        props.onPerformCrop()
+        props.onPerformCrop();
       }
       else {
         props.onFinishEditing();
       }
+    }
+    else if (props.mode == 'crop-only') {
+      props.onPerformCrop();
     }
     else {
       props.onFinishEditing();

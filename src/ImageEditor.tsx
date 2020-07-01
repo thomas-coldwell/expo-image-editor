@@ -126,12 +126,19 @@ function ImageEditor(props: ImageEditorProps) {
           { crop: { ...croppingBounds, originX: 0, originY: 0 } },
         ])
           .then(({ uri, width, height }) => {
-            setEditorState({
-              ...editorState,
-              processing: false,
-              imageData: { uri, width, height },
-              editingMode: "operation-select",
-            });
+            if (props.mode == 'crop-only') {
+              setEditorState({ ...editorState, processing: false });
+              props.onEditingComplete({ uri, width, height });
+              props.onCloseEditor();
+            }
+            else {
+              setEditorState({
+                ...editorState,
+                processing: false,
+                imageData: { uri, width, height },
+                editingMode: "operation-select",
+              });
+            }
           })
           .catch((error) => {
             // If there's an error dismiss the the editor and alert the user
@@ -140,12 +147,19 @@ function ImageEditor(props: ImageEditorProps) {
             Alert.alert("An error occurred while editing.");
           });
       } else {
-        setEditorState({
-          ...editorState,
-          processing: false,
-          imageData: { uri, width, height },
-          editingMode: "operation-select",
-        });
+        if (props.mode == 'crop-only') {
+          setEditorState({ ...editorState, processing: false });
+          props.onEditingComplete({ uri, width, height });
+          props.onCloseEditor();
+        }
+        else {
+          setEditorState({
+            ...editorState,
+            processing: false,
+            imageData: { uri, width, height },
+            editingMode: "operation-select",
+          });
+        }
       }
     })
     .catch((error) => {
@@ -180,7 +194,7 @@ function ImageEditor(props: ImageEditorProps) {
       });
   };
 
-  const onFinishEditing = () => {
+  const onFinishEditing = async () => {
     setEditorState({ ...editorState, processing: false });
     props.onEditingComplete(editorState.imageData);
     props.onCloseEditor();
