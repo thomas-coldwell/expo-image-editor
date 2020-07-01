@@ -9,7 +9,7 @@ import {
   Platform
 } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
-import { ImageEditor } from './lib/ImageEditor';
+import { ImageEditor, Mode } from './lib/ImageEditor';
 
 export default function App() {
 
@@ -21,6 +21,10 @@ export default function App() {
   const [editorVisible, setEditorVisible] = React.useState(false);
 
   const [croppedUri, setCroppedUri] = React.useState<string | undefined>(undefined);
+
+  const [mode, setMode] = React.useState<Mode>('full');
+
+  const [aspectLock, setAspectLock] = React.useState(false);
 
   const selectPhoto = async () => {
     // Get the permission to access the camera roll
@@ -78,19 +82,38 @@ export default function App() {
     setEditorVisible(true);
   }
 
+  const toggleMode = () => {
+    // Chaneg the mode to either full, crop-only or rotate only
+    if (mode == 'full') {
+      setMode('crop-only');
+    }
+    else if (mode == 'crop-only') {
+      setMode('rotate-only');
+    }
+    else {
+      setMode('full');
+    }
+  }
+
   return (
     <View style={styles.container}>
       <Image style={styles.image} 
              source={{uri: imageData.uri}} />
       <Image style={[styles.image, {backgroundColor: '#333'}]} 
              source={{uri: croppedUri}} />
-      <Button title='Select Photo' 
-              onPress={() => selectPhoto()}/>
+      <View style={styles.buttonRow}>
+        <Button title='Select Photo' 
+                onPress={() => selectPhoto()}/>
+        <Button title={'Mode: ' + mode}
+                onPress={() => toggleMode()} />
+        <Button title={'Aspect Lock: ' + aspectLock}
+                onPress={() => setAspectLock(!aspectLock)} />
+      </View>
       <ImageEditor visible={editorVisible}
                    onCloseEditor={() => setEditorVisible(false)}
                    imageData={imageData}
                    fixedCropAspectRatio={16/9}
-                   lockAspectRatio={false}
+                   lockAspectRatio={aspectLock}
                    minimumCropDimensions={{
                      width: 100,
                      height: 100
@@ -99,7 +122,7 @@ export default function App() {
                      setCroppedUri(result.uri);
                      console.log(result)
                    }}
-                   mode='full' />
+                   mode={mode} />
     </View>
   );
 
@@ -107,9 +130,11 @@ export default function App() {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center'
+    height: '100%',
+    width: '100%',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingTop: '15%'
   },
   image: {
     width: '90%',
@@ -117,6 +142,13 @@ const styles = StyleSheet.create({
     resizeMode: 'contain',
     backgroundColor: '#ccc',
     marginBottom: '5%'
+  },
+  buttonRow: {
+    width: '100%',
+    height: 150,
+    flexDirection: 'column',
+    justifyContent: 'space-around',
+    alignItems: 'center'
   }
 });
 
