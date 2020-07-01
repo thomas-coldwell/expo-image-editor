@@ -48,7 +48,6 @@ function EditingWindow(props: EditingWindowProps) {
   const { imageData } = props;
 
   const getImageFrame = (layout: {width: number, height: number, [key: string]: any}) => {
-    console.log(layout)
     onUpdateCropLayout(layout);
   }
 
