@@ -7,13 +7,13 @@ import {
 } from "@expo/vector-icons";
 import _ from "lodash";
 
-type Mode = "operation-select" | "crop";
+type EditingMode = "operation-select" | "crop";
 
 interface ControlBarProps {
   onPressBack: () => void;
   onPerformCrop: () => void;
-  mode: Mode;
-  onChangeMode: (mode: Mode) => void;
+  editingMode: EditingMode;
+  onChangeMode: (mode: EditingMode) => void;
   onRotate: (angle: number) => void;
   onFinishEditing: () => void;
 }
@@ -27,7 +27,7 @@ function ControlBar(props: ControlBarProps) {
         onPress={() => props.onPressBack()}
       />
       <View style={styles.buttonRow}>
-        {props.mode == "operation-select" ? (
+        {props.editingMode == "operation-select" ? (
           <>
             <Button
               iconID="crop"
@@ -49,7 +49,7 @@ function ControlBar(props: ControlBarProps) {
         <Button
           iconID="md-checkmark"
           source="ion"
-          onPress={() => props.mode == 'crop' ? props.onPerformCrop() : props.onFinishEditing()}
+          onPress={() => props.editingMode == 'crop' ? props.onPerformCrop() : props.onFinishEditing()}
         />
       </View>
     </View>

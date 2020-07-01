@@ -36,6 +36,7 @@ export interface ImageEditorProps {
   };
   onEditingComplete: (result: any) => void;
   lockAspectRatio: boolean;
+  
 }
 
 interface ImageEditorStore {
@@ -56,7 +57,7 @@ interface ImageEditorStore {
   };
   ready: boolean;
   processing: boolean;
-  mode: "operation-select" | "crop";
+  editingMode: "operation-select" | "crop";
   imageData: {
     uri: string;
     height: number;
@@ -83,7 +84,7 @@ function ImageEditor(props: ImageEditorProps) {
     },
     ready: false,
     processing: false,
-    mode: "operation-select",
+    editingMode: "operation-select",
     imageData: props.imageData,
   };
 
@@ -128,7 +129,7 @@ function ImageEditor(props: ImageEditorProps) {
                 ...editorState,
                 processing: false,
                 imageData: { uri, width, height },
-                mode: "operation-select",
+                editingMode: "operation-select",
               });
             })
             .catch((error) => {
@@ -142,7 +143,7 @@ function ImageEditor(props: ImageEditorProps) {
             ...editorState,
             processing: false,
             imageData: { uri, width, height },
-            mode: "operation-select",
+            editingMode: "operation-select",
           });
         }
       })
@@ -201,13 +202,13 @@ function ImageEditor(props: ImageEditorProps) {
         <View style={styles.container}>
           <ControlBar
             onPressBack={() =>
-              editorState.mode == "operation-select"
+              editorState.editingMode == "operation-select"
                 ? props.onCloseEditor()
-                : setEditorState({ ...editorState, mode: "operation-select" })
+                : setEditorState({ ...editorState, editingMode: "operation-select" })
             }
             onPerformCrop={() => onPerformCrop()}
-            mode={editorState.mode}
-            onChangeMode={(mode) => setEditorState({ ...editorState, mode })}
+            editingMode={editorState.editingMode}
+            onChangeMode={(editingMode) => setEditorState({ ...editorState, editingMode })}
             onRotate={(angle) => onRotate(angle)}
             onFinishEditing={() => onFinishEditing()}
           />
@@ -234,7 +235,7 @@ function ImageEditor(props: ImageEditorProps) {
             onUpdatePanAndSize={({ accumulatedPan, size }) =>
               setEditorState({ ...editorState, cropSize: size, accumulatedPan })
             }
-            isCropping={editorState.mode == "crop" ? true : false}
+            isCropping={editorState.editingMode == "crop" ? true : false}
           />
         </View>
       ) : null}
