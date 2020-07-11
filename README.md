@@ -144,3 +144,7 @@ function App() {
 | minimumCropDimensions | object   | An object of `{width, height}` specifying the minimum dimensions of the crop window.                  |
 | onEditingComplete     | function | function that will return the result of the image editing which is an object identical to `imageData` |
 | mode                  | string   | The mode the image editor can be used in - one of `full`, `crop-only` or `rotate-only`                |
+
+## Acknowledgements
+
+- Inspiration from <a href="https://github.com/brunon80/expo-image-crop">this</a> repo
