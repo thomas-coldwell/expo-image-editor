@@ -1,5 +1,5 @@
 /// <reference types="react" />
-export declare type Mode = 'full' | 'crop-only' | 'rotate-only';
+export declare type Mode = "full" | "crop-only" | "rotate-only";
 export interface ImageEditorProps {
     visible: boolean;
     onCloseEditor: () => void;
