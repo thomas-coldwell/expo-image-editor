@@ -12,7 +12,7 @@ import { EditingWindow } from "./EditingWindow";
 import * as ImageManipulator from "expo-image-manipulator";
 import { Processing } from "./Processing";
 import Modal from "modal-react-native-web";
-
+const noScroll = require("no-scroll");
 const PlatformModal = Platform.OS == "web" ? Modal : RNModal;
 
 // Stop ARIA errors
@@ -20,7 +20,7 @@ if (Platform.OS == "web") {
   PlatformModal.setAppElement("#root");
 }
 
-export type Mode = 'full' | 'crop-only' | 'rotate-only';
+export type Mode = "full" | "crop-only" | "rotate-only";
 
 export interface ImageEditorProps {
   visible: boolean;
@@ -85,7 +85,7 @@ function ImageEditor(props: ImageEditorProps) {
     },
     ready: false,
     processing: false,
-    editingMode: props.mode == 'crop-only' ? "crop" : 'operation-select',
+    editingMode: props.mode == "crop-only" ? "crop" : "operation-select",
     imageData: props.imageData,
   };
 
@@ -117,57 +117,55 @@ function ImageEditor(props: ImageEditorProps) {
       editorState.imageData.uri as string,
       [{ crop: croppingBounds }]
     )
-    .then(async ({ uri, width, height }) => {
-      // Check if on web - currently there is a weird bug where it will keep
-      // the canvas from ImageManipualtor at originX + width and so we'll just crop
-      // the result again for now if on web - TODO write github issue!
-      if (Platform.OS == "web") {
-        await ImageManipulator.manipulateAsync(uri, [
-          { crop: { ...croppingBounds, originX: 0, originY: 0 } },
-        ])
-          .then(({ uri, width, height }) => {
-            if (props.mode == 'crop-only') {
+      .then(async ({ uri, width, height }) => {
+        // Check if on web - currently there is a weird bug where it will keep
+        // the canvas from ImageManipualtor at originX + width and so we'll just crop
+        // the result again for now if on web - TODO write github issue!
+        if (Platform.OS == "web") {
+          await ImageManipulator.manipulateAsync(uri, [
+            { crop: { ...croppingBounds, originX: 0, originY: 0 } },
+          ])
+            .then(({ uri, width, height }) => {
+              if (props.mode == "crop-only") {
+                setEditorState({ ...editorState, processing: false });
+                props.onEditingComplete({ uri, width, height });
+                onCloseEditor();
+              } else {
+                setEditorState({
+                  ...editorState,
+                  processing: false,
+                  imageData: { uri, width, height },
+                  editingMode: "operation-select",
+                });
+              }
+            })
+            .catch((error) => {
+              // If there's an error dismiss the the editor and alert the user
               setEditorState({ ...editorState, processing: false });
-              props.onEditingComplete({ uri, width, height });
-              props.onCloseEditor();
-            }
-            else {
-              setEditorState({
-                ...editorState,
-                processing: false,
-                imageData: { uri, width, height },
-                editingMode: "operation-select",
-              });
-            }
-          })
-          .catch((error) => {
-            // If there's an error dismiss the the editor and alert the user
+              onCloseEditor();
+              Alert.alert("An error occurred while editing.");
+            });
+        } else {
+          if (props.mode == "crop-only") {
             setEditorState({ ...editorState, processing: false });
-            props.onCloseEditor();
-            Alert.alert("An error occurred while editing.");
-          });
-      } else {
-        if (props.mode == 'crop-only') {
-          setEditorState({ ...editorState, processing: false });
-          props.onEditingComplete({ uri, width, height });
-          props.onCloseEditor();
+            props.onEditingComplete({ uri, width, height });
+            onCloseEditor();
+          } else {
+            setEditorState({
+              ...editorState,
+              processing: false,
+              imageData: { uri, width, height },
+              editingMode: "operation-select",
+            });
+          }
         }
-        else {
-          setEditorState({
-            ...editorState,
-            processing: false,
-            imageData: { uri, width, height },
-            editingMode: "operation-select",
-          });
-        }
-      }
-    })
-    .catch((error) => {
-      // If there's an error dismiss the the editor and alert the user
-      setEditorState({ ...editorState, processing: false });
-      props.onCloseEditor();
-      Alert.alert("An error occurred while editing.");
-    });
+      })
+      .catch((error) => {
+        // If there's an error dismiss the the editor and alert the user
+        setEditorState({ ...editorState, processing: false });
+        onCloseEditor();
+        Alert.alert("An error occurred while editing.");
+      });
   };
 
   const onRotate = async (angle: number) => {
@@ -197,6 +195,12 @@ function ImageEditor(props: ImageEditorProps) {
   const onFinishEditing = async () => {
     setEditorState({ ...editorState, processing: false });
     props.onEditingComplete(editorState.imageData);
+    onCloseEditor();
+  };
+
+  const onCloseEditor = () => {
+    // Set no-scroll to off
+    noScroll.off();
     props.onCloseEditor();
   };
 
@@ -207,6 +211,8 @@ function ImageEditor(props: ImageEditorProps) {
       setEditorState({ ...initialState, ready: false });
     } else {
       setEditorState({ ...initialState, ready: true });
+      // Set no-scroll to on
+      noScroll.on();
     }
   }, [props.visible]);
 
@@ -219,11 +225,16 @@ function ImageEditor(props: ImageEditorProps) {
             onPressBack={() =>
               editorState.editingMode == "operation-select"
                 ? props.onCloseEditor()
-                : setEditorState({ ...editorState, editingMode: "operation-select" })
+                : setEditorState({
+                    ...editorState,
+                    editingMode: "operation-select",
+                  })
             }
             onPerformCrop={() => onPerformCrop()}
             editingMode={editorState.editingMode}
-            onChangeMode={(editingMode) => setEditorState({ ...editorState, editingMode })}
+            onChangeMode={(editingMode) =>
+              setEditorState({ ...editorState, editingMode })
+            }
             onRotate={(angle) => onRotate(angle)}
             onFinishEditing={() => onFinishEditing()}
             mode={props.mode}
