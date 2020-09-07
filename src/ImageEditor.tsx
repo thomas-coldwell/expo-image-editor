@@ -12,6 +12,17 @@ import { EditingWindow } from "./EditingWindow";
 import * as ImageManipulator from "expo-image-manipulator";
 import { Processing } from "./Processing";
 import Modal from "modal-react-native-web";
+import { useRecoilState, RecoilRoot } from "recoil";
+import {
+  imageBoundsState,
+  accumulatedPanState,
+  imageScaleFactorState,
+  cropSizeState,
+  processingState,
+  imageDataState,
+  editingModeState,
+  readyState,
+} from "./Store";
 const noScroll = require("no-scroll");
 const PlatformModal = Platform.OS == "web" ? Modal : RNModal;
 
@@ -66,7 +77,7 @@ interface ImageEditorStore {
   };
 }
 
-function ImageEditor(props: ImageEditorProps) {
+function ImageEditorCore(props: ImageEditorProps) {
   const initialState: ImageEditorStore = {
     imageScaleFactor: 1,
     imageBounds: {
@@ -89,18 +100,19 @@ function ImageEditor(props: ImageEditorProps) {
     imageData: props.imageData,
   };
 
-  const [editorState, setEditorState] = React.useState<ImageEditorStore>(
-    initialState
+  const [imageBounds, setImageBounds] = useRecoilState(imageBoundsState);
+  const [imageData, setImageData] = useRecoilState(imageDataState);
+  const [accumulatedPan, setAccumulatedPan] = useRecoilState(
+    accumulatedPanState
   );
+  const [imageScaleFactor] = useRecoilState(imageScaleFactorState);
+  const [cropSize, setCropSize] = useRecoilState(cropSizeState);
+  const [ready, setReady] = useRecoilState(readyState);
+  const [processing, setProcessing] = useRecoilState(processingState);
+  const [editingMode, setEditingMode] = useRecoilState(editingModeState);
 
   const onPerformCrop = async () => {
     // Calculate cropping bounds
-    const {
-      imageBounds,
-      accumulatedPan,
-      imageScaleFactor,
-      cropSize,
-    } = editorState;
     const croppingBounds = {
       originX: Math.round(
         (accumulatedPan.x - imageBounds.x) * imageScaleFactor
@@ -112,11 +124,10 @@ function ImageEditor(props: ImageEditorProps) {
       height: Math.round(cropSize.height * imageScaleFactor),
     };
     // Set the editor state to processing and perform the crop
-    setEditorState({ ...editorState, processing: true });
-    await ImageManipulator.manipulateAsync(
-      editorState.imageData.uri as string,
-      [{ crop: croppingBounds }]
-    )
+    setProcessing(true);
+    await ImageManipulator.manipulateAsync(imageData.uri, [
+      { crop: croppingBounds },
+    ])
       .then(async ({ uri, width, height }) => {
         // Check if on web - currently there is a weird bug where it will keep
         // the canvas from ImageManipualtor at originX + width and so we'll just crop
@@ -127,42 +138,36 @@ function ImageEditor(props: ImageEditorProps) {
           ])
             .then(({ uri, width, height }) => {
               if (props.mode == "crop-only") {
-                setEditorState({ ...editorState, processing: false });
+                setProcessing(false);
                 props.onEditingComplete({ uri, width, height });
                 onCloseEditor();
               } else {
-                setEditorState({
-                  ...editorState,
-                  processing: false,
-                  imageData: { uri, width, height },
-                  editingMode: "operation-select",
-                });
+                setProcessing(false);
+                setImageData({ uri, width, height });
+                setEditingMode("operation-select");
               }
             })
             .catch((error) => {
               // If there's an error dismiss the the editor and alert the user
-              setEditorState({ ...editorState, processing: false });
+              setProcessing(false);
               onCloseEditor();
               Alert.alert("An error occurred while editing.");
             });
         } else {
           if (props.mode == "crop-only") {
-            setEditorState({ ...editorState, processing: false });
+            setProcessing(false);
             props.onEditingComplete({ uri, width, height });
             onCloseEditor();
           } else {
-            setEditorState({
-              ...editorState,
-              processing: false,
-              imageData: { uri, width, height },
-              editingMode: "operation-select",
-            });
+            setProcessing(false);
+            setImageData({ uri, width, height });
+            setEditingMode("operation-select");
           }
         }
       })
       .catch((error) => {
         // If there's an error dismiss the the editor and alert the user
-        setEditorState({ ...editorState, processing: false });
+        setProcessing(false);
         onCloseEditor();
         Alert.alert("An error occurred while editing.");
       });
@@ -170,22 +175,12 @@ function ImageEditor(props: ImageEditorProps) {
 
   const onRotate = async (angle: number) => {
     // Rotate the image by the specified angle
-    setEditorState({ ...editorState, processing: true });
-    await ImageManipulator.manipulateAsync(
-      editorState.imageData.uri as string,
-      [{ rotate: angle }]
-    )
+    setProcessing(false);
+    await ImageManipulator.manipulateAsync(imageData.uri, [{ rotate: angle }])
       .then(async ({ uri, width, height }) => {
         // Set the image data
-        setEditorState({
-          ...editorState,
-          imageData: {
-            uri,
-            height,
-            width,
-          },
-          processing: false,
-        });
+        setProcessing(false);
+        setImageData({ uri, width, height });
       })
       .catch((error) => {
         alert("An error occured while editing.");
@@ -193,8 +188,8 @@ function ImageEditor(props: ImageEditorProps) {
   };
 
   const onFinishEditing = async () => {
-    setEditorState({ ...editorState, processing: false });
-    props.onEditingComplete(editorState.imageData);
+    setProcessing(false);
+    props.onEditingComplete(imageData);
     onCloseEditor();
   };
 
@@ -208,9 +203,9 @@ function ImageEditor(props: ImageEditorProps) {
     // Reset the state of things and only render the UI
     // when this state has been initialised
     if (!props.visible) {
-      setEditorState({ ...initialState, ready: false });
+      setReady(false);
     } else {
-      setEditorState({ ...initialState, ready: true });
+      setReady(true);
       // Set no-scroll to on
       noScroll.on();
     }
@@ -219,59 +214,38 @@ function ImageEditor(props: ImageEditorProps) {
   return (
     <PlatformModal visible={props.visible} transparent animationType="slide">
       <StatusBar hidden />
-      {editorState.ready ? (
+      {ready ? (
         <View style={styles.container}>
           <ControlBar
             onPressBack={() =>
-              editorState.editingMode == "operation-select"
+              editingMode == "operation-select"
                 ? props.onCloseEditor()
-                : setEditorState({
-                    ...editorState,
-                    editingMode: "operation-select",
-                  })
+                : setEditingMode("operation-select")
             }
             onPerformCrop={() => onPerformCrop()}
-            editingMode={editorState.editingMode}
-            onChangeMode={(editingMode) =>
-              setEditorState({ ...editorState, editingMode })
-            }
             onRotate={(angle) => onRotate(angle)}
             onFinishEditing={() => onFinishEditing()}
             mode={props.mode}
           />
           <EditingWindow
-            imageData={editorState.imageData}
             fixedCropAspectRatio={1 / props.fixedCropAspectRatio}
             lockAspectRatio={props.lockAspectRatio}
-            imageBounds={editorState.imageBounds}
             minimumCropDimensions={props.minimumCropDimensions}
-            onUpdateImageBounds={(bounds) =>
-              setEditorState({ ...editorState, ...bounds })
-            }
-            accumulatedPan={editorState.accumulatedPan}
-            onUpdateAccumulatedPan={(accumulatedPan) => {
-              setEditorState({
-                ...editorState,
-                accumulatedPan: accumulatedPan,
-              });
-            }}
-            cropSize={editorState.cropSize}
-            onUpdateCropSize={(size) =>
-              setEditorState({ ...editorState, cropSize: size })
-            }
-            onUpdatePanAndSize={({ accumulatedPan, size }) =>
-              setEditorState({ ...editorState, cropSize: size, accumulatedPan })
-            }
-            isCropping={editorState.editingMode == "crop" ? true : false}
           />
         </View>
       ) : null}
-      {editorState.processing ? <Processing /> : null}
+      {processing ? <Processing /> : null}
     </PlatformModal>
   );
 }
 
-export { ImageEditor };
+export function ImageEditor(props: ImageEditorProps) {
+  return (
+    <RecoilRoot>
+      <ImageEditorCore {...props} />
+    </RecoilRoot>
+  );
+}
 
 const styles = StyleSheet.create({
   container: {

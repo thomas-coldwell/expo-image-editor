@@ -6,7 +6,8 @@
   "types": "lib/ImageEditor.d.ts",
   "scripts": {
     "develop": "tsc -p . -w & cpx './lib/*' ./example/lib --watch",
-    "build": "tsc -p .",
+    "build": "tsc -p . -w",
+    "copy": "cpx './lib/*' ./example/lib --watch",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
@@ -31,6 +32,7 @@
     "react-dom": "^16.13.1",
     "react-native": "^0.62.2",
     "react-native-web": "^0.12.2",
+    "recoil": "^0.0.10",
     "typescript": "^3.9.3"
   },
   "dependencies": {

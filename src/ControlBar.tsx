@@ -1,5 +1,11 @@
 import * as React from "react";
-import { View, StyleSheet, TouchableOpacity, Text, Platform } from "react-native";
+import {
+  View,
+  StyleSheet,
+  TouchableOpacity,
+  Text,
+  Platform,
+} from "react-native";
 import {
   Ionicons,
   MaterialCommunityIcons,
@@ -7,38 +13,35 @@ import {
 } from "@expo/vector-icons";
 import _ from "lodash";
 import { Mode } from "./ImageEditor";
-
-type EditingMode = "operation-select" | "crop";
+import { useRecoilState } from "recoil";
+import { editingModeState } from "./Store";
 
 interface ControlBarProps {
   onPressBack: () => void;
   onPerformCrop: () => void;
-  editingMode: EditingMode;
-  onChangeMode: (mode: EditingMode) => void;
   onRotate: (angle: number) => void;
   onFinishEditing: () => void;
   mode: Mode;
 }
 
 function ControlBar(props: ControlBarProps) {
+  //
+  const [editingMode, setEditingMode] = useRecoilState(editingModeState);
 
   const onPressDone = async () => {
     // handle what action should be performed when the user press done
-    if (props.mode == 'full') {
-      if (props.editingMode == 'crop') {
+    if (props.mode == "full") {
+      if (editingMode == "crop") {
         props.onPerformCrop();
-      }
-      else {
+      } else {
         props.onFinishEditing();
       }
-    }
-    else if (props.mode == 'crop-only') {
+    } else if (props.mode == "crop-only") {
       props.onPerformCrop();
-    }
-    else {
+    } else {
       props.onFinishEditing();
     }
-  }
+  };
 
   return (
     <View style={styles.container}>
@@ -48,33 +51,27 @@ function ControlBar(props: ControlBarProps) {
         onPress={() => props.onPressBack()}
       />
       <View style={styles.buttonRow}>
-        {
-          props.mode == 'full' && props.editingMode == 'operation-select' ? 
+        {props.mode == "full" && editingMode == "operation-select" ? (
+          <Button
+            iconID="crop"
+            source="md"
+            onPress={() => setEditingMode("crop")}
+          />
+        ) : null}
+        {props.mode != "crop-only" && editingMode != "crop" ? (
+          <>
             <Button
-                iconID="crop"
-                source="md"
-                onPress={() => props.onChangeMode("crop")}
-              />
-          :
-            null
-        }
-        {
-          props.mode != 'crop-only' && props.editingMode != 'crop' ?
-            <>
-              <Button
-                iconID="rotate-left"
-                source="md"
-                onPress={() => props.onRotate(Platform.OS == 'web' ? 90 : -90)}
-              />
-              <Button
-                iconID="rotate-right"
-                source="md"
-                onPress={() => props.onRotate(Platform.OS == 'web' ? -90 : 90)}
-              />
-            </>
-          :
-            null
-        }
+              iconID="rotate-left"
+              source="md"
+              onPress={() => props.onRotate(Platform.OS == "web" ? 90 : -90)}
+            />
+            <Button
+              iconID="rotate-right"
+              source="md"
+              onPress={() => props.onRotate(Platform.OS == "web" ? -90 : 90)}
+            />
+          </>
+        ) : null}
         <Button
           iconID="md-checkmark"
           source="ion"
