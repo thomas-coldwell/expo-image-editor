@@ -1,7 +1,5 @@
 # 🌁 Expo Image Editor
 
-[![NPM](https://nodei.co/npm/<package>.png?compact=true)](https://npmjs.org/package/expo-image-editor)
-
 A super simple image cropping and rotation tool for Expo that runs on iOS, Android and Web!
 
 |                                                               iOS & Android                                                                |                                                                    Web                                                                     |
