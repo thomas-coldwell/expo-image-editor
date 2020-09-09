@@ -1,1 +1,1 @@
-{"version":3,"file":"ImageCropOverlay.d.ts","sourceRoot":"","sources":["../src/ImageCropOverlay.tsx"],"names":[],"mappings":";AAiBA,UAAU,qBAAqB;IAC7B,gBAAgB,EAAE,MAAM,CAAC;IACzB,eAAe,EAAE,OAAO,CAAC;IACzB,qBAAqB,EAAE;QACrB,KAAK,EAAE,MAAM,CAAC;QACd,MAAM,EAAE,MAAM,CAAC;KAChB,CAAC;CACH;AAED,iBAAS,gBAAgB,CAAC,KAAK,EAAE,qBAAqB,eAqVrD;AAED,OAAO,EAAE,gBAAgB,EAAE,CAAC"}
+{"version":3,"file":"ImageCropOverlay.d.ts","sourceRoot":"","sources":["../src/ImageCropOverlay.tsx"],"names":[],"mappings":";AAwBA,iBAAS,gBAAgB,gBAuVxB;AAED,OAAO,EAAE,gBAAgB,EAAE,CAAC"}

@@ -22,6 +22,9 @@ import {
   imageDataState,
   editingModeState,
   readyState,
+  fixedCropAspectRatioState,
+  lockAspectRatioState,
+  minimumCropDimensionsState,
 } from "./Store";
 const noScroll = require("no-scroll");
 const PlatformModal = Platform.OS == "web" ? Modal : RNModal;
@@ -100,16 +103,6 @@ function ImageEditorCore(props: ImageEditorProps) {
     imageData: props.imageData,
   };
 
-  // Initialise the image data when it is set through the props
-  React.useEffect(() => {
-    setImageData(props.imageData);
-  }, [props.imageData]);
-
-  // Initialise / update the editing mode set through props
-  React.useEffect(() => {
-    setEditingMode(props.mode === "crop-only" ? "crop" : "operation-select");
-  }, [props.mode]);
-
   const [imageBounds, setImageBounds] = useRecoilState(imageBoundsState);
   const [imageData, setImageData] = useRecoilState(imageDataState);
   const [accumulatedPan, setAccumulatedPan] = useRecoilState(
@@ -120,6 +113,32 @@ function ImageEditorCore(props: ImageEditorProps) {
   const [ready, setReady] = useRecoilState(readyState);
   const [processing, setProcessing] = useRecoilState(processingState);
   const [editingMode, setEditingMode] = useRecoilState(editingModeState);
+  const [, setFixedCropAspectRatio] = useRecoilState(fixedCropAspectRatioState);
+  const [, setLockAspectRatio] = useRecoilState(lockAspectRatioState);
+  const [, setMinimumCropDimensions] = useRecoilState(
+    minimumCropDimensionsState
+  );
+
+  // Initialise the image data when it is set through the props
+  React.useEffect(() => {
+    setImageData(props.imageData);
+  }, [props.imageData]);
+
+  // Initialise / update the editing mode set through props
+  React.useEffect(() => {
+    setEditingMode(props.mode === "crop-only" ? "crop" : "operation-select");
+  }, [props.mode]);
+
+  // Initialise / update the crop AR / AR lock / min crop dims set through props
+  React.useEffect(() => {
+    setFixedCropAspectRatio(props.fixedCropAspectRatio);
+  }, [props.fixedCropAspectRatio]);
+  React.useEffect(() => {
+    setLockAspectRatio(props.lockAspectRatio);
+  }, [props.lockAspectRatio]);
+  React.useEffect(() => {
+    setMinimumCropDimensions(props.minimumCropDimensions);
+  }, [props.minimumCropDimensions]);
 
   const onPerformCrop = async () => {
     // Calculate cropping bounds
@@ -237,11 +256,7 @@ function ImageEditorCore(props: ImageEditorProps) {
             onFinishEditing={() => onFinishEditing()}
             mode={props.mode}
           />
-          <EditingWindow
-            fixedCropAspectRatio={1 / props.fixedCropAspectRatio}
-            lockAspectRatio={props.lockAspectRatio}
-            minimumCropDimensions={props.minimumCropDimensions}
-          />
+          <EditingWindow />
         </View>
       ) : null}
       {processing ? <Processing /> : null}

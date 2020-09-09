@@ -1,1 +1,1 @@
-{"version":3,"file":"EditingWindow.d.ts","sourceRoot":"","sources":["../src/EditingWindow.tsx"],"names":[],"mappings":";AAWA,UAAU,kBAAkB;IAC1B,oBAAoB,EAAE,MAAM,CAAC;IAC7B,eAAe,EAAE,OAAO,CAAC;IACzB,qBAAqB,EAAE;QACrB,KAAK,EAAE,MAAM,CAAC;QACd,MAAM,EAAE,MAAM,CAAC;KAChB,CAAC;CACH;AAED,iBAAS,aAAa,CAAC,KAAK,EAAE,kBAAkB,eA0F/C;AAED,OAAO,EAAE,aAAa,EAAE,CAAC"}
+{"version":3,"file":"EditingWindow.d.ts","sourceRoot":"","sources":["../src/EditingWindow.tsx"],"names":[],"mappings":";AAWA,iBAAS,aAAa,gBAqFrB;AAED,OAAO,EAAE,aAAa,EAAE,CAAC"}

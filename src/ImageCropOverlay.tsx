@@ -10,21 +10,19 @@ import {
 } from "react-native";
 import _ from "lodash";
 import { useRecoilState } from "recoil";
-import { cropSizeState, imageBoundsState, accumulatedPanState } from "./Store";
+import {
+  cropSizeState,
+  imageBoundsState,
+  accumulatedPanState,
+  fixedCropAspectRatioState,
+  lockAspectRatioState,
+  minimumCropDimensionsState,
+} from "./Store";
 
 const horizontalSections = ["top", "middle", "bottom"];
 const verticalSections = ["left", "middle", "right"];
 
-interface ImageCropOverlayProps {
-  fixedAspectRatio: number;
-  lockAspectRatio: boolean;
-  minimumCropDimensions: {
-    width: number;
-    height: number;
-  };
-}
-
-function ImageCropOverlay(props: ImageCropOverlayProps) {
+function ImageCropOverlay() {
   //
   const [selectedFrameSection, setSelectedFrameSection] = React.useState(
     "middlemiddle"
@@ -43,7 +41,9 @@ function ImageCropOverlay(props: ImageCropOverlayProps) {
 
   const [panResponderEnabled, setPanResponderEnabled] = React.useState(false);
 
-  const { fixedAspectRatio, lockAspectRatio, minimumCropDimensions } = props;
+  const [fixedAspectRatio] = useRecoilState(fixedCropAspectRatioState);
+  const [lockAspectRatio] = useRecoilState(lockAspectRatioState);
+  const [minimumCropDimensions] = useRecoilState(minimumCropDimensionsState);
 
   const pan = React.useRef(
     new Animated.ValueXY({
@@ -82,15 +82,15 @@ function ImageCropOverlay(props: ImageCropOverlayProps) {
   React.useEffect(() => {
     let newSize = { width: 0, height: 0 };
     const { width, height } = imageBounds;
-    const imageAspectRatio = height / width;
+    const imageAspectRatio = width / height;
     // Then check if the cropping aspect ratio is smaller
     if (fixedAspectRatio < imageAspectRatio) {
       // If so calculate the size so its not greater than the image width
       newSize.width = width;
-      newSize.height = width * fixedAspectRatio;
+      newSize.height = width / fixedAspectRatio;
     } else {
       // else, calculate the size so its not greater than the image height
-      newSize.width = height / fixedAspectRatio;
+      newSize.width = height * fixedAspectRatio;
       newSize.height = height;
     }
     // Set the size of the crop overlay
@@ -139,24 +139,24 @@ function ImageCropOverlay(props: ImageCropOverlayProps) {
         if (dx < dy) {
           newWidth += dx;
           lockAspectRatio
-            ? (newHeight = newWidth * fixedAspectRatio)
+            ? (newHeight = newWidth / fixedAspectRatio)
             : (newHeight += dy);
         } else {
           newHeight += dy;
           lockAspectRatio
-            ? (newWidth = newHeight / fixedAspectRatio)
+            ? (newWidth = newHeight * fixedAspectRatio)
             : (newWidth += dx);
         }
       } else if (selectedFrameSection == "topright") {
         if (dx < dy) {
           newWidth += dx;
           lockAspectRatio
-            ? (newHeight = newWidth * fixedAspectRatio)
+            ? (newHeight = newWidth / fixedAspectRatio)
             : (newHeight -= dy);
         } else {
           newHeight -= dy;
           lockAspectRatio
-            ? (newWidth = newHeight / fixedAspectRatio)
+            ? (newWidth = newHeight * fixedAspectRatio)
             : (newWidth += dx);
         }
         pan.y.setValue(accumulatedPan.y + (cropSize.height - newHeight));
@@ -164,12 +164,12 @@ function ImageCropOverlay(props: ImageCropOverlayProps) {
         if (dx < dy) {
           newWidth -= dx;
           lockAspectRatio
-            ? (newHeight = newWidth * fixedAspectRatio)
+            ? (newHeight = newWidth / fixedAspectRatio)
             : (newHeight += dy);
         } else {
           newHeight += dy;
           lockAspectRatio
-            ? (newWidth = newHeight / fixedAspectRatio)
+            ? (newWidth = newHeight * fixedAspectRatio)
             : (newWidth -= dx);
         }
         pan.x.setValue(accumulatedPan.x + (cropSize.width - newWidth));
@@ -177,12 +177,12 @@ function ImageCropOverlay(props: ImageCropOverlayProps) {
         if (dx < dy) {
           newWidth -= dx;
           lockAspectRatio
-            ? (newHeight = newWidth * fixedAspectRatio)
+            ? (newHeight = newWidth / fixedAspectRatio)
             : (newHeight -= dy);
         } else {
           newHeight -= dy;
           lockAspectRatio
-            ? (newWidth = newHeight / fixedAspectRatio)
+            ? (newWidth = newHeight * fixedAspectRatio)
             : (newWidth -= dx);
         }
         pan.x.setValue(accumulatedPan.x + (cropSize.width - newWidth));
@@ -273,23 +273,23 @@ function ImageCropOverlay(props: ImageCropOverlayProps) {
     if (animatedHeight > maxHeight) {
       finalSize.height = maxHeight;
       finalSize.width = lockAspectRatio
-        ? finalSize.height / fixedAspectRatio
+        ? finalSize.height * fixedAspectRatio
         : finalSize.width;
     } else if (animatedHeight < minHeight) {
       finalSize.height = minHeight;
       finalSize.width = lockAspectRatio
-        ? finalSize.height / fixedAspectRatio
+        ? finalSize.height * fixedAspectRatio
         : finalSize.width;
     }
     if (animatedWidth > maxWidth) {
       finalSize.width = maxWidth;
       finalSize.height = lockAspectRatio
-        ? finalSize.width * fixedAspectRatio
+        ? finalSize.width / fixedAspectRatio
         : finalSize.height;
     } else if (animatedWidth < minWidth) {
       finalSize.width = minWidth;
       finalSize.height = lockAspectRatio
-        ? finalSize.width * fixedAspectRatio
+        ? finalSize.width / fixedAspectRatio
         : finalSize.height;
     }
     // Update together else one gets replaced with stale state

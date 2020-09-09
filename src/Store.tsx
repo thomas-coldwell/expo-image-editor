@@ -60,12 +60,12 @@ export const accumulatedPanState = atom<AccumulatedPan>({
   },
 });
 
-interface CropSize {
+interface ImageDimensions {
   width: number;
   height: number;
 }
 
-export const cropSizeState = atom<CropSize>({
+export const cropSizeState = atom<ImageDimensions>({
   key: "cropSizeState",
   default: {
     width: 0,
@@ -76,4 +76,22 @@ export const cropSizeState = atom<CropSize>({
 export const editingModeState = atom<"crop" | "operation-select">({
   key: "editingModeState",
   default: "operation-select",
+});
+
+export const fixedCropAspectRatioState = atom<number>({
+  key: "fixedCropAspectRatioState",
+  default: 1,
+});
+
+export const lockAspectRatioState = atom<boolean>({
+  key: "lockAspectRatioState",
+  default: false,
+});
+
+export const minimumCropDimensionsState = atom<ImageDimensions>({
+  key: "minimumCropDimensionsState",
+  default: {
+    width: 0,
+    height: 0,
+  },
 });

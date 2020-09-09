@@ -9,16 +9,8 @@ import {
   editingModeState,
 } from "./Store";
 
-interface EditingWindowProps {
-  fixedCropAspectRatio: number;
-  lockAspectRatio: boolean;
-  minimumCropDimensions: {
-    width: number;
-    height: number;
-  };
-}
-
-function EditingWindow(props: EditingWindowProps) {
+function EditingWindow() {
+  //
   const [state, setState] = React.useState({
     imageScaleFactor: null,
     imageLayout: {
@@ -28,11 +20,9 @@ function EditingWindow(props: EditingWindowProps) {
   });
 
   const [imageData] = useRecoilState(imageDataState);
-  const [imageBounds, setImageBounds] = useRecoilState(imageBoundsState);
-  const [imageScaleFactor, setImageScaleFactor] = useRecoilState(
-    imageScaleFactorState
-  );
-  const [editingMode, setEditingMode] = useRecoilState(editingModeState);
+  const [, setImageBounds] = useRecoilState(imageBoundsState);
+  const [, setImageScaleFactor] = useRecoilState(imageScaleFactorState);
+  const [editingMode] = useRecoilState(editingModeState);
 
   const getImageFrame = (layout: {
     width: number;
@@ -100,11 +90,7 @@ function EditingWindow(props: EditingWindowProps) {
         onLayout={({ nativeEvent }) => getImageFrame(nativeEvent.layout)}
       />
       {isCropping && state.imageLayout.height != null ? (
-        <ImageCropOverlay
-          fixedAspectRatio={props.fixedCropAspectRatio}
-          lockAspectRatio={props.lockAspectRatio}
-          minimumCropDimensions={props.minimumCropDimensions}
-        />
+        <ImageCropOverlay />
       ) : null}
     </View>
   );

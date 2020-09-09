@@ -19,11 +19,14 @@ interface AccumulatedPan {
     y: number;
 }
 export declare const accumulatedPanState: import("recoil").RecoilState<AccumulatedPan>;
-interface CropSize {
+interface ImageDimensions {
     width: number;
     height: number;
 }
-export declare const cropSizeState: import("recoil").RecoilState<CropSize>;
+export declare const cropSizeState: import("recoil").RecoilState<ImageDimensions>;
 export declare const editingModeState: import("recoil").RecoilState<"crop" | "operation-select">;
+export declare const fixedCropAspectRatioState: import("recoil").RecoilState<number>;
+export declare const lockAspectRatioState: import("recoil").RecoilState<boolean>;
+export declare const minimumCropDimensionsState: import("recoil").RecoilState<ImageDimensions>;
 export {};
 //# sourceMappingURL=Store.d.ts.map
