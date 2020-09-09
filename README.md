@@ -31,76 +31,31 @@ The package exports a single component `ImageEditor` that can be placed anywhere
 import { ImageEditor } from "expo-image-editor";
 
 function App() {
-  const [imageData, setImageData] = useState({
-    uri: undefined,
-    width: 0,
-    height: 0,
-  });
+  const [imageUri, setImageUri] = useState(undefined);
 
   const [editorVisible, setEditorVisible] = useState(false);
 
   const selectPhoto = async () => {
     // Get the permission to access the camera roll
-    await ImagePicker.requestCameraRollPermissionsAsync().then(
-      async (response) => {
-        // If they said yes then launch the image picker
-        if (response.granted) {
-          await ImagePicker.launchImageLibraryAsync().then(
-            async (pickerResult) => {
-              // Check they didn't cancel the picking
-              if (!pickerResult.cancelled) {
-                // Platform check
-                if (Platform.OS == "web") {
-                  var img = document.createElement("img");
-                  img.onload = () => {
-                    launchEditor({
-                      uri: pickerResult.uri,
-                      width: img.width,
-                      height: img.height,
-                    });
-                  };
-                  img.src = pickerResult.uri;
-                } else {
-                  Image.getSize(
-                    pickerResult.uri,
-                    (width: number, height: number) => {
-                      // Image.getSize gets the right ratio, but incorrect magnitude
-                      // whereas expo image picker does vice versa 😅...this fixes it.
-                      launchEditor({
-                        uri: pickerResult.uri,
-                        width:
-                          width > height
-                            ? pickerResult.width
-                            : pickerResult.height,
-                        height:
-                          width > height
-                            ? pickerResult.height
-                            : pickerResult.width,
-                      });
-                    },
-                    (error: any) => console.log(error)
-                  );
-                }
-              }
-            }
-          );
-        } else {
-          // If not then alert the user they need to enable it
-          Alert.alert(
-            "Please enable camera roll permissions for this app in your settings."
-          );
-        }
+    const response = await ImagePicker.requestCameraRollPermissionsAsync();
+    // If they said yes then launch the image picker
+    if (response.granted) {
+      const pickerResult = await ImagePicker.launchImageLibraryAsync();
+      // Check they didn't cancel the picking
+      if (!pickerResult.cancelled) {
+        launchEditor(pickerResult.uri);
       }
-    );
+    } else {
+      // If not then alert the user they need to enable it
+      Alert.alert(
+        "Please enable camera roll permissions for this app in your settings."
+      );
+    }
   };
 
-  const launchEditor = ({ uri, width, height }: any) => {
+  const launchEditor = (uri: string) => {
     // Then set the image uri
-    setImageData({
-      uri: uri,
-      width: width,
-      height: height,
-    });
+    setImageUri(uri);
     // And set the image editor to be visible
     setEditorVisible(true);
   };
@@ -115,7 +70,7 @@ function App() {
       <ImageEditor
         visible={editorVisible}
         onCloseEditor={() => setEditorVisible(false)}
-        imageData={imageData}
+        imageUri={imageUri}
         fixedCropAspectRatio={16 / 9}
         lockAspectRatio={aspectLock}
         minimumCropDimensions={{
@@ -138,7 +93,7 @@ function App() {
 | --------------------- | -------- | ----------------------------------------------------------------------------------------------------- |
 | visible               | boolean  | Whether the editor should be visible or not.                                                          |
 | onCloseEditor         | function | Callback when the editor is dimissed - use this to set hide the editor.                               |
-| imageData             | object   | An object of `{uri, width, height}` specifying the image to edit.                                     |
+| imageUri              | string   | The uri of the image to be edited                                                                     |
 | fixedCropAspectRatio  | number   | The starting aspect ratio of the cropping window.                                                     |
 | lockAspectRatio       | boolean  | Whether the cropping window should maintain this aspect ratio or not.                                 |
 | minimumCropDimensions | object   | An object of `{width, height}` specifying the minimum dimensions of the crop window.                  |

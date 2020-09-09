@@ -6,6 +6,7 @@ import {
   StatusBar,
   Alert,
   Platform,
+  Image,
 } from "react-native";
 import { ControlBar } from "./ControlBar";
 import { EditingWindow } from "./EditingWindow";
@@ -26,6 +27,7 @@ import {
   lockAspectRatioState,
   minimumCropDimensionsState,
 } from "./Store";
+import { Asset } from "expo-asset";
 const noScroll = require("no-scroll");
 const PlatformModal = Platform.OS == "web" ? Modal : RNModal;
 
@@ -39,11 +41,7 @@ export type Mode = "full" | "crop-only" | "rotate-only";
 export interface ImageEditorProps {
   visible: boolean;
   onCloseEditor: () => void;
-  imageData: {
-    uri: string | undefined;
-    width: number;
-    height: number;
-  };
+  imageUri: string | undefined;
   fixedCropAspectRatio: number;
   minimumCropDimensions: {
     width: number;
@@ -54,55 +52,7 @@ export interface ImageEditorProps {
   mode: Mode;
 }
 
-interface ImageEditorStore {
-  imageScaleFactor: number;
-  imageBounds: {
-    x: number;
-    y: number;
-    width: number;
-    height: number;
-  };
-  accumulatedPan: {
-    x: number;
-    y: number;
-  };
-  cropSize: {
-    width: number;
-    height: number;
-  };
-  ready: boolean;
-  processing: boolean;
-  editingMode: "operation-select" | "crop";
-  imageData: {
-    uri: string;
-    height: number;
-    width: number;
-  };
-}
-
 function ImageEditorCore(props: ImageEditorProps) {
-  const initialState: ImageEditorStore = {
-    imageScaleFactor: 1,
-    imageBounds: {
-      x: 0,
-      y: 0,
-      width: 0,
-      height: 0,
-    },
-    accumulatedPan: {
-      x: 0.0,
-      y: 0.0,
-    },
-    cropSize: {
-      width: 0,
-      height: 0,
-    },
-    ready: false,
-    processing: false,
-    editingMode: props.mode == "crop-only" ? "crop" : "operation-select",
-    imageData: props.imageData,
-  };
-
   const [imageBounds, setImageBounds] = useRecoilState(imageBoundsState);
   const [imageData, setImageData] = useRecoilState(imageDataState);
   const [accumulatedPan, setAccumulatedPan] = useRecoilState(
@@ -121,8 +71,45 @@ function ImageEditorCore(props: ImageEditorProps) {
 
   // Initialise the image data when it is set through the props
   React.useEffect(() => {
-    setImageData(props.imageData);
-  }, [props.imageData]);
+    if (props.imageUri) {
+      const enableEditor = () => {
+        setReady(true);
+        // Set no-scroll to on
+        noScroll.on();
+      };
+      // Platform check
+      if (Platform.OS == "web") {
+        var img = document.createElement("img");
+        img.onload = () => {
+          setImageData({
+            uri: props.imageUri,
+            height: img.height,
+            width: img.width,
+          });
+          enableEditor();
+        };
+        img.src = props.imageUri;
+      } else {
+        Image.getSize(
+          props.imageUri,
+          (width: number, height: number) => {
+            // Image.getSize gets the right ratio, but incorrect magnitude
+            // whereas expo image picker does vice versa 😅...this fixes it.
+            const { width: pickerWidth, height: pickerHeight } = Asset.fromURI(
+              props.imageUri
+            );
+            setImageData({
+              uri: props.imageUri,
+              width: width > height ? pickerWidth : pickerHeight,
+              height: width > height ? pickerHeight : pickerWidth,
+            });
+            enableEditor();
+          },
+          (error: any) => console.log(error)
+        );
+      }
+    }
+  }, [props.imageUri]);
 
   // Initialise / update the editing mode set through props
   React.useEffect(() => {
@@ -233,10 +220,6 @@ function ImageEditorCore(props: ImageEditorProps) {
     // when this state has been initialised
     if (!props.visible) {
       setReady(false);
-    } else {
-      setReady(true);
-      // Set no-scroll to on
-      noScroll.on();
     }
   }, [props.visible]);
 

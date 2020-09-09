@@ -3,11 +3,7 @@ export declare type Mode = "full" | "crop-only" | "rotate-only";
 export interface ImageEditorProps {
     visible: boolean;
     onCloseEditor: () => void;
-    imageData: {
-        uri: string | undefined;
-        width: number;
-        height: number;
-    };
+    imageUri: string | undefined;
     fixedCropAspectRatio: number;
     minimumCropDimensions: {
         width: number;
