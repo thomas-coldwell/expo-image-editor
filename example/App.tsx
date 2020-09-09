@@ -26,26 +26,20 @@ export default function App() {
 
   const selectPhoto = async () => {
     // Get the permission to access the camera roll
-    await ImagePicker.requestCameraRollPermissionsAsync().then(
-      async (response) => {
-        // If they said yes then launch the image picker
-        if (response.granted) {
-          await ImagePicker.launchImageLibraryAsync().then(
-            async (pickerResult) => {
-              // Check they didn't cancel the picking
-              if (!pickerResult.cancelled) {
-                launchEditor(pickerResult.uri);
-              }
-            }
-          );
-        } else {
-          // If not then alert the user they need to enable it
-          Alert.alert(
-            "Please enable camera roll permissions for this app in your settings."
-          );
-        }
+    const response = await ImagePicker.requestCameraRollPermissionsAsync();
+    // If they said yes then launch the image picker
+    if (response.granted) {
+      const pickerResult = await ImagePicker.launchImageLibraryAsync();
+      // Check they didn't cancel the picking
+      if (!pickerResult.cancelled) {
+        launchEditor(pickerResult.uri);
       }
-    );
+    } else {
+      // If not then alert the user they need to enable it
+      Alert.alert(
+        "Please enable camera roll permissions for this app in your settings."
+      );
+    }
   };
 
   const launchEditor = (uri: any) => {
