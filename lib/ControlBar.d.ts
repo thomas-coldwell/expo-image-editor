@@ -1,11 +1,8 @@
 /// <reference types="react" />
 import { Mode } from "./ImageEditor";
-declare type EditingMode = "operation-select" | "crop";
 interface ControlBarProps {
     onPressBack: () => void;
     onPerformCrop: () => void;
-    editingMode: EditingMode;
-    onChangeMode: (mode: EditingMode) => void;
     onRotate: (angle: number) => void;
     onFinishEditing: () => void;
     mode: Mode;

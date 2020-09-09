@@ -17,6 +17,5 @@ export interface ImageEditorProps {
     lockAspectRatio: boolean;
     mode: Mode;
 }
-declare function ImageEditor(props: ImageEditorProps): JSX.Element;
-export { ImageEditor };
+export declare function ImageEditor(props: ImageEditorProps): JSX.Element;
 //# sourceMappingURL=ImageEditor.d.ts.map
