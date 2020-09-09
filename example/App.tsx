@@ -12,11 +12,8 @@ import * as ImagePicker from "expo-image-picker";
 import { ImageEditor, Mode } from "./lib/ImageEditor";
 
 export default function App() {
-  const [imageData, setImageData] = React.useState({
-    uri: undefined,
-    width: 0,
-    height: 0,
-  });
+  //
+  const [imageUri, setImageUri] = React.useState<undefined | string>(undefined);
   const [editorVisible, setEditorVisible] = React.useState(false);
 
   const [croppedUri, setCroppedUri] = React.useState<string | undefined>(
@@ -37,38 +34,7 @@ export default function App() {
             async (pickerResult) => {
               // Check they didn't cancel the picking
               if (!pickerResult.cancelled) {
-                // Platform check
-                if (Platform.OS == "web") {
-                  var img = document.createElement("img");
-                  img.onload = () => {
-                    launchEditor({
-                      uri: pickerResult.uri,
-                      width: img.width,
-                      height: img.height,
-                    });
-                  };
-                  img.src = pickerResult.uri;
-                } else {
-                  Image.getSize(
-                    pickerResult.uri,
-                    (width: number, height: number) => {
-                      // Image.getSize gets the right ratio, but incorrect magnitude
-                      // whereas expo image picker does vice versa 😅...this fixes it.
-                      launchEditor({
-                        uri: pickerResult.uri,
-                        width:
-                          width > height
-                            ? pickerResult.width
-                            : pickerResult.height,
-                        height:
-                          width > height
-                            ? pickerResult.height
-                            : pickerResult.width,
-                      });
-                    },
-                    (error: any) => console.log(error)
-                  );
-                }
+                launchEditor(pickerResult.uri);
               }
             }
           );
@@ -82,13 +48,9 @@ export default function App() {
     );
   };
 
-  const launchEditor = ({ uri, width, height }: any) => {
+  const launchEditor = (uri: any) => {
     // Then set the image uri
-    setImageData({
-      uri: uri,
-      width: width,
-      height: height,
-    });
+    setImageUri(uri);
     // And set the image editor to be visible
     setEditorVisible(true);
   };
@@ -106,7 +68,7 @@ export default function App() {
 
   return (
     <View style={styles.container}>
-      <Image style={styles.image} source={{ uri: imageData.uri }} />
+      <Image style={styles.image} source={{ uri: imageUri }} />
       <Image
         style={[styles.image, { backgroundColor: "#333" }]}
         source={{ uri: croppedUri }}
@@ -122,8 +84,8 @@ export default function App() {
       <ImageEditor
         visible={editorVisible}
         onCloseEditor={() => setEditorVisible(false)}
-        imageData={imageData}
-        fixedCropAspectRatio={16 / 9}
+        imageUri={imageUri}
+        fixedCropAspectRatio={1.6}
         lockAspectRatio={aspectLock}
         minimumCropDimensions={{
           width: 100,
