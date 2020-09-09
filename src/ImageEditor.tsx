@@ -100,6 +100,16 @@ function ImageEditorCore(props: ImageEditorProps) {
     imageData: props.imageData,
   };
 
+  // Initialise the image data when it is set through the props
+  React.useEffect(() => {
+    setImageData(props.imageData);
+  }, [props.imageData]);
+
+  // Initialise / update the editing mode set through props
+  React.useEffect(() => {
+    setEditingMode(props.mode === "crop-only" ? "crop" : "operation-select");
+  }, [props.mode]);
+
   const [imageBounds, setImageBounds] = useRecoilState(imageBoundsState);
   const [imageData, setImageData] = useRecoilState(imageDataState);
   const [accumulatedPan, setAccumulatedPan] = useRecoilState(
