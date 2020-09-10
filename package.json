@@ -37,6 +37,7 @@
     "typescript": "^3.9.3"
   },
   "dependencies": {
-    "@types/lodash": "^4.14.157"
+    "@types/lodash": "^4.14.157",
+    "react-native-gesture-handler": "^1.8.0"
   }
 }

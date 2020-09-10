@@ -71,44 +71,47 @@ function ImageEditorCore(props: ImageEditorProps) {
 
   // Initialise the image data when it is set through the props
   React.useEffect(() => {
-    if (props.imageUri) {
-      const enableEditor = () => {
-        setReady(true);
-        // Set no-scroll to on
-        noScroll.on();
-      };
-      // Platform check
-      if (Platform.OS == "web") {
-        var img = document.createElement("img");
-        img.onload = () => {
-          setImageData({
-            uri: props.imageUri,
-            height: img.height,
-            width: img.width,
-          });
-          enableEditor();
+    (async () => {
+      if (props.imageUri) {
+        const enableEditor = () => {
+          setReady(true);
+          // Set no-scroll to on
+          noScroll.on();
         };
-        img.src = props.imageUri;
-      } else {
-        Image.getSize(
-          props.imageUri,
-          (width: number, height: number) => {
-            // Image.getSize gets the right ratio, but incorrect magnitude
-            // whereas expo image picker does vice versa 😅...this fixes it.
-            const { width: pickerWidth, height: pickerHeight } = Asset.fromURI(
-              props.imageUri
-            );
+        // Platform check
+        if (Platform.OS == "web") {
+          var img = document.createElement("img");
+          img.onload = () => {
             setImageData({
               uri: props.imageUri,
-              width: width > height ? pickerWidth : pickerHeight,
-              height: width > height ? pickerHeight : pickerWidth,
+              height: img.height,
+              width: img.width,
             });
             enableEditor();
-          },
-          (error: any) => console.log(error)
-        );
+          };
+          img.src = props.imageUri;
+        } else {
+          const {
+            width: pickerWidth,
+            height: pickerHeight,
+          } = await ImageManipulator.manipulateAsync(props.imageUri, []);
+          Image.getSize(
+            props.imageUri,
+            (width: number, height: number) => {
+              // Image.getSize gets the right ratio, but incorrect magnitude
+              // whereas expo image picker does vice versa 😅...this fixes it.
+              setImageData({
+                uri: props.imageUri,
+                width: width > height ? pickerWidth : pickerHeight,
+                height: width > height ? pickerHeight : pickerWidth,
+              });
+              enableEditor();
+            },
+            (error: any) => console.log(error)
+          );
+        }
       }
-    }
+    })();
   }, [props.imageUri]);
 
   // Initialise / update the editing mode set through props
