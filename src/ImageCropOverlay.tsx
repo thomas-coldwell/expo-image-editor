@@ -18,6 +18,7 @@ import {
   lockAspectRatioState,
   minimumCropDimensionsState,
 } from "./Store";
+import { PanGestureHandler } from "react-native-gesture-handler";
 
 const horizontalSections = ["top", "middle", "bottom"];
 const verticalSections = ["left", "middle", "right"];
@@ -39,41 +40,21 @@ function ImageCropOverlay() {
     height: new Animated.Value(cropSize.height),
   });
 
-  const [panResponderEnabled, setPanResponderEnabled] = React.useState(false);
+  const [panResponderEnabled, setPanResponderEnabled] = React.useState(true);
 
   const [fixedAspectRatio] = useRecoilState(fixedCropAspectRatioState);
   const [lockAspectRatio] = useRecoilState(lockAspectRatioState);
   const [minimumCropDimensions] = useRecoilState(minimumCropDimensionsState);
 
-  const pan = React.useRef(
-    new Animated.ValueXY({
-      x: imageBounds.x,
-      y: imageBounds.y,
-    })
-  ).current;
-
-  const panInstance = PanResponder.create({
-    onMoveShouldSetPanResponder: () => true,
-    onPanResponderGrant: (e, gestureState) =>
-      onOverlayMoveGrant(e, gestureState),
-    onPanResponderMove: (e, gestureState) => onOverlayMove(e, gestureState),
-    onPanResponderRelease: (e, gestureState) => onOverlayRelease(gestureState),
-    onPanResponderTerminationRequest: () => false,
-  });
-
-  const [panResponder, setPanResponder] = React.useState(panInstance);
-
-  React.useEffect(() => {
-    // https://stackoverflow.com/questions/61014169/react-natives-panresponder-has-stale-value-from-usestate
-    setPanResponder(panInstance);
-  }, [cropSize, accumulatedPan, selectedFrameSection]);
+  const panX = React.useRef(new Animated.Value(imageBounds.x));
+  const panY = React.useRef(new Animated.Value(imageBounds.y));
 
   React.useEffect(() => {
     // Reset the accumulated pan
-    checkCropBounds({
-      dx: pan.x._value - accumulatedPan.x,
-      dy: pan.y._value - accumulatedPan.y,
-    });
+    // checkCropBounds({
+    //   dx: panX.current._value - accumulatedPan.x,
+    //   dy: panY.current._value - accumulatedPan.y,
+    // });
     // When the crop size updates make sure the animated value does too!
     animatedCropSize.height.setValue(cropSize.height);
     animatedCropSize.width.setValue(cropSize.width);
@@ -107,110 +88,98 @@ function ImageCropOverlay() {
     );
   };
 
-  const onOverlayMoveGrant = (
-    e: any,
-    gestureState: PanResponderGestureState
-  ) => {
+  const onOverlayMove = (e) => {
     // TODO - Check if the action is to move or resize based on the
     // selected frame section
     if (isMovingSection()) {
-      pan.setOffset({
-        x: accumulatedPan.x,
-        y: accumulatedPan.y,
-      });
+      Animated.event([
+        {
+          nativeEvent: {
+            translationX: panX.current,
+            translationY: panY.current,
+          },
+        },
+      ])(e);
     } else {
-      // Do nothing
+      // // Else its a scaling operation
+      // const { dx, dy } = gestureState;
+      // // Get the new target height / width
+      // let newWidth = cropSize.width;
+      // let newHeight = cropSize.height;
+      // // Check what resizing / translation needs to be performed based on which section was pressed
+      // if (selectedFrameSection == "bottomright") {
+      //   if (dx < dy) {
+      //     newWidth += dx;
+      //     lockAspectRatio
+      //       ? (newHeight = newWidth / fixedAspectRatio)
+      //       : (newHeight += dy);
+      //   } else {
+      //     newHeight += dy;
+      //     lockAspectRatio
+      //       ? (newWidth = newHeight * fixedAspectRatio)
+      //       : (newWidth += dx);
+      //   }
+      // } else if (selectedFrameSection == "topright") {
+      //   if (dx < dy) {
+      //     newWidth += dx;
+      //     lockAspectRatio
+      //       ? (newHeight = newWidth / fixedAspectRatio)
+      //       : (newHeight -= dy);
+      //   } else {
+      //     newHeight -= dy;
+      //     lockAspectRatio
+      //       ? (newWidth = newHeight * fixedAspectRatio)
+      //       : (newWidth += dx);
+      //   }
+      //   pan.y.setValue(accumulatedPan.y + (cropSize.height - newHeight));
+      // } else if (selectedFrameSection == "bottomleft") {
+      //   if (dx < dy) {
+      //     newWidth -= dx;
+      //     lockAspectRatio
+      //       ? (newHeight = newWidth / fixedAspectRatio)
+      //       : (newHeight += dy);
+      //   } else {
+      //     newHeight += dy;
+      //     lockAspectRatio
+      //       ? (newWidth = newHeight * fixedAspectRatio)
+      //       : (newWidth -= dx);
+      //   }
+      //   pan.x.setValue(accumulatedPan.x + (cropSize.width - newWidth));
+      // } else if (selectedFrameSection == "topleft") {
+      //   if (dx < dy) {
+      //     newWidth -= dx;
+      //     lockAspectRatio
+      //       ? (newHeight = newWidth / fixedAspectRatio)
+      //       : (newHeight -= dy);
+      //   } else {
+      //     newHeight -= dy;
+      //     lockAspectRatio
+      //       ? (newWidth = newHeight * fixedAspectRatio)
+      //       : (newWidth -= dx);
+      //   }
+      //   pan.x.setValue(accumulatedPan.x + (cropSize.width - newWidth));
+      //   pan.y.setValue(accumulatedPan.y + (cropSize.height - newHeight));
+      // }
+      // // Finally set the new height and width ready for checking if valid in onRelease
+      // animatedCropSize.width.setValue(newWidth);
+      // animatedCropSize.height.setValue(newHeight);
     }
   };
 
-  const onOverlayMove = (e: any, gestureState: PanResponderGestureState) => {
-    // TODO - Check if the action is to move or resize based on the
-    // selected frame section
-    if (isMovingSection()) {
-      Animated.event([null, { dx: pan.x, dy: pan.y }])(e, gestureState);
-    } else {
-      // Else its a scaling operation
-      const { dx, dy } = gestureState;
-      // Get the new target height / width
-      let newWidth = cropSize.width;
-      let newHeight = cropSize.height;
-      // Check what resizing / translation needs to be performed based on which section was pressed
-      if (selectedFrameSection == "bottomright") {
-        if (dx < dy) {
-          newWidth += dx;
-          lockAspectRatio
-            ? (newHeight = newWidth / fixedAspectRatio)
-            : (newHeight += dy);
-        } else {
-          newHeight += dy;
-          lockAspectRatio
-            ? (newWidth = newHeight * fixedAspectRatio)
-            : (newWidth += dx);
-        }
-      } else if (selectedFrameSection == "topright") {
-        if (dx < dy) {
-          newWidth += dx;
-          lockAspectRatio
-            ? (newHeight = newWidth / fixedAspectRatio)
-            : (newHeight -= dy);
-        } else {
-          newHeight -= dy;
-          lockAspectRatio
-            ? (newWidth = newHeight * fixedAspectRatio)
-            : (newWidth += dx);
-        }
-        pan.y.setValue(accumulatedPan.y + (cropSize.height - newHeight));
-      } else if (selectedFrameSection == "bottomleft") {
-        if (dx < dy) {
-          newWidth -= dx;
-          lockAspectRatio
-            ? (newHeight = newWidth / fixedAspectRatio)
-            : (newHeight += dy);
-        } else {
-          newHeight += dy;
-          lockAspectRatio
-            ? (newWidth = newHeight * fixedAspectRatio)
-            : (newWidth -= dx);
-        }
-        pan.x.setValue(accumulatedPan.x + (cropSize.width - newWidth));
-      } else if (selectedFrameSection == "topleft") {
-        if (dx < dy) {
-          newWidth -= dx;
-          lockAspectRatio
-            ? (newHeight = newWidth / fixedAspectRatio)
-            : (newHeight -= dy);
-        } else {
-          newHeight -= dy;
-          lockAspectRatio
-            ? (newWidth = newHeight * fixedAspectRatio)
-            : (newWidth -= dx);
-        }
-        pan.x.setValue(accumulatedPan.x + (cropSize.width - newWidth));
-        pan.y.setValue(accumulatedPan.y + (cropSize.height - newHeight));
-      }
-      // Finally set the new height and width ready for checking if valid in onRelease
-      animatedCropSize.width.setValue(newWidth);
-      animatedCropSize.height.setValue(newHeight);
-    }
-  };
-
-  const onOverlayRelease = (gestureState: PanResponderGestureState) => {
-    // TODO - Check if the action is to move or resize based on the
-    // selected frame section
-
-    if (isMovingSection()) {
-      // Flatten the offset to reduce erratic behaviour
-      pan.flattenOffset();
-      // Ensure the cropping overlay has not been moved outside of the allowed bounds
-      checkCropBounds(gestureState);
-    } else {
-      // Else its a scaling op
-      checkResizeBounds(gestureState);
-      //
-    }
-    // Disable the pan responder so the section tile can be pressed
-    setPanResponderEnabled(false);
-  };
+  // const onOverlayRelease = (gestureState: PanResponderGestureState) => {
+  //   // TODO - Check if the action is to move or resize based on the
+  //   // selected frame section
+  //   if (isMovingSection()) {
+  //     // Ensure the cropping overlay has not been moved outside of the allowed bounds
+  //     checkCropBounds(gestureState);
+  //   } else {
+  //     // Else its a scaling op
+  //     checkResizeBounds(gestureState);
+  //     //
+  //   }
+  //   // Disable the pan responder so the section tile can be pressed
+  //   setPanResponderEnabled(false);
+  // };
 
   const checkCropBounds = ({
     dx,
@@ -222,14 +191,14 @@ function ImageCropOverlay() {
     if (accDx <= imageBounds.x) {
       // Then set it to be zero and set the pan to zero too
       accDx = imageBounds.x;
-      pan.x.setValue(imageBounds.x);
+      panX.current.setValue(imageBounds.x);
     }
     // Is the new x pos plus crop width going to exceed the right hand bound
     else if (accDx + cropSize.width > imageBounds.width + imageBounds.x) {
       // Then set the x pos so the crop frame touches the right hand edge
       let limitedXPos = imageBounds.x + imageBounds.width - cropSize.width;
       accDx = limitedXPos;
-      pan.x.setValue(limitedXPos);
+      panX.current.setValue(limitedXPos);
     } else {
       // It's somewhere in between - no formatting required
     }
@@ -240,14 +209,14 @@ function ImageCropOverlay() {
     if (accDy <= imageBounds.y) {
       // Then set it to be zero and set the pan to zero too
       accDy = imageBounds.y;
-      pan.y.setValue(imageBounds.y);
+      panY.current.setValue(imageBounds.y);
     }
     // Is the new y pos plus crop height going to exceed the bottom bound
     else if (accDy + cropSize.height > imageBounds.height + imageBounds.y) {
       // Then set the y pos so the crop frame touches the bottom edge
       let limitedYPos = imageBounds.y + imageBounds.height - cropSize.height;
       accDy = limitedYPos;
-      pan.y.setValue(limitedYPos);
+      panY.current.setValue(limitedYPos);
     } else {
       // It's somewhere in between - no formatting required
     }
@@ -294,23 +263,25 @@ function ImageCropOverlay() {
     }
     // Update together else one gets replaced with stale state
     setAccumluatedPan({
-      x: pan.x._value,
-      y: pan.y._value,
+      x: panX.current._value,
+      y: panY.current._value,
     });
     setCropSize(finalSize);
   };
 
-  const panProps = panResponderEnabled ? { ...panResponder.panHandlers } : {};
-
   return (
-    <View style={styles.container} {...panProps}>
-      {/* https://github.com/facebook/react-native/issues/14295#issuecomment-374012339 */}
-      <TouchableWithoutFeedback onPress={() => {}} disabled>
+    <View style={styles.container}>
+      <PanGestureHandler onGestureEvent={onOverlayMove}>
         <Animated.View
           style={[
             styles.overlay,
             animatedCropSize,
-            { transform: [{ translateX: pan.x }, { translateY: pan.y }] },
+            {
+              transform: [
+                { translateX: panX.current },
+                { translateY: panY.current },
+              ],
+            },
           ]}
         >
           {
@@ -362,7 +333,7 @@ function ImageCropOverlay() {
             })
           }
         </Animated.View>
-      </TouchableWithoutFeedback>
+      </PanGestureHandler>
     </View>
   );
 }
@@ -374,6 +345,7 @@ const styles = StyleSheet.create({
     height: "100%",
     width: "100%",
     position: "absolute",
+    backgroundColor: "#ffffff55",
   },
   overlay: {
     height: 40,
