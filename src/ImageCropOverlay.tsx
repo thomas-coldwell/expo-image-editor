@@ -28,32 +28,41 @@ const horizontalSections = ["top", "middle", "bottom"];
 const verticalSections = ["left", "middle", "right"];
 
 function ImageCropOverlay() {
-  //
+  // Record which section of the fram window has been pressed
+  // this determines whether it is a translation or scaling gesture
   const [selectedFrameSection, setSelectedFrameSection] = React.useState(
     "middlemiddle"
   );
 
+  // Shared state and bits passed through recoil to avoid prop drilling
   const [cropSize, setCropSize] = useRecoilState(cropSizeState);
   const [imageBounds] = useRecoilState(imageBoundsState);
   const [accumulatedPan, setAccumluatedPan] = useRecoilState(
     accumulatedPanState
   );
+  const [fixedAspectRatio] = useRecoilState(fixedCropAspectRatioState);
+  const [lockAspectRatio] = useRecoilState(lockAspectRatioState);
+  const [minimumCropDimensions] = useRecoilState(minimumCropDimensionsState);
 
   const [animatedCropSize] = React.useState({
     width: new Animated.Value(cropSize.width),
     height: new Animated.Value(cropSize.height),
   });
 
+  // State to enable and disable the pan handler so the section buttons
+  // can register being pressed first and THEN enable the pan handler
+  // to start tracking gestures once we know what type of gesture it is
   const [panResponderEnabled, setPanResponderEnabled] = React.useState(false);
 
-  const [fixedAspectRatio] = useRecoilState(fixedCropAspectRatioState);
-  const [lockAspectRatio] = useRecoilState(lockAspectRatioState);
-  const [minimumCropDimensions] = useRecoilState(minimumCropDimensionsState);
-
+  // pan X and Y values to track the current delta of the pan
+  // in both directions - this should be zeroed out on release
+  // and the delta added onto the accumulatedPan state
   const panX = React.useRef(new Animated.Value(imageBounds.x));
   const panY = React.useRef(new Animated.Value(imageBounds.y));
 
   React.useEffect(() => {
+    // Move the pan to the origin and check the bounds so it clicks to
+    // the corner of the image
     checkCropBounds({
       translationX: 0,
       translationY: 0,
@@ -64,6 +73,7 @@ function ImageCropOverlay() {
   }, [cropSize]);
 
   React.useEffect(() => {
+    // Update the size of the crop window based on the new image bounds
     let newSize = { width: 0, height: 0 };
     const { width, height } = imageBounds;
     const imageAspectRatio = width / height;
@@ -81,6 +91,8 @@ function ImageCropOverlay() {
     setCropSize(newSize);
   }, [imageBounds]);
 
+  // Function that sets which sections allow for translation when
+  // pressed
   const isMovingSection = () => {
     return (
       selectedFrameSection == "topmiddle" ||
@@ -92,10 +104,10 @@ function ImageCropOverlay() {
   };
 
   const onOverlayMove = ({ nativeEvent }: PanGestureHandlerGestureEvent) => {
-    // TODO - Check if the action is to move or resize based on the
-    // selected frame section
-    console.log(nativeEvent);
+    // Check if the section pressed is one to translate the crop window or not
     if (isMovingSection()) {
+      // If it is then use an animated event to directly pass the tranlation
+      // to the pan refs
       Animated.event([
         {
           translationX: panX.current,
@@ -162,7 +174,8 @@ function ImageCropOverlay() {
         panX.current.setValue(cropSize.width - newWidth);
         panY.current.setValue(cropSize.height - newHeight);
       }
-      // Finally set the new height and width ready for checking if valid in onRelease
+      // Finally update the animated width to the values the crop
+      // window has been resized to
       animatedCropSize.width.setValue(newWidth);
       animatedCropSize.height.setValue(newHeight);
     }
@@ -171,23 +184,23 @@ function ImageCropOverlay() {
   const onOverlayRelease = (
     nativeEvent: PanGestureHandlerGestureEvent["nativeEvent"]
   ) => {
-    // TODO - Check if the action is to move or resize based on the
-    // selected frame section
+    // Check if the section pressed is one to translate the crop window or not
     if (isMovingSection()) {
       // Ensure the cropping overlay has not been moved outside of the allowed bounds
-      //checkCropBounds(nativeEvent);
+      checkCropBounds(nativeEvent);
     } else {
-      // Else its a scaling op
+      // Else its a scaling op - check that the resizing didnt take it out of bounds
       checkResizeBounds(nativeEvent);
-      //
     }
-    // Disable the pan responder so the section tile can be pressed
+    // Disable the pan responder so the section tiles can register being pressed again
     setPanResponderEnabled(false);
   };
 
   const onHandlerStateChange = ({
     nativeEvent,
   }: PanGestureHandlerGestureEvent) => {
+    // Handle any state changes from the pan gesture handler
+    // only looking at when the touch ends atm
     if (nativeEvent.state === State.END) {
       onOverlayRelease(nativeEvent);
     }
@@ -205,36 +218,33 @@ function ImageCropOverlay() {
     if (accDx <= imageBounds.x) {
       // Then set it to be zero and set the pan to zero too
       accDx = imageBounds.x;
-      panX.current.setValue(0);
     }
     // Is the new x pos plus crop width going to exceed the right hand bound
     else if (accDx + cropSize.width > imageBounds.width + imageBounds.x) {
       // Then set the x pos so the crop frame touches the right hand edge
       let limitedXPos = imageBounds.x + imageBounds.width - cropSize.width;
       accDx = limitedXPos;
-      panX.current.setValue(0);
     } else {
       // It's somewhere in between - no formatting required
     }
-
     // Check if the pan in the y direction exceeds the bounds
     let accDy = accumulatedPan.y + translationY;
     // Is the new y pos less the top edge?
     if (accDy <= imageBounds.y) {
       // Then set it to be zero and set the pan to zero too
       accDy = imageBounds.y;
-      panY.current.setValue(0);
     }
     // Is the new y pos plus crop height going to exceed the bottom bound
     else if (accDy + cropSize.height > imageBounds.height + imageBounds.y) {
       // Then set the y pos so the crop frame touches the bottom edge
       let limitedYPos = imageBounds.y + imageBounds.height - cropSize.height;
       accDy = limitedYPos;
-      panY.current.setValue(0);
     } else {
       // It's somewhere in between - no formatting required
     }
-    // Record the accumulated pan
+    // Record the accumulated pan and reset the pan refs to zero
+    panX.current.setValue(0);
+    panY.current.setValue(0);
     setAccumluatedPan({ x: accDx, y: accDy });
   };
 
@@ -244,6 +254,8 @@ function ImageCropOverlay() {
   }:
     | PanGestureHandlerGestureEvent["nativeEvent"]
     | { translationX: number; translationY: number }) => {
+    // Check we haven't gone out of bounds when resizing - allow it to be
+    // resized up to the appropriate bounds if so
     const { width: maxWidth, height: maxHeight } = imageBounds;
     const { width: minWidth, height: minHeight } = minimumCropDimensions;
     const animatedWidth = animatedCropSize.width._value;
@@ -252,7 +264,6 @@ function ImageCropOverlay() {
       width: animatedWidth,
       height: animatedHeight,
     };
-
     // Ensure the width / height does not exceed the boundaries -
     // resize to the max it can be if so
     if (animatedHeight > maxHeight) {
@@ -277,13 +288,15 @@ function ImageCropOverlay() {
         ? finalSize.width / fixedAspectRatio
         : finalSize.height;
     }
-    // Update together else one gets replaced with stale state
+    // Update the accumulated pan with the delta from the pan refs
     setAccumluatedPan({
       x: accumulatedPan.x + panX.current._value,
       y: accumulatedPan.y + panY.current._value,
     });
+    // Zero out the pan refs
     panX.current.setValue(0);
     panY.current.setValue(0);
+    // Update the crop size to the size after resizing
     setCropSize(finalSize);
   };
 
