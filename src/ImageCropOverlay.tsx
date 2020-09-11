@@ -60,6 +60,9 @@ function ImageCropOverlay() {
   const panX = React.useRef(new Animated.Value(imageBounds.x));
   const panY = React.useRef(new Animated.Value(imageBounds.y));
 
+  const cropWidthDelta = React.useRef(new Animated.Value(0));
+  const cropHeightDelta = React.useRef(new Animated.Value(0));
+
   React.useEffect(() => {
     // Move the pan to the origin and check the bounds so it clicks to
     // the corner of the image
@@ -118,67 +121,59 @@ function ImageCropOverlay() {
       // Else its a scaling operation
       const { translationX, translationY } = nativeEvent;
       // Get the new target height / width
-      let newWidth = cropSize.width;
-      let newHeight = cropSize.height;
+      let x = 0;
+      let y = 0;
       // Check what resizing / translation needs to be performed based on which section was pressed
       if (selectedFrameSection == "bottomright") {
         if (translationX < translationY) {
-          newWidth += translationX;
-          lockAspectRatio
-            ? (newHeight = newWidth / fixedAspectRatio)
-            : (newHeight += translationY);
+          x = translationX;
+          lockAspectRatio ? (y = x / fixedAspectRatio) : (y = translationY);
         } else {
-          newHeight += translationY;
-          lockAspectRatio
-            ? (newWidth = newHeight * fixedAspectRatio)
-            : (newWidth += translationX);
+          y = translationY;
+          lockAspectRatio ? (x = y * fixedAspectRatio) : (x = translationX);
         }
       } else if (selectedFrameSection == "topright") {
         if (translationX < translationY) {
-          newWidth += translationX;
-          lockAspectRatio
-            ? (newHeight = newWidth / fixedAspectRatio)
-            : (newHeight -= translationY);
+          x = translationX;
+          lockAspectRatio ? (y = x / fixedAspectRatio) : (y = -translationY);
         } else {
-          newHeight -= translationY;
-          lockAspectRatio
-            ? (newWidth = newHeight * fixedAspectRatio)
-            : (newWidth += translationX);
+          y = -translationY;
+          lockAspectRatio ? (x = y * fixedAspectRatio) : (x = translationX);
         }
-        panY.current.setValue(cropSize.height - newHeight);
+        panY.current.setValue(y);
       } else if (selectedFrameSection == "bottomleft") {
         if (translationX < translationY) {
-          newWidth -= translationX;
-          lockAspectRatio
-            ? (newHeight = newWidth / fixedAspectRatio)
-            : (newHeight += translationY);
+          x = -translationX;
+          lockAspectRatio ? (y = x / fixedAspectRatio) : (y = translationY);
         } else {
-          newHeight += translationY;
-          lockAspectRatio
-            ? (newWidth = newHeight * fixedAspectRatio)
-            : (newWidth -= translationX);
+          y = translationY;
+          lockAspectRatio ? (x = y * fixedAspectRatio) : (x = -translationX);
         }
-        panX.current.setValue(cropSize.width - newWidth);
       } else if (selectedFrameSection == "topleft") {
         if (translationX < translationY) {
-          newWidth -= translationX;
-          lockAspectRatio
-            ? (newHeight = newWidth / fixedAspectRatio)
-            : (newHeight -= translationY);
+          x = -translationX;
+          lockAspectRatio ? (y = x / fixedAspectRatio) : (y = -translationY);
         } else {
-          newHeight -= translationY;
-          lockAspectRatio
-            ? (newWidth = newHeight * fixedAspectRatio)
-            : (newWidth -= translationX);
+          y = -translationY;
+          lockAspectRatio ? (x = x * fixedAspectRatio) : (x = -translationX);
         }
-        panX.current.setValue(cropSize.width - newWidth);
-        panY.current.setValue(cropSize.height - newHeight);
       }
+      // panX.current.setValue(x);
+      // panY.current.setValue(y);
       // Finally update the animated width to the values the crop
       // window has been resized to
-      animatedCropSize.width.setValue(newWidth);
-      animatedCropSize.height.setValue(newHeight);
+      animatedCropSize.width.setValue(cropSize.width - x);
+      animatedCropSize.height.setValue(cropSize.height - y);
     }
+  };
+
+  const getTargetCropFrameBounds = ({
+    nativeEvent,
+  }: PanGestureHandlerGestureEvent) => {
+    let x = 0;
+    let y = 0;
+    let width = 0;
+    let height = 0;
   };
 
   const onOverlayRelease = (
