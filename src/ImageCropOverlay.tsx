@@ -60,9 +60,6 @@ function ImageCropOverlay() {
   const panX = React.useRef(new Animated.Value(imageBounds.x));
   const panY = React.useRef(new Animated.Value(imageBounds.y));
 
-  const cropWidthDelta = React.useRef(new Animated.Value(0));
-  const cropHeightDelta = React.useRef(new Animated.Value(0));
-
   React.useEffect(() => {
     // Move the pan to the origin and check the bounds so it clicks to
     // the corner of the image
@@ -239,36 +236,25 @@ function ImageCropOverlay() {
     const { width: maxWidth, height: maxHeight } = imageBounds;
     const { width: minWidth, height: minHeight } = minimumCropDimensions;
     const { x, y } = getTargetCropFrameBounds({ translationX, translationY });
-    console.log({ x, y });
     const animatedWidth = cropSize.width + x;
     const animatedHeight = cropSize.height + y;
-    const finalSize = {
-      width: animatedWidth,
-      height: animatedHeight,
-    };
+    let finalHeight = animatedHeight;
+    let finalWidth = animatedWidth;
     // Ensure the width / height does not exceed the boundaries -
     // resize to the max it can be if so
     if (animatedHeight > maxHeight) {
-      finalSize.height = maxHeight;
-      finalSize.width = lockAspectRatio
-        ? finalSize.height * fixedAspectRatio
-        : finalSize.width;
+      finalHeight = maxHeight;
+      if (lockAspectRatio) finalWidth = finalHeight * fixedAspectRatio;
     } else if (animatedHeight < minHeight) {
-      finalSize.height = minHeight;
-      finalSize.width = lockAspectRatio
-        ? finalSize.height * fixedAspectRatio
-        : finalSize.width;
+      finalHeight = minHeight;
+      if (lockAspectRatio) finalWidth = finalHeight * fixedAspectRatio;
     }
     if (animatedWidth > maxWidth) {
-      finalSize.width = maxWidth;
-      finalSize.height = lockAspectRatio
-        ? finalSize.width / fixedAspectRatio
-        : finalSize.height;
+      finalWidth = maxWidth;
+      if (lockAspectRatio) finalHeight = finalWidth / fixedAspectRatio;
     } else if (animatedWidth < minWidth) {
-      finalSize.width = minWidth;
-      finalSize.height = lockAspectRatio
-        ? finalSize.width / fixedAspectRatio
-        : finalSize.height;
+      finalWidth = minWidth;
+      if (lockAspectRatio) finalHeight = finalWidth / fixedAspectRatio;
     }
     // Update the accumulated pan with the delta from the pan refs
     setAccumluatedPan({
@@ -279,7 +265,10 @@ function ImageCropOverlay() {
     panX.current.setValue(0);
     panY.current.setValue(0);
     // Update the crop size to the size after resizing
-    setCropSize(finalSize);
+    setCropSize({
+      height: finalHeight,
+      width: finalWidth,
+    });
   };
 
   return (
