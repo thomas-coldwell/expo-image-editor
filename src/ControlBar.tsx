@@ -1,20 +1,10 @@
 import * as React from "react";
-import {
-  View,
-  StyleSheet,
-  TouchableOpacity,
-  Text,
-  Platform,
-} from "react-native";
-import {
-  Ionicons,
-  MaterialCommunityIcons,
-  MaterialIcons,
-} from "@expo/vector-icons";
+import { View, StyleSheet } from "react-native";
 import _ from "lodash";
 import { Mode } from "./ImageEditor";
 import { useRecoilState } from "recoil";
 import { editingModeState } from "./Store";
+import { IconButton } from "./components/IconButton";
 
 interface ControlBarProps {
   onPressBack: () => void;
@@ -26,81 +16,26 @@ interface ControlBarProps {
 
 function ControlBar(props: ControlBarProps) {
   //
-  const [editingMode, setEditingMode] = useRecoilState(editingModeState);
-
-  const onPressDone = async () => {
-    // handle what action should be performed when the user press done
-    if (props.mode == "full") {
-      if (editingMode == "crop") {
-        props.onPerformCrop();
-      } else {
-        props.onFinishEditing();
-      }
-    } else if (props.mode == "crop-only") {
-      props.onPerformCrop();
-    } else {
-      props.onFinishEditing();
-    }
-  };
+  const [editingMode] = useRecoilState(editingModeState);
 
   return (
     <View style={styles.container}>
-      <Button
-        iconID="md-arrow-back"
-        source="ion"
+      <IconButton
+        iconID="arrow-back"
+        text="Back"
         onPress={() => props.onPressBack()}
       />
-      <View style={styles.buttonRow}>
-        {props.mode == "full" && editingMode == "operation-select" ? (
-          <Button
-            iconID="crop"
-            source="md"
-            onPress={() => setEditingMode("crop")}
-          />
-        ) : null}
-        {props.mode != "crop-only" && editingMode != "crop" ? (
-          <>
-            <Button
-              iconID="rotate-left"
-              source="md"
-              onPress={() => props.onRotate(Platform.OS == "web" ? 90 : -90)}
-            />
-            <Button
-              iconID="rotate-right"
-              source="md"
-              onPress={() => props.onRotate(Platform.OS == "web" ? -90 : 90)}
-            />
-          </>
-        ) : null}
-        <Button
-          iconID="md-checkmark"
-          source="ion"
-          onPress={() => onPressDone()}
-        />
-      </View>
+      <IconButton
+        iconID="done"
+        text="Done"
+        onPress={() => props.onFinishEditing()}
+        disabled={editingMode == "operation-select"}
+      />
     </View>
   );
 }
 
 export { ControlBar };
-
-interface ControlBarButtonProps {
-  onPress: () => void;
-  iconID: string;
-  source: "ion" | "md";
-}
-
-function Button(props: ControlBarButtonProps) {
-  return (
-    <TouchableOpacity style={styles.button} onPress={() => props.onPress()}>
-      {props.source == "ion" ? (
-        <Ionicons name={props.iconID} size={32} color="#fff" />
-      ) : (
-        <MaterialIcons name={props.iconID} size={32} color="#fff" />
-      )}
-    </TouchableOpacity>
-  );
-}
 
 const styles = StyleSheet.create({
   container: {
@@ -110,15 +45,6 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-  },
-  button: {
-    height: 64,
-    width: 64,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  buttonRow: {
-    flexShrink: 1,
-    flexDirection: "row",
+    paddingHorizontal: 4,
   },
 });
