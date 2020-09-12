@@ -1,13 +1,5 @@
 import * as React from "react";
-import {
-  Animated,
-  PanResponder,
-  StyleSheet,
-  View,
-  TouchableWithoutFeedback,
-  PanResponderGestureState,
-  TouchableOpacity,
-} from "react-native";
+import { Animated, StyleSheet, View, TouchableOpacity } from "react-native";
 import _ from "lodash";
 import { useRecoilState } from "recoil";
 import {
