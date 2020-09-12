@@ -28,6 +28,7 @@ import {
   minimumCropDimensionsState,
 } from "./Store";
 import { Asset } from "expo-asset";
+import { OperationBar } from "./OperationBar";
 const noScroll = require("no-scroll");
 const PlatformModal = Platform.OS == "web" ? Modal : RNModal;
 
@@ -243,6 +244,7 @@ function ImageEditorCore(props: ImageEditorProps) {
             mode={props.mode}
           />
           <EditingWindow />
+          <OperationBar />
         </View>
       ) : null}
       {processing ? <Processing /> : null}

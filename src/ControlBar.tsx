@@ -29,7 +29,7 @@ function ControlBar(props: ControlBarProps) {
         iconID="done"
         text="Done"
         onPress={() => props.onFinishEditing()}
-        disabled={editingMode == "operation-select"}
+        disabled={editingMode !== "operation-select"}
       />
     </View>
   );
