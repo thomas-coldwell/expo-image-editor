@@ -1,6 +1,6 @@
 {
   "name": "expo-image-editor",
-  "version": "1.2.0",
+  "version": "1.3.0",
   "description": "",
   "main": "lib/ImageEditor.js",
   "types": "lib/ImageEditor.d.ts",
@@ -37,6 +37,7 @@
     "typescript": "^3.9.3"
   },
   "dependencies": {
-    "@types/lodash": "^4.14.157"
+    "@types/lodash": "^4.14.157",
+    "react-native-gesture-handler": "^1.8.0"
   }
 }
