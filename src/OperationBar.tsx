@@ -1,15 +1,48 @@
 import * as React from "react";
-import { Platform, StyleSheet, View } from "react-native";
-import { TouchableOpacity } from "react-native-gesture-handler";
+import {
+  Platform,
+  StyleSheet,
+  View,
+  TouchableOpacity,
+  ScrollView,
+} from "react-native";
 import { Icon } from "./components/Icon";
+import { IconButton } from "./components/IconButton";
+
+const operations = {
+  transform: [
+    {
+      title: "Crop",
+      iconID: "crop",
+    },
+    {
+      title: "Rotate",
+      iconID: "rotate-90-degrees-ccw",
+    },
+  ],
+  adjust: [
+    {
+      title: "Blur",
+      iconID: "blur-on",
+    },
+  ],
+};
 
 export function OperationBar() {
   //
-  const [selectedOperation, setSelectedOperation] = React.useState("transform");
+  const [selectedOperation, setSelectedOperation] = React.useState<
+    "transform" | "adjust"
+  >("transform");
 
   return (
     <View style={styles.container}>
-      <View style={styles.opRow}></View>
+      <ScrollView style={styles.opRow} horizontal>
+        {operations[selectedOperation].map((item, index) => (
+          <View style={styles.opContainer}>
+            <IconButton text={item.title} iconID={item.iconID} />
+          </View>
+        ))}
+      </ScrollView>
       <View style={styles.modeRow}>
         <TouchableOpacity
           style={[
@@ -36,28 +69,31 @@ export function OperationBar() {
 
 const styles = StyleSheet.create({
   container: {
-    height: 140,
+    height: 160,
     width: "100%",
     backgroundColor: "#333",
   },
   opRow: {
-    height: 70,
+    flex: 1,
     width: "100%",
-    flexDirection: "row",
-    justifyContent: "flex-start",
-    alignItems: "center",
     backgroundColor: "#333",
   },
+  opContainer: {
+    height: "100%",
+    justifyContent: "center",
+    alignItems: "center",
+    marginLeft: 16,
+  },
   modeRow: {
-    height: 70,
-    width: Platform.OS == "web" ? "100vw" : "100%",
+    flex: 1,
+    width: "100%",
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-around",
   },
   modeButton: {
     height: 70,
-    width: Platform.OS == "web" ? "50vw" : "50%",
+    flex: 1,
     justifyContent: "center",
     alignItems: "center",
     backgroundColor: "#222",

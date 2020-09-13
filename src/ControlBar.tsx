@@ -40,7 +40,7 @@ export { ControlBar };
 const styles = StyleSheet.create({
   container: {
     width: "100%",
-    height: 64,
+    height: 80,
     backgroundColor: "#333",
     flexDirection: "row",
     justifyContent: "space-between",

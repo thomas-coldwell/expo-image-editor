@@ -13,7 +13,7 @@ export function Icon(props: IIconProps) {
     <View style={styles.container}>
       <MaterialIcons
         name={props.iconID}
-        size={30}
+        size={26}
         color={props.disabled ? "grey" : "white"}
       />
       <Text style={[styles.text, props.disabled && { color: "grey" }]}>
@@ -30,7 +30,7 @@ const styles = StyleSheet.create({
     flexDirection: "column",
     justifyContent: "space-between",
     alignItems: "center",
-    paddingVertical: 6,
+    paddingVertical: 8,
   },
   text: {
     color: "#fff",
