@@ -6,8 +6,8 @@ import {
   TouchableOpacity,
   ScrollView,
 } from "react-native";
-import { Icon } from "./components/Icon";
-import { IconButton } from "./components/IconButton";
+import { Icon } from "../components/Icon";
+import { IconButton } from "../components/IconButton";
 
 const operations = {
   transform: [

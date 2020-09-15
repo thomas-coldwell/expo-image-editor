@@ -28,7 +28,7 @@ import {
   minimumCropDimensionsState,
 } from "./Store";
 import { Asset } from "expo-asset";
-import { OperationBar } from "./OperationBar";
+import { OperationBar } from "./OperationBar/OperationBar";
 const noScroll = require("no-scroll");
 const PlatformModal = Platform.OS == "web" ? Modal : RNModal;
 
