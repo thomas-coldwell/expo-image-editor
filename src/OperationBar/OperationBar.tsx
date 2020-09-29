@@ -1,5 +1,6 @@
 import * as React from "react";
 import {
+  Animated,
   Platform,
   StyleSheet,
   View,
@@ -8,62 +9,60 @@ import {
 } from "react-native";
 import { Icon } from "../components/Icon";
 import { IconButton } from "../components/IconButton";
+import { editingModeState, EditingModes } from "../Store";
+import { useRecoilState } from "recoil";
+import { OperationSelection } from "./OperationSelection";
 
-const operations = {
+interface Operation {
+  title: string;
+  iconID: string;
+  operationID: EditingModes;
+}
+
+interface Operations {
+  transform: Operation[];
+  adjust: Operation[];
+}
+
+const operations: Operations = {
   transform: [
     {
       title: "Crop",
       iconID: "crop",
+      operationID: "crop",
     },
     {
       title: "Rotate",
       iconID: "rotate-90-degrees-ccw",
+      operationID: "rotate",
     },
   ],
   adjust: [
     {
       title: "Blur",
       iconID: "blur-on",
+      operationID: "blur",
     },
   ],
 };
 
 export function OperationBar() {
   //
-  const [selectedOperation, setSelectedOperation] = React.useState<
-    "transform" | "adjust"
-  >("transform");
+  const [editingMode] = useRecoilState(editingModeState);
+
+  const getOperationWindow = () => {
+    switch (editingMode) {
+      case "operation-select":
+        return <OperationSelection />;
+      default:
+        return null;
+    }
+  };
 
   return (
-    <View style={styles.container}>
-      <ScrollView style={styles.opRow} horizontal>
-        {operations[selectedOperation].map((item, index) => (
-          <View style={styles.opContainer}>
-            <IconButton text={item.title} iconID={item.iconID} />
-          </View>
-        ))}
-      </ScrollView>
-      <View style={styles.modeRow}>
-        <TouchableOpacity
-          style={[
-            styles.modeButton,
-            selectedOperation === "transform" && { backgroundColor: "#333" },
-          ]}
-          onPress={() => setSelectedOperation("transform")}
-        >
-          <Icon iconID="transform" text="Transform" />
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={[
-            styles.modeButton,
-            selectedOperation === "adjust" && { backgroundColor: "#333" },
-          ]}
-          onPress={() => setSelectedOperation("adjust")}
-        >
-          <Icon iconID="tune" text="Adjust" />
-        </TouchableOpacity>
-      </View>
-    </View>
+    <Animated.View style={styles.container}>
+      {getOperationWindow()}
+    </Animated.View>
   );
 }
 
@@ -72,30 +71,5 @@ const styles = StyleSheet.create({
     height: 160,
     width: "100%",
     backgroundColor: "#333",
-  },
-  opRow: {
-    flex: 1,
-    width: "100%",
-    backgroundColor: "#333",
-  },
-  opContainer: {
-    height: "100%",
-    justifyContent: "center",
-    alignItems: "center",
-    marginLeft: 16,
-  },
-  modeRow: {
-    flex: 1,
-    width: "100%",
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-around",
-  },
-  modeButton: {
-    height: 70,
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "#222",
   },
 });
