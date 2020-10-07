@@ -8,6 +8,7 @@ import {
   imageScaleFactorState,
   editingModeState,
 } from "./Store";
+import { gestureHandlerRootHOC } from "react-native-gesture-handler";
 
 function EditingWindow() {
   //
@@ -95,6 +96,8 @@ function EditingWindow() {
     </View>
   );
 }
+
+const EditingWindowRNGH = gestureHandlerRootHOC(EditingWindow);
 
 export { EditingWindow };
 

@@ -7,6 +7,7 @@ import {
   Alert,
   Platform,
   Image,
+  Dimensions,
 } from "react-native";
 import { ControlBar } from "./ControlBar";
 import { EditingWindow } from "./EditingWindow";
@@ -131,68 +132,6 @@ function ImageEditorCore(props: ImageEditorProps) {
     setMinimumCropDimensions(props.minimumCropDimensions);
   }, [props.minimumCropDimensions]);
 
-  const onPerformCrop = async () => {
-    // Calculate cropping bounds
-    const croppingBounds = {
-      originX: Math.round(
-        (accumulatedPan.x - imageBounds.x) * imageScaleFactor
-      ),
-      originY: Math.round(
-        (accumulatedPan.y - imageBounds.y) * imageScaleFactor
-      ),
-      width: Math.round(cropSize.width * imageScaleFactor),
-      height: Math.round(cropSize.height * imageScaleFactor),
-    };
-    // Set the editor state to processing and perform the crop
-    setProcessing(true);
-    await ImageManipulator.manipulateAsync(imageData.uri, [
-      { crop: croppingBounds },
-    ])
-      .then(async ({ uri, width, height }) => {
-        // Check if on web - currently there is a weird bug where it will keep
-        // the canvas from ImageManipualtor at originX + width and so we'll just crop
-        // the result again for now if on web - TODO write github issue!
-        if (Platform.OS == "web") {
-          await ImageManipulator.manipulateAsync(uri, [
-            { crop: { ...croppingBounds, originX: 0, originY: 0 } },
-          ])
-            .then(({ uri, width, height }) => {
-              if (props.mode == "crop-only") {
-                setProcessing(false);
-                props.onEditingComplete({ uri, width, height });
-                onCloseEditor();
-              } else {
-                setProcessing(false);
-                setImageData({ uri, width, height });
-                setEditingMode("operation-select");
-              }
-            })
-            .catch((error) => {
-              // If there's an error dismiss the the editor and alert the user
-              setProcessing(false);
-              onCloseEditor();
-              Alert.alert("An error occurred while editing.");
-            });
-        } else {
-          if (props.mode == "crop-only") {
-            setProcessing(false);
-            props.onEditingComplete({ uri, width, height });
-            onCloseEditor();
-          } else {
-            setProcessing(false);
-            setImageData({ uri, width, height });
-            setEditingMode("operation-select");
-          }
-        }
-      })
-      .catch((error) => {
-        // If there's an error dismiss the the editor and alert the user
-        setProcessing(false);
-        onCloseEditor();
-        Alert.alert("An error occurred while editing.");
-      });
-  };
-
   const onRotate = async (angle: number) => {
     // Rotate the image by the specified angle
     setProcessing(false);
@@ -228,7 +167,19 @@ function ImageEditorCore(props: ImageEditorProps) {
   }, [props.visible]);
 
   return (
-    <PlatformModal visible={props.visible} transparent animationType="slide">
+    <View
+      style={{
+        height: "100%",
+        width: "100%",
+        position: "absolute",
+        top: 0,
+        left: 0,
+        zIndex: 1000000,
+        elevation: 1000000,
+        opacity: props.visible ? 1.0 : 0.0,
+      }}
+      pointerEvents={props.visible ? "auto" : "none"}
+    >
       <StatusBar hidden />
       {ready ? (
         <View style={styles.container}>
@@ -238,8 +189,6 @@ function ImageEditorCore(props: ImageEditorProps) {
                 ? props.onCloseEditor()
                 : setEditingMode("operation-select")
             }
-            onPerformCrop={() => onPerformCrop()}
-            onRotate={(angle) => onRotate(angle)}
             onFinishEditing={() => onFinishEditing()}
             mode={props.mode}
           />
@@ -248,7 +197,7 @@ function ImageEditorCore(props: ImageEditorProps) {
         </View>
       ) : null}
       {processing ? <Processing /> : null}
-    </PlatformModal>
+    </View>
   );
 }
 

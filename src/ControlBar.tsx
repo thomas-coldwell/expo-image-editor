@@ -8,8 +8,6 @@ import { IconButton } from "./components/IconButton";
 
 interface ControlBarProps {
   onPressBack: () => void;
-  onPerformCrop: () => void;
-  onRotate: (angle: number) => void;
   onFinishEditing: () => void;
   mode: Mode;
 }

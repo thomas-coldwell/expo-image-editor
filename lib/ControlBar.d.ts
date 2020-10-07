@@ -2,8 +2,6 @@
 import { Mode } from "./ImageEditor";
 interface ControlBarProps {
     onPressBack: () => void;
-    onPerformCrop: () => void;
-    onRotate: (angle: number) => void;
     onFinishEditing: () => void;
     mode: Mode;
 }

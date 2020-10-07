@@ -12,39 +12,7 @@ import { IconButton } from "../components/IconButton";
 import { editingModeState, EditingModes } from "../Store";
 import { useRecoilState } from "recoil";
 import { OperationSelection } from "./OperationSelection";
-
-interface Operation {
-  title: string;
-  iconID: string;
-  operationID: EditingModes;
-}
-
-interface Operations {
-  transform: Operation[];
-  adjust: Operation[];
-}
-
-const operations: Operations = {
-  transform: [
-    {
-      title: "Crop",
-      iconID: "crop",
-      operationID: "crop",
-    },
-    {
-      title: "Rotate",
-      iconID: "rotate-90-degrees-ccw",
-      operationID: "rotate",
-    },
-  ],
-  adjust: [
-    {
-      title: "Blur",
-      iconID: "blur-on",
-      operationID: "blur",
-    },
-  ],
-};
+import { Crop } from "./Crop";
 
 export function OperationBar() {
   //
@@ -54,6 +22,8 @@ export function OperationBar() {
     switch (editingMode) {
       case "operation-select":
         return <OperationSelection />;
+      case "crop":
+        return <Crop />;
       default:
         return null;
     }

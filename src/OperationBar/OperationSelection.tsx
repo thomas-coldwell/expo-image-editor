@@ -56,7 +56,7 @@ export function OperationSelection() {
     <>
       <ScrollView style={styles.opRow} horizontal>
         {operations[selectedOperation].map((item, index) => (
-          <View style={styles.opContainer}>
+          <View style={styles.opContainer} key={item.title}>
             <IconButton
               text={item.title}
               iconID={item.iconID}
