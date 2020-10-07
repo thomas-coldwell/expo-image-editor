@@ -13,6 +13,7 @@ import { editingModeState, EditingModes } from "../Store";
 import { useRecoilState } from "recoil";
 import { OperationSelection } from "./OperationSelection";
 import { Crop } from "./Crop";
+import { Rotate } from "./Rotate";
 
 export function OperationBar() {
   //
@@ -24,8 +25,10 @@ export function OperationBar() {
         return <OperationSelection />;
       case "crop":
         return <Crop />;
+      case "rotate":
+        return <Rotate />;
       default:
-        return null;
+        return <OperationSelection />;
     }
   };
 

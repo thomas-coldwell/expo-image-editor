@@ -67,7 +67,7 @@ export function Crop() {
       <Text style={styles.prompt}>Adjust window to crop</Text>
       <IconButton
         iconID="check"
-        text="Crop"
+        text="Done"
         onPress={() =>
           onPerformCrop().catch(() => {
             // If there's an error dismiss the the editor and alert the user

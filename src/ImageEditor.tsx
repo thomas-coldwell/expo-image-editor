@@ -132,20 +132,6 @@ function ImageEditorCore(props: ImageEditorProps) {
     setMinimumCropDimensions(props.minimumCropDimensions);
   }, [props.minimumCropDimensions]);
 
-  const onRotate = async (angle: number) => {
-    // Rotate the image by the specified angle
-    setProcessing(false);
-    await ImageManipulator.manipulateAsync(imageData.uri, [{ rotate: angle }])
-      .then(async ({ uri, width, height }) => {
-        // Set the image data
-        setProcessing(false);
-        setImageData({ uri, width, height });
-      })
-      .catch((error) => {
-        alert("An error occured while editing.");
-      });
-  };
-
   const onFinishEditing = async () => {
     setProcessing(false);
     props.onEditingComplete(imageData);
