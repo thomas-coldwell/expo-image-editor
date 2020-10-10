@@ -14,6 +14,7 @@ import { useRecoilState } from "recoil";
 import { OperationSelection } from "./OperationSelection";
 import { Crop } from "./Crop";
 import { Rotate } from "./Rotate";
+import { Blur } from "./Blur";
 
 export function OperationBar() {
   //
@@ -21,20 +22,25 @@ export function OperationBar() {
 
   const getOperationWindow = () => {
     switch (editingMode) {
-      case "operation-select":
-        return <OperationSelection />;
       case "crop":
         return <Crop />;
       case "rotate":
         return <Rotate />;
+      case "blur":
+        return <Blur />;
       default:
-        return <OperationSelection />;
+        return null;
     }
   };
 
   return (
     <Animated.View style={styles.container}>
-      {getOperationWindow()}
+      <OperationSelection />
+      {editingMode !== "operation-select" && (
+        <View style={[styles.container, { position: "absolute" }]}>
+          {getOperationWindow()}
+        </View>
+      )}
     </Animated.View>
   );
 }

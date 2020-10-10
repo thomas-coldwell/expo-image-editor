@@ -1,3 +1,4 @@
+import { ExpoWebGLRenderingContext } from "expo-gl";
 import { atom } from "recoil";
 
 interface ImageData {
@@ -96,4 +97,20 @@ export const minimumCropDimensionsState = atom<ImageDimensions>({
     width: 0,
     height: 0,
   },
+});
+
+interface GLContext {
+  gl: ExpoWebGLRenderingContext | null;
+  program: WebGLProgram;
+  verts: Float32Array;
+}
+
+export const glContextState = atom<GLContext["gl"]>({
+  key: "glContextState",
+  default: null,
+});
+
+export const glProgramState = atom<GLContext["program"]>({
+  key: "glProgramState",
+  default: null,
 });

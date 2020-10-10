@@ -9,7 +9,10 @@
     "netlify": "expo build:web && netlify deploy --dir=web-build --prod"
   },
   "dependencies": {
+    "@miblanchard/react-native-slider": "^1.5.0",
     "expo": "~37.0.3",
+    "expo-gl": "^9.1.1",
+    "expo-gl-cpp": "^9.1.2",
     "expo-image-manipulator": "~8.1.0",
     "expo-image-picker": "^8.1.0",
     "image-size": "^0.8.3",

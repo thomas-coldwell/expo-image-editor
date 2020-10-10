@@ -1828,6 +1828,11 @@
     "@babel/runtime" "^7.7.2"
     core-js "^3.4.1"
 
+"@miblanchard/react-native-slider@^1.5.0":
+  version "1.5.0"
+  resolved "https://registry.yarnpkg.com/@miblanchard/react-native-slider/-/react-native-slider-1.5.0.tgz#32d5c4f786c6a527b48f127c4d65ea366b2ae851"
+  integrity sha512-8Zguehw7u0cgzpc4F31QjmmaWH1lZAQGXX2b6S6Ck1ABKhBp+F7SD5qH8g8VEu2z9LnDWgOvXMM2Txzw4rYpyA==
+
 "@mrmlnc/readdir-enhanced@^2.2.1":
   version "2.2.1"
   resolved "https://registry.yarnpkg.com/@mrmlnc/readdir-enhanced/-/readdir-enhanced-2.2.1.tgz#524af240d1a360527b730475ecfa1344aa540dde"
@@ -4737,6 +4742,20 @@ expo-font@~8.1.0:
   dependencies:
     fbjs "1.0.0"
     fontfaceobserver "^2.1.0"
+
+expo-gl-cpp@^9.1.2, expo-gl-cpp@~9.1.2:
+  version "9.1.2"
+  resolved "https://registry.yarnpkg.com/expo-gl-cpp/-/expo-gl-cpp-9.1.2.tgz#6556265fcc5ffa36a08135f1243da8e316f2217e"
+  integrity sha512-vNDaei3PdMWY9vTq+nnkfL/sWMJRuFOhTYHkCCbHBBmkdsYGF497mezsb26cqdTVfgyMe1ft0wvEZvrXm867LA==
+
+expo-gl@^9.1.1:
+  version "9.1.1"
+  resolved "https://registry.yarnpkg.com/expo-gl/-/expo-gl-9.1.1.tgz#2402a8d661c169e91f9cb634ad1e98079ff7e3fe"
+  integrity sha512-zB55tmSDrrpM0Fs45qx9uUkRBJeQX7+mxfpzaeH7N3p/HASaYA2H5XHumLI4TK7mGpV2ufnjbvimiPl5YxuNEw==
+  dependencies:
+    expo-gl-cpp "~9.1.2"
+    fbjs "1.0.0"
+    invariant "^2.2.4"
 
 expo-image-manipulator@~8.1.0:
   version "8.1.0"

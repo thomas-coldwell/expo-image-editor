@@ -1,3 +1,4 @@
+import { ExpoWebGLRenderingContext } from "expo-gl";
 interface ImageData {
     uri: string;
     height: number;
@@ -29,5 +30,7 @@ export declare const editingModeState: import("recoil").RecoilState<EditingModes
 export declare const fixedCropAspectRatioState: import("recoil").RecoilState<number>;
 export declare const lockAspectRatioState: import("recoil").RecoilState<boolean>;
 export declare const minimumCropDimensionsState: import("recoil").RecoilState<ImageDimensions>;
+export declare const glContextState: import("recoil").RecoilState<ExpoWebGLRenderingContext>;
+export declare const glProgramState: import("recoil").RecoilState<WebGLProgram>;
 export {};
 //# sourceMappingURL=Store.d.ts.map
