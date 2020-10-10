@@ -9,7 +9,7 @@ import {
   Platform,
 } from "react-native";
 import * as ImagePicker from "expo-image-picker";
-import { ImageEditor, Mode } from "./lib/ImageEditor";
+import { ImageEditor, Mode } from "expo-image-editor";
 
 export default function App() {
   //

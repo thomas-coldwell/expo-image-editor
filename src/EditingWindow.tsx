@@ -12,7 +12,9 @@ import {
   imageDataState,
   imageBoundsState,
   imageScaleFactorState,
-  editingModeState,, glContextState, glProgramState
+  editingModeState,
+  glContextState,
+  glProgramState,
 } from "./Store";
 import { ExpoWebGLRenderingContext, GLView } from "expo-gl";
 import { Asset } from "expo-asset";
@@ -260,7 +262,9 @@ function EditingWindow() {
       {usesGL ? (
         <View style={styles.glContainer}>
           <GLView
-            onLayout={({nativeEvent: { layout }}) => console.log(layout, PixelRatio.get())}
+            onLayout={({ nativeEvent: { layout } }) =>
+              console.log(layout, PixelRatio.get())
+            }
             style={{
               height: "100%",
               aspectRatio: imageData.width / imageData.height,

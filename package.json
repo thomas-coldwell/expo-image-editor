@@ -24,7 +24,12 @@
     "@types/react-dom": "^16.9.8",
     "@types/react-native": "^0.62.11",
     "babel-preset-expo": "~8.1.0",
-    "cpx": "^1.5.0",
+    "typescript": "^3.9.3"
+  },
+  "dependencies": {
+    "@miblanchard/react-native-slider": "^1.5.0",
+    "@types/lodash": "^4.14.157",
+    "react-native-gesture-handler": "^1.8.0",
     "expo-asset": "^8.1.7",
     "expo-gl": "^9.1.1",
     "expo-gl-cpp": "^9.1.2",
@@ -36,12 +41,6 @@
     "react-native": "https://github.com/expo/react-native/archive/sdk-39.0.0.tar.gz",
     "react-native-screens": "~2.10.1",
     "react-native-web": "~0.13.7",
-    "recoil": "^0.0.10",
-    "typescript": "^3.9.3"
-  },
-  "dependencies": {
-    "@miblanchard/react-native-slider": "^1.5.0",
-    "@types/lodash": "^4.14.157",
-    "react-native-gesture-handler": "^1.8.0"
+    "recoil": "^0.0.10"
   }
 }
