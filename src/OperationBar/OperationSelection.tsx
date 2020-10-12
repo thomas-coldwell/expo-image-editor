@@ -109,7 +109,7 @@ const styles = StyleSheet.create({
     justifyContent: "space-around",
   },
   modeButton: {
-    height: 70,
+    height: 80,
     flex: 1,
     justifyContent: "center",
     alignItems: "center",

@@ -31,12 +31,6 @@ import {
 import { Asset } from "expo-asset";
 import { OperationBar } from "./OperationBar/OperationBar";
 const noScroll = require("no-scroll");
-const PlatformModal = Platform.OS == "web" ? Modal : RNModal;
-
-// Stop ARIA errors
-if (Platform.OS == "web") {
-  PlatformModal.setAppElement("#root");
-}
 
 export type Mode = "full" | "crop-only" | "rotate-only";
 
