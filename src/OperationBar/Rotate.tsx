@@ -68,7 +68,7 @@ export function Rotate() {
 
   return (
     <View style={styles.container}>
-      <View style={[styles.row, { paddingHorizontal: 200 }]}>
+      <View style={[styles.row, { paddingHorizontal: "20%" }]}>
         <IconButton
           iconID="rotate-left"
           text="Rotate -90"
@@ -115,6 +115,6 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    paddingHorizontal: 30,
+    paddingHorizontal: "2%",
   },
 });

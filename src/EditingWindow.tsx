@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Image, StyleSheet, View } from "react-native";
+import { Image, PixelRatio, StyleSheet, View } from "react-native";
 import { ImageCropOverlay } from "./ImageCropOverlay";
 import { useRecoilState } from "recoil";
 import {
@@ -84,6 +84,19 @@ function EditingWindow() {
     }
   };
 
+  const getGLLayout = () => {
+    const { height: windowHeight, width: windowWidth } = state.imageLayout;
+    const windowAspectRatio = windowWidth / windowHeight;
+    const { height: imageHeight, width: imageWidth } = imageData;
+    const imageAspectRatio = imageWidth / imageHeight;
+    // If the window is taller than img...
+    if (windowAspectRatio < imageAspectRatio) {
+      return { width: windowWidth, height: windowWidth / imageAspectRatio };
+    } else {
+      return { height: windowHeight, width: windowHeight * imageAspectRatio };
+    }
+  };
+
   React.useEffect(() => {
     onUpdateCropLayout(state.imageLayout);
   }, [imageData]);
@@ -97,12 +110,15 @@ function EditingWindow() {
       {usesGL ? (
         <View style={styles.glContainer}>
           <GLView
-            style={{
-              height: "100%",
-              width:
-                state.imageLayout.height * (imageData.width / imageData.height),
-              transform: [{ scaleY: -1 }],
-            }}
+            style={[
+              {
+                height: 1,
+                width: 1,
+                backgroundColor: "#ccc",
+                transform: [{ scaleY: -1 }],
+              },
+              getGLLayout(),
+            ]}
             onContextCreate={onGLContextCreate}
           />
         </View>

@@ -276,13 +276,12 @@ export function Blur() {
       gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
       gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
       // Then set the data of this texture using texImage2D
-      const viewport = gl.getParameter(gl.VIEWPORT);
       gl.texImage2D(
         gl.TEXTURE_2D,
         0,
         gl.RGBA,
-        viewport[2],
-        viewport[3],
+        gl.drawingBufferWidth,
+        gl.drawingBufferHeight,
         0,
         gl.RGBA,
         gl.UNSIGNED_BYTE,
@@ -299,10 +298,11 @@ export function Blur() {
         firstPassTexture,
         0
       );
-      gl.clear(gl.COLOR_BUFFER_BIT);
+      //gl.viewport(0, 0, imageData.width, imageData.height);
       // Actually draw using the shader program we setup!
       gl.drawArrays(gl.TRIANGLES, 0, 6);
       gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+      //gl.viewport(0, 0, imageData.width, imageData.height);
       gl.uniform1i(gl.getUniformLocation(program, "texture"), 1);
       gl.uniform1i(gl.getUniformLocation(program, "pass"), 1);
       gl.drawArrays(gl.TRIANGLES, 0, 6);
@@ -361,7 +361,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    paddingHorizontal: 30,
+    paddingHorizontal: "2%",
   },
   slider: {
     height: 20,
