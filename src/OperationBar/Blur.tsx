@@ -13,6 +13,7 @@ import { Slider } from "@miblanchard/react-native-slider";
 import { Asset } from "expo-asset";
 import { GLView } from "expo-gl";
 import * as ImageManinpulator from "expo-image-manipulator";
+
 const vertShader = `
 precision highp float;
 attribute vec2 position;

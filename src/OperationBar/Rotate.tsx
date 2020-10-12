@@ -33,6 +33,7 @@ export function Rotate() {
   }, [rotation]);
 
   const onRotate = async (angle: number) => {
+    setProcessing(true);
     // Rotate the image by the specified angle
     // To get rid of thing white line caused by context its being painted onto
     // crop 1 px border off https://github.com/expo/expo/issues/7325
@@ -57,6 +58,7 @@ export function Rotate() {
       ]
     );
     setImageData({ uri, width, height });
+    setProcessing(false);
   };
 
   const onClose = () => {
