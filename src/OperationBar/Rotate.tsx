@@ -19,8 +19,7 @@ export function Rotate() {
   const [imageData, setImageData] = useRecoilState(imageDataState);
   const [, setEditingMode] = useRecoilState(editingModeState);
 
-  const originalImageData = React.useRef(imageData).current;
-  console.log(imageData);
+  const [originalImageData] = React.useState(imageData);
 
   const [rotation, setRotation] = React.useState(0);
 

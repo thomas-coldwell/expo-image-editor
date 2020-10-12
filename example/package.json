@@ -11,6 +11,7 @@
   "dependencies": {
     "@miblanchard/react-native-slider": "^1.5.0",
     "expo": "~37.0.3",
+    "expo-file-system": "^9.2.0",
     "expo-gl": "^9.1.1",
     "expo-gl-cpp": "^9.1.2",
     "expo-image-manipulator": "~8.1.0",

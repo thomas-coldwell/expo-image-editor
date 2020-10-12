@@ -13,6 +13,7 @@ import { Slider } from "@miblanchard/react-native-slider";
 import { Asset } from "expo-asset";
 import { GLView } from "expo-gl";
 import * as ImageManinpulator from "expo-image-manipulator";
+import * as FileSystem from "expo-file-system";
 
 const vertShader = `
 precision highp float;
@@ -149,10 +150,25 @@ export function Blur() {
       const setupGL = async () => {
         // Load in the asset and get its height and width
         const gl = glContext;
-        let asset = Asset.fromURI(imageData.uri);
-        await asset.downloadAsync();
-        asset.height = imageData.height;
-        asset.width = imageData.width;
+        // Do some magic instead of using asset.download async as this tries to
+        // redownload the file:// uri on android and iOS
+        let asset;
+        if (Platform.OS !== "web") {
+          asset = {
+            uri: imageData.uri,
+            localUri: imageData.uri,
+            height: imageData.height,
+            width: imageData.width,
+          };
+          await FileSystem.copyAsync({
+            from: asset.uri,
+            to: FileSystem.cacheDirectory + "blur.jpg",
+          });
+          asset.localUri = FileSystem.cacheDirectory + "blur.jpg";
+        } else {
+          asset = Asset.fromURI(imageData.uri);
+          await asset.downloadAsync();
+        }
         if (asset.width && asset.height) {
           // Setup the shaders for our GL context so it draws from texImage2D
           const vert = gl.createShader(gl.VERTEX_SHADER);
@@ -238,9 +254,9 @@ export function Blur() {
           }
         }
       };
-      setupGL();
+      setupGL().catch((e) => console.error(e));
     }
-  }, [glContext]);
+  }, [glContext, imageData]);
 
   React.useEffect(() => {
     const gl = glContext;
@@ -312,7 +328,6 @@ export function Blur() {
           thumbTintColor="#c4c4c4"
           containerStyle={styles.slider}
           trackStyle={styles.sliderTrack}
-          thumbStyle={styles.sliderThumb}
         />
       </View>
       <View style={styles.row}>
