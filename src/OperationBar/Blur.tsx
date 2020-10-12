@@ -355,8 +355,4 @@ const styles = StyleSheet.create({
   sliderTrack: {
     borderRadius: 10,
   },
-  sliderThumb: {
-    backgroundColor: "#f0f",
-    color: "#f0f",
-  },
 });
