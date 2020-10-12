@@ -92,7 +92,7 @@ export function Blur() {
   const [, setEditingMode] = useRecoilState(editingModeState);
   const [glContext, setGLContext] = useRecoilState(glContextState);
 
-  const [blur, setBlur] = React.useState(1);
+  const [blur, setBlur] = React.useState(26);
   const [glProgram, setGLProgram] = React.useState(null);
 
   const onClose = () => {
@@ -308,6 +308,7 @@ export function Blur() {
           maximumValue={50}
           minimumTrackTintColor="#00A3FF"
           maximumTrackTintColor="#ccc"
+          thumbTintColor="#c4c4c4"
           containerStyle={styles.slider}
           trackStyle={styles.sliderTrack}
           thumbStyle={styles.sliderThumb}
@@ -355,6 +356,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
   },
   sliderThumb: {
-    backgroundColor: "#c4c4c4",
+    backgroundColor: "#f0f",
+    color: "#f0f",
   },
 });
