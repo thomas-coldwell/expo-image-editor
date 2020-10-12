@@ -91,20 +91,13 @@ function ImageEditorCore(props: ImageEditorProps) {
             width: pickerWidth,
             height: pickerHeight,
           } = await ImageManipulator.manipulateAsync(props.imageUri, []);
-          Image.getSize(
-            props.imageUri,
-            (width: number, height: number) => {
-              // Image.getSize gets the right ratio, but incorrect magnitude
-              // whereas expo image picker does vice versa 😅...this fixes it.
-              setImageData({
-                uri: props.imageUri,
-                width: width > height ? pickerWidth : pickerHeight,
-                height: width > height ? pickerHeight : pickerWidth,
-              });
-              enableEditor();
-            },
-            (error: any) => console.log(error)
-          );
+          console.log(pickerWidth, pickerHeight);
+          setImageData({
+            uri: props.imageUri,
+            width: pickerWidth,
+            height: pickerHeight,
+          });
+          enableEditor();
         }
       }
     })();
