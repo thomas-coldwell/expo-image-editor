@@ -1,5 +1,5 @@
 import * as React from "react";
-import { StyleSheet, View, Text, PixelRatio } from "react-native";
+import { StyleSheet, View, Text, PixelRatio, Platform } from "react-native";
 import { useRecoilState } from "recoil";
 import { IconButton } from "../components/IconButton";
 import {
@@ -11,7 +11,8 @@ import {
 } from "../Store";
 import { Slider } from "@miblanchard/react-native-slider";
 import { Asset } from "expo-asset";
-
+import { GLView } from "expo-gl";
+import * as ImageManinpulator from "expo-image-manipulator";
 const vertShader = `
 precision highp float;
 attribute vec2 position;
@@ -96,6 +97,48 @@ export function Blur() {
 
   const onClose = () => {
     // If closing reset the image back to its original
+    setGLContext(null);
+    setEditingMode("operation-select");
+  };
+
+  const onSaveWithBlur = async () => {
+    // Set the processing to true so no UI can be interacted with
+    setProcessing(true);
+    // Take a snapshot of the GLView's current framebuffer and set that as the new image data
+    const gl = glContext;
+    gl.drawArrays(gl.TRIANGLES, 0, 6);
+    const output = await GLView.takeSnapshotAsync(gl);
+    // Do any addtional platform processing of the result and set it as the
+    // new image data
+    if (Platform.OS === "web") {
+      const fileReaderInstance = new FileReader();
+      fileReaderInstance.readAsDataURL(output.uri as any);
+      fileReaderInstance.onload = async () => {
+        const base64data = fileReaderInstance.result;
+        const flippedOutput = await ImageManinpulator.manipulateAsync(
+          base64data as string,
+          [{ flip: ImageManinpulator.FlipType.Vertical }]
+        );
+        setImageData({
+          uri: flippedOutput.uri,
+          width: flippedOutput.width,
+          height: flippedOutput.height,
+        });
+      };
+    } else {
+      const flippedOutput = await ImageManinpulator.manipulateAsync(
+        output.uri as string,
+        [{ flip: ImageManinpulator.FlipType.Vertical }]
+      );
+      setImageData({
+        uri: flippedOutput.uri as string,
+        width: flippedOutput.width,
+        height: flippedOutput.height,
+      });
+    }
+
+    // Reset back to operation selection mode
+    setProcessing(false);
     setGLContext(null);
     setEditingMode("operation-select");
   };
@@ -276,7 +319,7 @@ export function Blur() {
         <IconButton
           iconID="check"
           text="Done"
-          onPress={() => setEditingMode("operation-select")}
+          onPress={() => onSaveWithBlur()}
         />
       </View>
     </View>

@@ -1,11 +1,5 @@
 import * as React from "react";
-import {
-  Image,
-  StyleSheet,
-  LayoutRectangle,
-  View,
-  PixelRatio,
-} from "react-native";
+import { Image, StyleSheet, View } from "react-native";
 import { ImageCropOverlay } from "./ImageCropOverlay";
 import { useRecoilState } from "recoil";
 import {
@@ -14,10 +8,8 @@ import {
   imageScaleFactorState,
   editingModeState,
   glContextState,
-  glProgramState,
 } from "./Store";
 import { ExpoWebGLRenderingContext, GLView } from "expo-gl";
-import { Asset } from "expo-asset";
 
 function EditingWindow() {
   //
@@ -33,11 +25,11 @@ function EditingWindow() {
   const [, setImageBounds] = useRecoilState(imageBoundsState);
   const [, setImageScaleFactor] = useRecoilState(imageScaleFactorState);
   const [editingMode] = useRecoilState(editingModeState);
-  const [glContext, setGLContext] = useRecoilState(glContextState);
+  const [, setGLContext] = useRecoilState(glContextState);
 
+  // Get some readable boolean states
   const isCropping = editingMode === "crop";
   const isBlurring = editingMode === "blur";
-
   const usesGL = isBlurring;
 
   const getImageFrame = (layout: {
