@@ -71,12 +71,16 @@ export function Rotate() {
         <IconButton
           iconID="rotate-left"
           text="Rotate -90"
-          onPress={() => setRotation(rotation - 90)}
+          onPress={() =>
+            setRotation(rotation + (Platform.OS === "web" ? 90 : -90))
+          }
         />
         <IconButton
           iconID="rotate-right"
           text="Rotate +90"
-          onPress={() => setRotation(rotation + 90)}
+          onPress={() =>
+            setRotation(rotation - (Platform.OS === "web" ? 90 : -90))
+          }
         />
       </View>
       <View style={styles.row}>
