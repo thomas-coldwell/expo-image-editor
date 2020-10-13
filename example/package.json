@@ -23,6 +23,7 @@
     "react-dom": "^16.13.1",
     "react-hot-loader": "^4.12.21",
     "react-native": "https://github.com/expo/react-native/archive/sdk-37.0.1.tar.gz",
+    "react-native-console-time-polyfill": "^1.2.1",
     "react-native-gesture-handler": "~1.6.0",
     "react-native-screens": "~2.2.0",
     "react-native-web": "~0.11.7",

@@ -6,6 +6,7 @@ import {
   editingModeState,
   glContextState,
   glProgramState,
+  imageBoundsState,
   imageDataState,
   processingState,
 } from "../Store";
@@ -33,6 +34,7 @@ uniform highp float height;
 varying vec2 uv;
 uniform highp int radius;
 uniform highp int pass;
+uniform highp float pixelFrequency;
 float gauss (float sigma, float x) {
   float g = (1.0/sqrt(2.0*3.142*sigma*sigma))*exp(-0.5*(x*x)/(sigma*sigma));
   return g;
@@ -45,7 +47,7 @@ void main () {
   color *= gauss(sigma, 0.0);
   for (int i = -50; i <= 50; i++) {
     if (i >= -radius && i <= radius) {
-      float offset = float(i);
+      float index = float(i);
       // Caclulate the current pixel index
       float pixelIndex = 0.0;
       if (pass == 0) {
@@ -55,6 +57,7 @@ void main () {
         pixelIndex = uv.x * width;
       }
       // Get the neighbouring pixel index
+      float offset = index * pixelFrequency;
       pixelIndex += offset;
       // Normalise the new index back into the 0.0 to 1.0 range
       if (pass == 0) {
@@ -71,7 +74,7 @@ void main () {
         pixelIndex = 1.0;
       }
       // Get gaussian amplitude
-      float g = gauss(sigma, offset);
+      float g = gauss(sigma, index);
       // Get the color of neighbouring pixel
       vec4 previousColor = vec4(0.0, 0.0, 0.0, 0.0);
       if (pass == 0) {
@@ -93,6 +96,7 @@ export function Blur() {
   const [imageData, setImageData] = useRecoilState(imageDataState);
   const [, setEditingMode] = useRecoilState(editingModeState);
   const [glContext, setGLContext] = useRecoilState(glContextState);
+  const [imageBounds] = useRecoilState(imageBoundsState);
 
   const [blur, setBlur] = React.useState(26);
   const [glProgram, setGLProgram] = React.useState(null);
@@ -239,7 +243,7 @@ export function Blur() {
                 gl.UNSIGNED_BYTE,
                 asset as any
               );
-              // Set a bunch of uniforms we want to pass into our fragement shader
+              // Set a bunch of uniforms we want to pass into our fragment shader
               gl.uniform1i(gl.getUniformLocation(program, "texture"), 0);
               gl.uniform1f(
                 gl.getUniformLocation(program, "width"),
@@ -248,6 +252,15 @@ export function Blur() {
               gl.uniform1f(
                 gl.getUniformLocation(program, "height"),
                 asset.height
+              );
+              // Calculate the pixel frequency to sample at based on the image resolution
+              // as the blur radius is in dp
+              const pixelFrequency = Math.round(
+                imageData.width / imageBounds.width
+              );
+              gl.uniform1f(
+                gl.getUniformLocation(program, "pixelFrequency"),
+                pixelFrequency
               );
               setGLProgram(program);
             }
