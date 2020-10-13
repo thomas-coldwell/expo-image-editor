@@ -1,6 +1,6 @@
 {
   "name": "expo-image-editor",
-  "version": "1.4.1",
+  "version": "1.4.2",
   "description": "",
   "main": "lib/ImageEditor.js",
   "types": "lib/ImageEditor.d.ts",
@@ -10,8 +10,22 @@
     "copy": "cpx './lib/*' ./example/lib --watch",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "",
-  "license": "ISC",
+  "keywords": [
+    "react",
+    "react-native",
+    "image",
+    "image editor",
+    "image cropping",
+    "blur",
+    "expo"
+  ],
+  "author": "Thomas Coldwell",
+  "license": "MIT",
+  "homepage": "https://github.com/thomas-coldwell/expo-image-editor",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/thomas-coldwell/expo-image-editor"
+  },
   "peerDependencies": {
     "react": "*",
     "react-native": "*"
