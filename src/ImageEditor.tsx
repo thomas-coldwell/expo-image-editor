@@ -8,6 +8,7 @@ import {
   Platform,
   Image,
   Dimensions,
+  SafeAreaView,
 } from "react-native";
 import { ControlBar } from "./ControlBar";
 import { EditingWindow } from "./EditingWindow";
@@ -139,36 +140,38 @@ function ImageEditorCore(props: ImageEditorProps) {
   }, [props.visible]);
 
   return (
-    <View
-      style={{
-        height: "100%",
-        width: "100%",
-        position: "absolute",
-        top: 0,
-        left: 0,
-        zIndex: 1000000,
-        elevation: 1000000,
-        opacity: props.visible ? 1.0 : 0.0,
-      }}
-      pointerEvents={props.visible ? "auto" : "none"}
-    >
+    <>
       <StatusBar hidden />
-      {ready ? (
-        <View style={styles.container}>
-          <ControlBar
-            onPressBack={() =>
-              editingMode == "operation-select"
-                ? props.onCloseEditor()
-                : setEditingMode("operation-select")
-            }
-            onFinishEditing={() => onFinishEditing()}
-          />
-          <EditingWindow />
-          <OperationBar />
-        </View>
-      ) : null}
-      {processing ? <Processing /> : null}
-    </View>
+      <SafeAreaView
+        style={{
+          height: "100%",
+          width: "100%",
+          position: "absolute",
+          top: 0,
+          left: 0,
+          zIndex: 1000000,
+          elevation: 1000000,
+          opacity: props.visible ? 1.0 : 0.0,
+        }}
+        pointerEvents={props.visible ? "auto" : "none"}
+      >
+        {ready ? (
+          <View style={styles.container}>
+            <ControlBar
+              onPressBack={() =>
+                editingMode == "operation-select"
+                  ? props.onCloseEditor()
+                  : setEditingMode("operation-select")
+              }
+              onFinishEditing={() => onFinishEditing()}
+            />
+            <EditingWindow />
+            <OperationBar />
+          </View>
+        ) : null}
+        {processing ? <Processing /> : null}
+      </SafeAreaView>
+    </>
   );
 }
 
