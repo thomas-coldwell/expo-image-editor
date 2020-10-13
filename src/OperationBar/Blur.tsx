@@ -264,9 +264,11 @@ export function Blur() {
               );
               // Calculate the pixel frequency to sample at based on the image resolution
               // as the blur radius is in dp
-              const pixelFrequency = Math.round(
-                imageData.width / imageBounds.width / 2
+              const pixelFrequency = Math.max(
+                Math.round(imageData.width / imageBounds.width / 2),
+                1
               );
+              console.log(pixelFrequency);
               gl.uniform1f(
                 gl.getUniformLocation(program, "pixelFrequency"),
                 pixelFrequency
@@ -348,12 +350,11 @@ export function Blur() {
           onValueChange={(value) => {
             setSliderValue(value[0]);
             if (throttleBlur) {
-              throttleSliderBlur(value[0]);
+              throttleSliderBlur(Math.round(value[0]));
             } else {
-              setBlur(value[0]);
+              setBlur(Math.round(value[0]));
             }
           }}
-          step={1}
           minimumValue={1}
           maximumValue={30}
           minimumTrackTintColor="#00A3FF"
@@ -365,7 +366,9 @@ export function Blur() {
       </View>
       <View style={styles.row}>
         <IconButton iconID="close" text="Cancel" onPress={() => onClose()} />
-        <Text style={styles.prompt}>Blur Radius: {sliderValue}</Text>
+        <Text style={styles.prompt}>
+          Blur Radius: {Math.round(sliderValue)}
+        </Text>
         <IconButton
           iconID="check"
           text="Done"
