@@ -268,7 +268,6 @@ export function Blur() {
                 Math.round(imageData.width / imageBounds.width / 2),
                 1
               );
-              console.log(pixelFrequency);
               gl.uniform1f(
                 gl.getUniformLocation(program, "pixelFrequency"),
                 pixelFrequency
