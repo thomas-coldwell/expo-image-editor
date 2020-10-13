@@ -41,49 +41,51 @@ float gauss (float sigma, float x) {
 }
 void main () {
   float f_radius = float(radius);
-  float sigma = ((0.5 * f_radius) + exp(-0.05 * f_radius));
+  float sigma = (0.5 * f_radius);
   // Get the color of the fragment pixel
   vec4 color = texture2D(texture, vec2(uv.x, uv.y));
   color *= gauss(sigma, 0.0);
   for (int i = -50; i <= 50; i++) {
-    if (i >= -radius && i <= radius) {
-      float index = float(i);
-      // Caclulate the current pixel index
-      float pixelIndex = 0.0;
-      if (pass == 0) {
-        pixelIndex = (uv.y) * height;
+    if (i != 0) {
+      if (i >= -radius && i <= radius) {
+        float index = float(i);
+        // Caclulate the current pixel index
+        float pixelIndex = 0.0;
+        if (pass == 0) {
+          pixelIndex = (uv.y) * height;
+        }
+        else {
+          pixelIndex = uv.x * width;
+        }
+        // Get the neighbouring pixel index
+        float offset = index * pixelFrequency;
+        pixelIndex += offset;
+        // Normalise the new index back into the 0.0 to 1.0 range
+        if (pass == 0) {
+          pixelIndex /= height;
+        }
+        else {
+          pixelIndex /= width;
+        }
+        // Pad the UV 
+        if (pixelIndex < 0.0) {
+          pixelIndex = 0.0;
+        }
+        if (pixelIndex > 1.0) {
+          pixelIndex = 1.0;
+        }
+        // Get gaussian amplitude
+        float g = gauss(sigma, index);
+        // Get the color of neighbouring pixel
+        vec4 previousColor = vec4(0.0, 0.0, 0.0, 0.0);
+        if (pass == 0) {
+          previousColor = texture2D(texture, vec2(uv.x, pixelIndex)) * g;
+        }
+        else {
+          previousColor = texture2D(texture, vec2(pixelIndex, uv.y)) * g;
+        }
+        color += previousColor;
       }
-      else {
-        pixelIndex = uv.x * width;
-      }
-      // Get the neighbouring pixel index
-      float offset = index * pixelFrequency;
-      pixelIndex += offset;
-      // Normalise the new index back into the 0.0 to 1.0 range
-      if (pass == 0) {
-        pixelIndex /= height;
-      }
-      else {
-        pixelIndex /= width;
-      }
-      // Pad the UV 
-      if (pixelIndex < 0.0) {
-        pixelIndex = 0.0;
-      }
-      if (pixelIndex > 1.0) {
-        pixelIndex = 1.0;
-      }
-      // Get gaussian amplitude
-      float g = gauss(sigma, index);
-      // Get the color of neighbouring pixel
-      vec4 previousColor = vec4(0.0, 0.0, 0.0, 0.0);
-      if (pass == 0) {
-        previousColor = texture2D(texture, vec2(uv.x, pixelIndex)) * g;
-      }
-      else {
-        previousColor = texture2D(texture, vec2(pixelIndex, uv.y)) * g;
-      }
-      color += previousColor;
     }
   }
   // Return the resulting color
@@ -256,7 +258,7 @@ export function Blur() {
               // Calculate the pixel frequency to sample at based on the image resolution
               // as the blur radius is in dp
               const pixelFrequency = Math.round(
-                imageData.width / imageBounds.width
+                imageData.width / imageBounds.width / 2
               );
               gl.uniform1f(
                 gl.getUniformLocation(program, "pixelFrequency"),
