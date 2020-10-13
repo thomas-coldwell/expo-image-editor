@@ -106,7 +106,7 @@ const styles = StyleSheet.create({
   },
   prompt: {
     color: "#fff",
-    fontSize: 24,
+    fontSize: 21,
     textAlign: "center",
   },
   row: {
