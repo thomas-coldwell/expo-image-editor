@@ -90,6 +90,7 @@ export default function App() {
           console.log(result);
         }}
         mode={mode}
+        throttleBlur={false}
       />
     </View>
   );

@@ -9,12 +9,14 @@ import {
   imageBoundsState,
   imageDataState,
   processingState,
+  throttleBlurState,
 } from "../Store";
 import { Slider } from "@miblanchard/react-native-slider";
 import { Asset } from "expo-asset";
 import { GLView } from "expo-gl";
 import * as ImageManinpulator from "expo-image-manipulator";
 import * as FileSystem from "expo-file-system";
+import _, { debounce, throttle } from "lodash";
 
 const vertShader = `
 precision highp float;
@@ -45,8 +47,11 @@ void main () {
   // Get the color of the fragment pixel
   vec4 color = texture2D(texture, vec2(uv.x, uv.y));
   color *= gauss(sigma, 0.0);
-  for (int i = -50; i <= 50; i++) {
+  // Loop over the neightbouring pixels
+  for (int i = -30; i <= 30; i++) {
+    // Make sure we don't include the main pixel which we already sampled!
     if (i != 0) {
+      // Check we are on an index that doesn't exceed the blur radius specified
       if (i >= -radius && i <= radius) {
         float index = float(i);
         // Caclulate the current pixel index
@@ -99,8 +104,10 @@ export function Blur() {
   const [, setEditingMode] = useRecoilState(editingModeState);
   const [glContext, setGLContext] = useRecoilState(glContextState);
   const [imageBounds] = useRecoilState(imageBoundsState);
+  const [throttleBlur] = useRecoilState(throttleBlurState);
 
-  const [blur, setBlur] = React.useState(26);
+  const [sliderValue, setSliderValue] = React.useState(15);
+  const [blur, setBlur] = React.useState(15);
   const [glProgram, setGLProgram] = React.useState(null);
 
   const onClose = () => {
@@ -325,6 +332,10 @@ export function Blur() {
     }
   }, [blur, glContext, glProgram]);
 
+  const throttleSliderBlur = React.useRef<any>(
+    throttle((value) => setBlur(value), 50, { leading: true })
+  ).current;
+
   if (glContext === null) {
     return null;
   }
@@ -333,11 +344,18 @@ export function Blur() {
     <View style={styles.container}>
       <View style={[styles.row, { justifyContent: "center" }]}>
         <Slider
-          value={blur}
-          onValueChange={(value) => setBlur(value[0])}
+          value={sliderValue}
+          onValueChange={(value) => {
+            setSliderValue(value[0]);
+            if (throttleBlur) {
+              throttleSliderBlur(value[0]);
+            } else {
+              setBlur(value[0]);
+            }
+          }}
           step={1}
           minimumValue={1}
-          maximumValue={50}
+          maximumValue={30}
           minimumTrackTintColor="#00A3FF"
           maximumTrackTintColor="#ccc"
           thumbTintColor="#c4c4c4"
@@ -347,7 +365,7 @@ export function Blur() {
       </View>
       <View style={styles.row}>
         <IconButton iconID="close" text="Cancel" onPress={() => onClose()} />
-        <Text style={styles.prompt}>Blur Radius: {blur}</Text>
+        <Text style={styles.prompt}>Blur Radius: {sliderValue}</Text>
         <IconButton
           iconID="check"
           text="Done"

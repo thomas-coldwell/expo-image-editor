@@ -32,5 +32,6 @@ export declare const lockAspectRatioState: import("recoil").RecoilState<boolean>
 export declare const minimumCropDimensionsState: import("recoil").RecoilState<ImageDimensions>;
 export declare const glContextState: import("recoil").RecoilState<ExpoWebGLRenderingContext>;
 export declare const glProgramState: import("recoil").RecoilState<WebGLProgram>;
+export declare const throttleBlurState: import("recoil").RecoilState<boolean>;
 export {};
 //# sourceMappingURL=Store.d.ts.map

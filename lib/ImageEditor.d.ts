@@ -12,6 +12,7 @@ export interface ImageEditorProps {
     onEditingComplete: (result: any) => void;
     lockAspectRatio: boolean;
     mode: Mode;
+    throttleBlur?: boolean;
 }
 export declare function ImageEditor(props: ImageEditorProps): JSX.Element;
 //# sourceMappingURL=ImageEditor.d.ts.map

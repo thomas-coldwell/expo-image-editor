@@ -26,7 +26,7 @@ import {
   readyState,
   fixedCropAspectRatioState,
   lockAspectRatioState,
-  minimumCropDimensionsState,
+  minimumCropDimensionsState,, throttleBlurState
 } from "./Store";
 import { Asset } from "expo-asset";
 import { OperationBar } from "./OperationBar/OperationBar";
@@ -46,6 +46,7 @@ export interface ImageEditorProps {
   onEditingComplete: (result: any) => void;
   lockAspectRatio: boolean;
   mode: Mode;
+  throttleBlur?: boolean;
 }
 
 function ImageEditorCore(props: ImageEditorProps) {
@@ -64,6 +65,7 @@ function ImageEditorCore(props: ImageEditorProps) {
   const [, setMinimumCropDimensions] = useRecoilState(
     minimumCropDimensionsState
   );
+  const [, setThrottleBlur] = useRecoilState(throttleBlurState);
 
   // Initialise the image data when it is set through the props
   React.useEffect(() => {
@@ -117,6 +119,9 @@ function ImageEditorCore(props: ImageEditorProps) {
   React.useEffect(() => {
     setMinimumCropDimensions(props.minimumCropDimensions);
   }, [props.minimumCropDimensions]);
+  React.useEffect(() => {
+    setThrottleBlur(props.throttleBlur && true);
+  }, [props.throttleBlur]);
 
   const onFinishEditing = async () => {
     setProcessing(false);

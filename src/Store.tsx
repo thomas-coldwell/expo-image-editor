@@ -114,3 +114,8 @@ export const glProgramState = atom<GLContext["program"]>({
   key: "glProgramState",
   default: null,
 });
+
+export const throttleBlurState = atom<boolean>({
+  key: "throttleBlurState",
+  default: false,
+});
