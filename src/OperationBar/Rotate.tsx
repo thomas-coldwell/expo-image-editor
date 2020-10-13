@@ -66,22 +66,30 @@ export function Rotate() {
     setEditingMode("operation-select");
   };
 
+  const rotate = (direction: "cw" | "ccw") => {
+    const webDirection = Platform.OS === "web" ? 1 : -1;
+    let rotateBy = rotation - 90 * webDirection * (direction === "cw" ? 1 : -1);
+    // keep it in the -180 to 180 range
+    if (rotateBy > 180) {
+      rotateBy = -90;
+    } else if (rotateBy < -180) {
+      rotateBy = 90;
+    }
+    setRotation(rotateBy);
+  };
+
   return (
     <View style={styles.container}>
       <View style={[styles.row, { paddingHorizontal: "20%" }]}>
         <IconButton
           iconID="rotate-left"
           text="Rotate -90"
-          onPress={() =>
-            setRotation(rotation + (Platform.OS === "web" ? 90 : -90))
-          }
+          onPress={() => rotate("ccw")}
         />
         <IconButton
           iconID="rotate-right"
           text="Rotate +90"
-          onPress={() =>
-            setRotation(rotation - (Platform.OS === "web" ? 90 : -90))
-          }
+          onPress={() => rotate("cw")}
         />
       </View>
       <View style={styles.row}>
