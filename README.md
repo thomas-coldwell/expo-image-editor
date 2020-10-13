@@ -80,7 +80,6 @@ function App() {
         onEditingComplete={(result) => {
           setImageData(result);
         }}
-        mode="crop-only"
       />
     </View>
   );
@@ -89,17 +88,13 @@ function App() {
 
 ### Props
 
-| Name                  | Type     | Description                                                                                           |
-| --------------------- | -------- | ----------------------------------------------------------------------------------------------------- |
-| visible               | boolean  | Whether the editor should be visible or not.                                                          |
-| onCloseEditor         | function | Callback when the editor is dimissed - use this to set hide the editor.                               |
-| imageUri              | string   | The uri of the image to be edited                                                                     |
-| fixedCropAspectRatio  | number   | The starting aspect ratio of the cropping window.                                                     |
-| lockAspectRatio       | boolean  | Whether the cropping window should maintain this aspect ratio or not.                                 |
-| minimumCropDimensions | object   | An object of `{width, height}` specifying the minimum dimensions of the crop window.                  |
-| onEditingComplete     | function | function that will return the result of the image editing which is an object identical to `imageData` |
-| mode                  | string   | The mode the image editor can be used in - one of `full`, `crop-only` or `rotate-only`                |
-
-## Acknowledgements
-
-- Inspiration from <a href="https://github.com/brunon80/expo-image-crop">this</a> repo
+| Name                  | Type     | Description                                                                                                                               |
+| --------------------- | -------- | ----------------------------------------------------------------------------------------------------------------------------------------- |
+| visible               | boolean  | Whether the editor should be visible or not.                                                                                              |
+| onCloseEditor         | function | Callback when the editor is dimissed - use this to set hide the editor.                                                                   |
+| imageUri              | string   | The uri of the image to be edited                                                                                                         |
+| fixedCropAspectRatio  | number   | The starting aspect ratio of the cropping window.                                                                                         |
+| lockAspectRatio       | boolean  | Whether the cropping window should maintain this aspect ratio or not.                                                                     |
+| minimumCropDimensions | object   | An object of `{width, height}` specifying the minimum dimensions of the crop window.                                                      |
+| onEditingComplete     | function | function that will return the result of the image editing which is an object identical to `imageData`                                     |
+| throttleBlur          | boolean  | Whether to throttle the WebGL update of the blur while adjusting (defaults to false) - useful to set to true on lower performance devices |
