@@ -26,7 +26,8 @@ import {
   readyState,
   fixedCropAspectRatioState,
   lockAspectRatioState,
-  minimumCropDimensionsState,, throttleBlurState
+  minimumCropDimensionsState,
+  throttleBlurState,
 } from "./Store";
 import { Asset } from "expo-asset";
 import { OperationBar } from "./OperationBar/OperationBar";
@@ -45,7 +46,6 @@ export interface ImageEditorProps {
   };
   onEditingComplete: (result: any) => void;
   lockAspectRatio: boolean;
-  mode: Mode;
   throttleBlur?: boolean;
 }
 
@@ -103,11 +103,6 @@ function ImageEditorCore(props: ImageEditorProps) {
       }
     })();
   }, [props.imageUri]);
-
-  // Initialise / update the editing mode set through props
-  React.useEffect(() => {
-    setEditingMode(props.mode === "crop-only" ? "crop" : "operation-select");
-  }, [props.mode]);
 
   // Initialise / update the crop AR / AR lock / min crop dims set through props
   React.useEffect(() => {
@@ -167,7 +162,6 @@ function ImageEditorCore(props: ImageEditorProps) {
                 : setEditingMode("operation-select")
             }
             onFinishEditing={() => onFinishEditing()}
-            mode={props.mode}
           />
           <EditingWindow />
           <OperationBar />

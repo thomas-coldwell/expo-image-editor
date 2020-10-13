@@ -1,7 +1,6 @@
 import * as React from "react";
 import { View, StyleSheet } from "react-native";
 import _ from "lodash";
-import { Mode } from "./ImageEditor";
 import { useRecoilState } from "recoil";
 import { editingModeState } from "./Store";
 import { IconButton } from "./components/IconButton";
@@ -9,7 +8,6 @@ import { IconButton } from "./components/IconButton";
 interface ControlBarProps {
   onPressBack: () => void;
   onFinishEditing: () => void;
-  mode: Mode;
 }
 
 function ControlBar(props: ControlBarProps) {
