@@ -9,7 +9,12 @@
     "netlify": "expo build:web && netlify deploy --dir=web-build --prod"
   },
   "dependencies": {
+    "@miblanchard/react-native-slider": "^1.5.0",
+    "@react-hook/throttle": "^2.2.0",
     "expo": "~37.0.3",
+    "expo-file-system": "^9.2.0",
+    "expo-gl": "^9.1.1",
+    "expo-gl-cpp": "^9.1.2",
     "expo-image-manipulator": "~8.1.0",
     "expo-image-picker": "^8.1.0",
     "image-size": "^0.8.3",
@@ -19,7 +24,8 @@
     "react-dom": "^16.13.1",
     "react-hot-loader": "^4.12.21",
     "react-native": "https://github.com/expo/react-native/archive/sdk-37.0.1.tar.gz",
-    "react-native-gesture-handler": "^1.8.0",
+    "react-native-console-time-polyfill": "^1.2.1",
+    "react-native-gesture-handler": "~1.6.0",
     "react-native-screens": "~2.2.0",
     "react-native-web": "~0.11.7",
     "recoil": "^0.0.10"

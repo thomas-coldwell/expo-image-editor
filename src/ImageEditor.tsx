@@ -7,6 +7,8 @@ import {
   Alert,
   Platform,
   Image,
+  Dimensions,
+  SafeAreaView,
 } from "react-native";
 import { ControlBar } from "./ControlBar";
 import { EditingWindow } from "./EditingWindow";
@@ -26,15 +28,11 @@ import {
   fixedCropAspectRatioState,
   lockAspectRatioState,
   minimumCropDimensionsState,
+  throttleBlurState,
 } from "./Store";
 import { Asset } from "expo-asset";
+import { OperationBar } from "./OperationBar/OperationBar";
 const noScroll = require("no-scroll");
-const PlatformModal = Platform.OS == "web" ? Modal : RNModal;
-
-// Stop ARIA errors
-if (Platform.OS == "web") {
-  PlatformModal.setAppElement("#root");
-}
 
 export type Mode = "full" | "crop-only" | "rotate-only";
 
@@ -49,7 +47,7 @@ export interface ImageEditorProps {
   };
   onEditingComplete: (result: any) => void;
   lockAspectRatio: boolean;
-  mode: Mode;
+  throttleBlur?: boolean;
 }
 
 function ImageEditorCore(props: ImageEditorProps) {
@@ -68,6 +66,7 @@ function ImageEditorCore(props: ImageEditorProps) {
   const [, setMinimumCropDimensions] = useRecoilState(
     minimumCropDimensionsState
   );
+  const [, setThrottleBlur] = useRecoilState(throttleBlurState);
 
   // Initialise the image data when it is set through the props
   React.useEffect(() => {
@@ -95,29 +94,16 @@ function ImageEditorCore(props: ImageEditorProps) {
             width: pickerWidth,
             height: pickerHeight,
           } = await ImageManipulator.manipulateAsync(props.imageUri, []);
-          Image.getSize(
-            props.imageUri,
-            (width: number, height: number) => {
-              // Image.getSize gets the right ratio, but incorrect magnitude
-              // whereas expo image picker does vice versa 😅...this fixes it.
-              setImageData({
-                uri: props.imageUri,
-                width: width > height ? pickerWidth : pickerHeight,
-                height: width > height ? pickerHeight : pickerWidth,
-              });
-              enableEditor();
-            },
-            (error: any) => console.log(error)
-          );
+          setImageData({
+            uri: props.imageUri,
+            width: pickerWidth,
+            height: pickerHeight,
+          });
+          enableEditor();
         }
       }
     })();
   }, [props.imageUri]);
-
-  // Initialise / update the editing mode set through props
-  React.useEffect(() => {
-    setEditingMode(props.mode === "crop-only" ? "crop" : "operation-select");
-  }, [props.mode]);
 
   // Initialise / update the crop AR / AR lock / min crop dims set through props
   React.useEffect(() => {
@@ -129,82 +115,9 @@ function ImageEditorCore(props: ImageEditorProps) {
   React.useEffect(() => {
     setMinimumCropDimensions(props.minimumCropDimensions);
   }, [props.minimumCropDimensions]);
-
-  const onPerformCrop = async () => {
-    // Calculate cropping bounds
-    const croppingBounds = {
-      originX: Math.round(
-        (accumulatedPan.x - imageBounds.x) * imageScaleFactor
-      ),
-      originY: Math.round(
-        (accumulatedPan.y - imageBounds.y) * imageScaleFactor
-      ),
-      width: Math.round(cropSize.width * imageScaleFactor),
-      height: Math.round(cropSize.height * imageScaleFactor),
-    };
-    // Set the editor state to processing and perform the crop
-    setProcessing(true);
-    await ImageManipulator.manipulateAsync(imageData.uri, [
-      { crop: croppingBounds },
-    ])
-      .then(async ({ uri, width, height }) => {
-        // Check if on web - currently there is a weird bug where it will keep
-        // the canvas from ImageManipualtor at originX + width and so we'll just crop
-        // the result again for now if on web - TODO write github issue!
-        if (Platform.OS == "web") {
-          await ImageManipulator.manipulateAsync(uri, [
-            { crop: { ...croppingBounds, originX: 0, originY: 0 } },
-          ])
-            .then(({ uri, width, height }) => {
-              if (props.mode == "crop-only") {
-                setProcessing(false);
-                props.onEditingComplete({ uri, width, height });
-                onCloseEditor();
-              } else {
-                setProcessing(false);
-                setImageData({ uri, width, height });
-                setEditingMode("operation-select");
-              }
-            })
-            .catch((error) => {
-              // If there's an error dismiss the the editor and alert the user
-              setProcessing(false);
-              onCloseEditor();
-              Alert.alert("An error occurred while editing.");
-            });
-        } else {
-          if (props.mode == "crop-only") {
-            setProcessing(false);
-            props.onEditingComplete({ uri, width, height });
-            onCloseEditor();
-          } else {
-            setProcessing(false);
-            setImageData({ uri, width, height });
-            setEditingMode("operation-select");
-          }
-        }
-      })
-      .catch((error) => {
-        // If there's an error dismiss the the editor and alert the user
-        setProcessing(false);
-        onCloseEditor();
-        Alert.alert("An error occurred while editing.");
-      });
-  };
-
-  const onRotate = async (angle: number) => {
-    // Rotate the image by the specified angle
-    setProcessing(false);
-    await ImageManipulator.manipulateAsync(imageData.uri, [{ rotate: angle }])
-      .then(async ({ uri, width, height }) => {
-        // Set the image data
-        setProcessing(false);
-        setImageData({ uri, width, height });
-      })
-      .catch((error) => {
-        alert("An error occured while editing.");
-      });
-  };
+  React.useEffect(() => {
+    setThrottleBlur(props.throttleBlur && true);
+  }, [props.throttleBlur]);
 
   const onFinishEditing = async () => {
     setProcessing(false);
@@ -227,26 +140,38 @@ function ImageEditorCore(props: ImageEditorProps) {
   }, [props.visible]);
 
   return (
-    <PlatformModal visible={props.visible} transparent animationType="slide">
+    <>
       <StatusBar hidden />
-      {ready ? (
-        <View style={styles.container}>
-          <ControlBar
-            onPressBack={() =>
-              editingMode == "operation-select"
-                ? props.onCloseEditor()
-                : setEditingMode("operation-select")
-            }
-            onPerformCrop={() => onPerformCrop()}
-            onRotate={(angle) => onRotate(angle)}
-            onFinishEditing={() => onFinishEditing()}
-            mode={props.mode}
-          />
-          <EditingWindow />
-        </View>
-      ) : null}
-      {processing ? <Processing /> : null}
-    </PlatformModal>
+      <SafeAreaView
+        style={{
+          height: "100%",
+          width: "100%",
+          position: "absolute",
+          top: 0,
+          left: 0,
+          zIndex: 1000000,
+          elevation: 1000000,
+          opacity: props.visible ? 1.0 : 0.0,
+        }}
+        pointerEvents={props.visible ? "auto" : "none"}
+      >
+        {ready ? (
+          <View style={styles.container}>
+            <ControlBar
+              onPressBack={() =>
+                editingMode == "operation-select"
+                  ? props.onCloseEditor()
+                  : setEditingMode("operation-select")
+              }
+              onFinishEditing={() => onFinishEditing()}
+            />
+            <EditingWindow />
+            <OperationBar />
+          </View>
+        ) : null}
+        {processing ? <Processing /> : null}
+      </SafeAreaView>
+    </>
   );
 }
 

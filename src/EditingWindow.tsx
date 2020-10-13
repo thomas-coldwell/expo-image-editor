@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Image, StyleSheet, LayoutRectangle, View } from "react-native";
+import { Image, PixelRatio, StyleSheet, View } from "react-native";
 import { ImageCropOverlay } from "./ImageCropOverlay";
 import { useRecoilState } from "recoil";
 import {
@@ -7,7 +7,9 @@ import {
   imageBoundsState,
   imageScaleFactorState,
   editingModeState,
+  glContextState,
 } from "./Store";
+import { ExpoWebGLRenderingContext, GLView } from "expo-gl";
 
 function EditingWindow() {
   //
@@ -23,6 +25,12 @@ function EditingWindow() {
   const [, setImageBounds] = useRecoilState(imageBoundsState);
   const [, setImageScaleFactor] = useRecoilState(imageScaleFactorState);
   const [editingMode] = useRecoilState(editingModeState);
+  const [, setGLContext] = useRecoilState(glContextState);
+
+  // Get some readable boolean states
+  const isCropping = editingMode === "crop";
+  const isBlurring = editingMode === "blur";
+  const usesGL = isBlurring;
 
   const getImageFrame = (layout: {
     width: number;
@@ -76,19 +84,51 @@ function EditingWindow() {
     }
   };
 
+  const getGLLayout = () => {
+    const { height: windowHeight, width: windowWidth } = state.imageLayout;
+    const windowAspectRatio = windowWidth / windowHeight;
+    const { height: imageHeight, width: imageWidth } = imageData;
+    const imageAspectRatio = imageWidth / imageHeight;
+    // If the window is taller than img...
+    if (windowAspectRatio < imageAspectRatio) {
+      return { width: windowWidth, height: windowWidth / imageAspectRatio };
+    } else {
+      return { height: windowHeight, width: windowHeight * imageAspectRatio };
+    }
+  };
+
   React.useEffect(() => {
     onUpdateCropLayout(state.imageLayout);
   }, [imageData]);
 
-  const isCropping = editingMode === "crop";
+  const onGLContextCreate = async (gl: ExpoWebGLRenderingContext) => {
+    setGLContext(gl);
+  };
 
   return (
     <View style={styles.container}>
-      <Image
-        style={styles.image}
-        source={{ uri: imageData.uri }}
-        onLayout={({ nativeEvent }) => getImageFrame(nativeEvent.layout)}
-      />
+      {usesGL ? (
+        <View style={styles.glContainer}>
+          <GLView
+            style={[
+              {
+                height: 1,
+                width: 1,
+                backgroundColor: "#ccc",
+                transform: [{ scaleY: -1 }],
+              },
+              getGLLayout(),
+            ]}
+            onContextCreate={onGLContextCreate}
+          />
+        </View>
+      ) : (
+        <Image
+          style={styles.image}
+          source={{ uri: imageData.uri }}
+          onLayout={({ nativeEvent }) => getImageFrame(nativeEvent.layout)}
+        />
+      )}
       {isCropping && state.imageLayout.height != null ? (
         <ImageCropOverlay />
       ) : null}
@@ -105,5 +145,10 @@ const styles = StyleSheet.create({
   image: {
     flex: 1,
     resizeMode: "contain",
+  },
+  glContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
   },
 });

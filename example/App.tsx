@@ -20,8 +20,6 @@ export default function App() {
     undefined
   );
 
-  const [mode, setMode] = React.useState<Mode>("full");
-
   const [aspectLock, setAspectLock] = React.useState(false);
 
   const selectPhoto = async () => {
@@ -49,17 +47,6 @@ export default function App() {
     setEditorVisible(true);
   };
 
-  const toggleMode = () => {
-    // Chaneg the mode to either full, crop-only or rotate only
-    if (mode == "full") {
-      setMode("crop-only");
-    } else if (mode == "crop-only") {
-      setMode("rotate-only");
-    } else {
-      setMode("full");
-    }
-  };
-
   return (
     <View style={styles.container}>
       <Image style={styles.image} source={{ uri: imageUri }} />
@@ -69,7 +56,6 @@ export default function App() {
       />
       <View style={styles.buttonRow}>
         <Button title="Select Photo" onPress={() => selectPhoto()} />
-        <Button title={"Mode: " + mode} onPress={() => toggleMode()} />
         <Button
           title={"Aspect Lock: " + aspectLock}
           onPress={() => setAspectLock(!aspectLock)}
@@ -89,7 +75,7 @@ export default function App() {
           setCroppedUri(result.uri);
           console.log(result);
         }}
-        mode={mode}
+        throttleBlur={false}
       />
     </View>
   );

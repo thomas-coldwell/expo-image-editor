@@ -22,9 +22,7 @@ const verticalSections = ["left", "middle", "right"];
 function ImageCropOverlay() {
   // Record which section of the fram window has been pressed
   // this determines whether it is a translation or scaling gesture
-  const [selectedFrameSection, setSelectedFrameSection] = React.useState(
-    "middlemiddle"
-  );
+  const [selectedFrameSection, setSelectedFrameSection] = React.useState("");
 
   // Shared state and bits passed through recoil to avoid prop drilling
   const [cropSize, setCropSize] = useRecoilState(cropSizeState);
@@ -40,11 +38,6 @@ function ImageCropOverlay() {
     width: new Animated.Value(cropSize.width),
     height: new Animated.Value(cropSize.height),
   });
-
-  // State to enable and disable the pan handler so the section buttons
-  // can register being pressed first and THEN enable the pan handler
-  // to start tracking gestures once we know what type of gesture it is
-  const [panResponderEnabled, setPanResponderEnabled] = React.useState(false);
 
   // pan X and Y values to track the current delta of the pan
   // in both directions - this should be zeroed out on release
@@ -100,29 +93,31 @@ function ImageCropOverlay() {
   const isTop = selectedFrameSection.startsWith("top");
 
   const onOverlayMove = ({ nativeEvent }: PanGestureHandlerGestureEvent) => {
-    // Check if the section pressed is one to translate the crop window or not
-    if (isMovingSection()) {
-      // If it is then use an animated event to directly pass the tranlation
-      // to the pan refs
-      Animated.event([
-        {
-          translationX: panX.current,
-          translationY: panY.current,
-        },
-      ])(nativeEvent);
-    } else {
-      // Else its a scaling operation
-      const { x, y } = getTargetCropFrameBounds(nativeEvent);
-      if (isTop) {
-        panY.current.setValue(-y);
+    if (selectedFrameSection !== "") {
+      // Check if the section pressed is one to translate the crop window or not
+      if (isMovingSection()) {
+        // If it is then use an animated event to directly pass the tranlation
+        // to the pan refs
+        Animated.event([
+          {
+            translationX: panX.current,
+            translationY: panY.current,
+          },
+        ])(nativeEvent);
+      } else {
+        // Else its a scaling operation
+        const { x, y } = getTargetCropFrameBounds(nativeEvent);
+        if (isTop) {
+          panY.current.setValue(-y);
+        }
+        if (isLeft) {
+          panX.current.setValue(-x);
+        }
+        // Finally update the animated width to the values the crop
+        // window has been resized to
+        animatedCropSize.width.setValue(cropSize.width + x);
+        animatedCropSize.height.setValue(cropSize.height + y);
       }
-      if (isLeft) {
-        panX.current.setValue(-x);
-      }
-      // Finally update the animated width to the values the crop
-      // window has been resized to
-      animatedCropSize.width.setValue(cropSize.width + x);
-      animatedCropSize.height.setValue(cropSize.height + y);
     }
   };
 
@@ -162,7 +157,7 @@ function ImageCropOverlay() {
       checkResizeBounds(nativeEvent);
     }
     // Disable the pan responder so the section tiles can register being pressed again
-    setPanResponderEnabled(false);
+    setSelectedFrameSection("");
   };
 
   const onHandlerStateChange = ({
@@ -266,7 +261,7 @@ function ImageCropOverlay() {
   return (
     <View style={styles.container}>
       <PanGestureHandler
-        enabled={panResponderEnabled}
+        enabled={true}
         onGestureEvent={onOverlayMove}
         onHandlerStateChange={onHandlerStateChange}
       >
@@ -295,11 +290,6 @@ function ImageCropOverlay() {
                         key={key}
                         onPressIn={async () => {
                           setSelectedFrameSection(key);
-                          // No good way to asynchronously enable the pan responder
-                          // after tile selection so using a timeout for now...
-                          setTimeout(() => {
-                            setPanResponderEnabled(true);
-                          }, 30);
                         }}
                         activeOpacity={1.0}
                       >

@@ -1,3 +1,4 @@
+import { ExpoWebGLRenderingContext } from "expo-gl";
 import { atom } from "recoil";
 
 interface ImageData {
@@ -73,7 +74,9 @@ export const cropSizeState = atom<ImageDimensions>({
   },
 });
 
-export const editingModeState = atom<"crop" | "operation-select">({
+export type EditingModes = "operation-select" | "crop" | "rotate" | "blur";
+
+export const editingModeState = atom<EditingModes>({
   key: "editingModeState",
   default: "operation-select",
 });
@@ -94,4 +97,25 @@ export const minimumCropDimensionsState = atom<ImageDimensions>({
     width: 0,
     height: 0,
   },
+});
+
+interface GLContext {
+  gl: ExpoWebGLRenderingContext | null;
+  program: WebGLProgram;
+  verts: Float32Array;
+}
+
+export const glContextState = atom<GLContext["gl"]>({
+  key: "glContextState",
+  default: null,
+});
+
+export const glProgramState = atom<GLContext["program"]>({
+  key: "glProgramState",
+  default: null,
+});
+
+export const throttleBlurState = atom<boolean>({
+  key: "throttleBlurState",
+  default: false,
 });
