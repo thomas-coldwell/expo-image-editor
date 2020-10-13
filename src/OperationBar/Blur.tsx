@@ -155,7 +155,11 @@ export function Blur() {
     // Reset back to operation selection mode
     setProcessing(false);
     setGLContext(null);
-    setEditingMode("operation-select");
+    // Small timeout so it can set processing state to flase BEFORE
+    // Blur component is unmounted...
+    setTimeout(() => {
+      setEditingMode("operation-select");
+    }, 100);
   };
 
   React.useEffect(() => {
@@ -336,6 +340,10 @@ export function Blur() {
   const throttleSliderBlur = React.useRef<any>(
     throttle((value) => setBlur(value), 50, { leading: true })
   ).current;
+
+  React.useEffect(() => {
+    return () => {};
+  });
 
   if (glContext === null) {
     return null;
