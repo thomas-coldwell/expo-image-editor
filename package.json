@@ -55,6 +55,7 @@
     "expo-image-manipulator": "~8.3.0",
     "modal-enhanced-react-native-web": "^0.2.0",
     "modal-react-native-web": "^0.2.0",
+    "no-scroll": "^2.1.1",
     "react-native-gesture-handler": "^1.8.0",
     "recoil": "^0.0.10"
   }
