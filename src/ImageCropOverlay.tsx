@@ -98,12 +98,15 @@ function ImageCropOverlay() {
       if (isMovingSection()) {
         // If it is then use an animated event to directly pass the tranlation
         // to the pan refs
-        Animated.event([
-          {
-            translationX: panX.current,
-            translationY: panY.current,
-          },
-        ])(nativeEvent);
+        Animated.event(
+          [
+            {
+              translationX: panX.current,
+              translationY: panY.current,
+            },
+          ],
+          { useNativeDriver: false }
+        )(nativeEvent);
       } else {
         // Else its a scaling operation
         const { x, y } = getTargetCropFrameBounds(nativeEvent);
@@ -118,6 +121,28 @@ function ImageCropOverlay() {
         animatedCropSize.width.setValue(cropSize.width + x);
         animatedCropSize.height.setValue(cropSize.height + y);
       }
+    } else {
+      // We need to set which section has been pressed
+      const { x, y } = nativeEvent;
+      const { width: initialWidth, height: initialHeight } = cropSize;
+      let position = "";
+      // Figure out where we pressed vertically
+      if (y / initialHeight < 0.333) {
+        position = position + "top";
+      } else if (y / initialHeight < 0.667) {
+        position = position + "middle";
+      } else {
+        position = position + "bottom";
+      }
+      // Figure out where we pressed horizontally
+      if (x / initialWidth < 0.333) {
+        position = position + "left";
+      } else if (x / initialWidth < 0.667) {
+        position = position + "middle";
+      } else {
+        position = position + "right";
+      }
+      setSelectedFrameSection(position);
     }
   };
 
@@ -261,9 +286,8 @@ function ImageCropOverlay() {
   return (
     <View style={styles.container}>
       <PanGestureHandler
-        enabled={true}
         onGestureEvent={onOverlayMove}
-        onHandlerStateChange={onHandlerStateChange}
+        onHandlerStateChange={(e) => onHandlerStateChange(e)}
       >
         <Animated.View
           style={[
@@ -285,14 +309,7 @@ function ImageCropOverlay() {
                   {verticalSections.map((vsection) => {
                     const key = hsection + vsection;
                     return (
-                      <TouchableOpacity
-                        style={[styles.defaultSection]}
-                        key={key}
-                        onPressIn={async () => {
-                          setSelectedFrameSection(key);
-                        }}
-                        activeOpacity={1.0}
-                      >
+                      <View style={[styles.defaultSection]} key={key}>
                         {
                           // Add the corner markers to the topleft,
                           // topright, bottomleft and bottomright corners to indicate resizing
@@ -313,7 +330,7 @@ function ImageCropOverlay() {
                             />
                           ) : null
                         }
-                      </TouchableOpacity>
+                      </View>
                     );
                   })}
                 </View>
