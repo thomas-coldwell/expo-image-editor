@@ -1,6 +1,6 @@
 {
   "name": "expo-image-editor",
-  "version": "1.4.2",
+  "version": "1.4.3",
   "description": "",
   "main": "lib/ImageEditor.js",
   "types": "lib/ImageEditor.d.ts",
