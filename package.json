@@ -2,12 +2,13 @@
   "name": "expo-image-editor",
   "version": "1.4.3",
   "description": "",
-  "main": "lib/ImageEditor.js",
+  "main": "lib/ImageEditor",
   "types": "lib/ImageEditor.d.ts",
+  "react-native": "src/ImageEditor",
+  "source": "src/ImageEditor",
+  "module": "lib/ImageEditor",
   "scripts": {
-    "develop": "tsc -p . -w & cpx './lib/**' ./example/lib --watch",
-    "build": "tsc -p . -w",
-    "copy": "cpx './lib/*' ./example/lib --watch",
+    "build": "tsc -p .",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [

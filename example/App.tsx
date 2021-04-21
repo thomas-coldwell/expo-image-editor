@@ -1,15 +1,7 @@
 import * as React from "react";
-import {
-  StyleSheet,
-  Text,
-  View,
-  Button,
-  Image,
-  Alert,
-  Platform,
-} from "react-native";
+import { StyleSheet, View, Button, Image, Alert } from "react-native";
 import * as ImagePicker from "expo-image-picker";
-import { ImageEditor, Mode } from "./lib/ImageEditor";
+import { ImageEditor } from "expo-image-editor";
 
 export default function App() {
   //
