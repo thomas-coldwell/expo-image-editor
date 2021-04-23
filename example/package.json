@@ -1,7 +1,7 @@
 {
-  "main": "node_modules/expo/AppEntry.js",
+  "main": "index",
   "scripts": {
-    "start": "expo start",
+    "start": "EXPO_NO_TYPESCRIPT_SETUP=1 expo start",
     "android": "expo start --android",
     "ios": "expo start --ios",
     "web": "expo start --web",
@@ -37,6 +37,7 @@
     "@types/expo__vector-icons": "^9.0.1",
     "@types/react": "~16.9.35",
     "@types/react-native": "~0.63.2",
+    "babel-plugin-module-resolver": "^4.1.0",
     "babel-preset-expo": "^8.3.0",
     "typescript": "~3.9.2",
     "webpack-hot-middleware": "^2.25.0"
