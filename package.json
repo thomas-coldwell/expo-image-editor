@@ -1,6 +1,6 @@
 {
   "name": "expo-image-editor",
-  "version": "1.4.3",
+  "version": "1.4.4",
   "description": "",
   "main": "lib/ImageEditor",
   "types": "lib/ImageEditor.d.ts",
@@ -9,7 +9,10 @@
   "module": "lib/ImageEditor",
   "scripts": {
     "build": "tsc -p .",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "sv:patch": "standard-version --release-as patch",
+    "sv:minor": "standard-version --release-as minor",
+    "sv:major": "standard-version --release-as major"
   },
   "keywords": [
     "react",
@@ -43,6 +46,7 @@
     "react-dom": "^16.13.1",
     "react-native": "https://github.com/expo/react-native/archive/sdk-39.0.0.tar.gz",
     "react-native-web": "~0.13.7",
+    "standard-version": "^9.2.0",
     "typescript": "^3.9.3"
   },
   "dependencies": {
