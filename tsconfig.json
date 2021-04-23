@@ -37,7 +37,7 @@
     /* Additional Checks */
     // "noUnusedLocals": true,                      /* Report errors on unused locals. */
     // "noUnusedParameters": true,                  /* Report errors on unused parameters. */
-    "noImplicitReturns": true /* Report error when not all code paths in function return a value. */,
+    // "noImplicitReturns": true /* Report error when not all code paths in function return a value. */,
     // "noFallthroughCasesInSwitch": true,          /* Report errors for fallthrough cases in switch statement. */
     // "noUncheckedIndexedAccess": true,            /* Include 'undefined' in index signature results */
     // "noPropertyAccessFromIndexSignature": true,  /* Require undeclared properties from index signatures to use element accesses. */
@@ -70,15 +70,15 @@
     "paths": {
       "expo-image-editor": ["./src/ImageEditor"]
     },
-    "allowUnreachableCode": false,
-    "allowUnusedLabels": false,
-    "lib": ["esnext"],
+    // "allowUnreachableCode": false,
+    // "allowUnusedLabels": false,
+    "lib": ["esnext", "DOM"],
     "moduleResolution": "node",
     "noFallthroughCasesInSwitch": true,
     "noImplicitUseStrict": false,
     "noStrictGenericChecks": false,
-    "noUnusedLocals": true,
-    "noUnusedParameters": true,
+    // "noUnusedLocals": true,
+    // "noUnusedParameters": true,
     "resolveJsonModule": true
   }
 }

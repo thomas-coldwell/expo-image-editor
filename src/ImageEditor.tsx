@@ -1,20 +1,15 @@
 import * as React from "react";
 import {
-  Modal as RNModal,
   StyleSheet,
   View,
   StatusBar,
-  Alert,
   Platform,
-  Image,
-  Dimensions,
   SafeAreaView,
 } from "react-native";
 import { ControlBar } from "./ControlBar";
 import { EditingWindow } from "./EditingWindow";
 import * as ImageManipulator from "expo-image-manipulator";
 import { Processing } from "./Processing";
-import Modal from "modal-react-native-web";
 import { useRecoilState, RecoilRoot } from "recoil";
 import {
   imageBoundsState,
@@ -30,7 +25,6 @@ import {
   minimumCropDimensionsState,
   throttleBlurState,
 } from "./Store";
-import { Asset } from "expo-asset";
 import { OperationBar } from "./OperationBar/OperationBar";
 const noScroll = require("no-scroll");
 
@@ -79,10 +73,10 @@ function ImageEditorCore(props: ImageEditorProps) {
         };
         // Platform check
         if (Platform.OS == "web") {
-          var img = document.createElement("img");
+          let img = document.createElement("img");
           img.onload = () => {
             setImageData({
-              uri: props.imageUri,
+              uri: props.imageUri ?? "",
               height: img.height,
               width: img.width,
             });
@@ -116,7 +110,7 @@ function ImageEditorCore(props: ImageEditorProps) {
     setMinimumCropDimensions(props.minimumCropDimensions);
   }, [props.minimumCropDimensions]);
   React.useEffect(() => {
-    setThrottleBlur(props.throttleBlur && true);
+    setThrottleBlur(Boolean(props.throttleBlur));
   }, [props.throttleBlur]);
 
   const onFinishEditing = async () => {
