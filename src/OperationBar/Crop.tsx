@@ -10,6 +10,7 @@ import {
   imageDataState,
   imageScaleFactorState,
   processingState,
+  textTranslateOptionsState
 } from "../Store";
 import * as ImageManipulator from "expo-image-manipulator";
 
@@ -21,6 +22,7 @@ export function Crop() {
   const [, setProcessing] = useRecoilState(processingState);
   const [imageData, setImageData] = useRecoilState(imageDataState);
   const [, setEditingMode] = useRecoilState(editingModeState);
+  const [textTranslateOptions] = useRecoilState(textTranslateOptionsState);
 
   const onPerformCrop = async () => {
     // Calculate cropping bounds
@@ -61,13 +63,13 @@ export function Crop() {
     <View style={styles.container}>
       <IconButton
         iconID="close"
-        text="Cancel"
+        text={textTranslateOptions.cancel}
         onPress={() => setEditingMode("operation-select")}
       />
       <Text style={styles.prompt}>Adjust window to crop</Text>
       <IconButton
         iconID="check"
-        text="Done"
+        text={textTranslateOptions.done}
         onPress={() =>
           onPerformCrop().catch(() => {
             // If there's an error dismiss the the editor and alert the user

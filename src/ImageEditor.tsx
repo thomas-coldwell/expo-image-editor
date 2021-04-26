@@ -24,6 +24,8 @@ import {
   lockAspectRatioState,
   minimumCropDimensionsState,
   throttleBlurState,
+  TextTranslateOptions,
+  textTranslateOptionsState,
 } from "./Store";
 import { OperationBar } from "./OperationBar/OperationBar";
 const noScroll = require("no-scroll");
@@ -42,6 +44,7 @@ export interface ImageEditorProps {
   onEditingComplete: (result: any) => void;
   lockAspectRatio: boolean;
   throttleBlur?: boolean;
+  textTranslateOptions?: TextTranslateOptions;
 }
 
 function ImageEditorCore(props: ImageEditorProps) {
@@ -61,6 +64,7 @@ function ImageEditorCore(props: ImageEditorProps) {
     minimumCropDimensionsState
   );
   const [, setThrottleBlur] = useRecoilState(throttleBlurState);
+  const [, setTextTranslateOptions] = useRecoilState(textTranslateOptionsState);
 
   // Initialise the image data when it is set through the props
   React.useEffect(() => {
@@ -112,6 +116,10 @@ function ImageEditorCore(props: ImageEditorProps) {
   React.useEffect(() => {
     setThrottleBlur(Boolean(props.throttleBlur));
   }, [props.throttleBlur]);
+  React.useEffect(() => {
+    if(props.textTranslateOptions)
+      setTextTranslateOptions(props.textTranslateOptions);
+  }, [props.textTranslateOptions]);
 
   const onFinishEditing = async () => {
     setProcessing(false);
@@ -146,6 +154,7 @@ function ImageEditorCore(props: ImageEditorProps) {
           zIndex: 1000000,
           elevation: 1000000,
           opacity: props.visible ? 1.0 : 0.0,
+          backgroundColor: "#333",
         }}
         pointerEvents={props.visible ? "auto" : "none"}
       >

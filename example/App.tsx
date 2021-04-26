@@ -1,7 +1,7 @@
 import * as React from "react";
 import { StyleSheet, View, Button, Image, Alert } from "react-native";
 import * as ImagePicker from "expo-image-picker";
-import { ImageEditor } from "expo-image-editor";
+import { ImageEditor } from "../src/ImageEditor";
 
 export default function App() {
   //
@@ -68,6 +68,17 @@ export default function App() {
           console.log(result);
         }}
         throttleBlur={false}
+        textTranslateOptions={{
+          back: 'Voltar',
+          done: 'Pronto',
+          transform: 'Transformar',
+          crop: 'Cortar',
+          rotate: 'Rodar',
+          adjust: 'Ajustar',
+          blur: 'Borrar',
+          cancel: 'Cancelar',
+          blurRadius: 'Taxa do Borrão',
+        }}
       />
     </View>
   );
