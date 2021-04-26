@@ -10,6 +10,7 @@ import {
   imageDataState,
   imageScaleFactorState,
   processingState,
+  textTranslateOptionsState
 } from "../Store";
 import * as ImageManipulator from "expo-image-manipulator";
 
@@ -18,6 +19,7 @@ export function Rotate() {
   const [, setProcessing] = useRecoilState(processingState);
   const [imageData, setImageData] = useRecoilState(imageDataState);
   const [, setEditingMode] = useRecoilState(editingModeState);
+  const [textTranslateOptions] = useRecoilState(textTranslateOptionsState);
 
   const [originalImageData] = React.useState(imageData);
 
@@ -83,21 +85,21 @@ export function Rotate() {
       <View style={[styles.row, { paddingHorizontal: "20%" }]}>
         <IconButton
           iconID="rotate-left"
-          text="Rotate -90"
+          text={`${textTranslateOptions.rotate} -90`}
           onPress={() => rotate("ccw")}
         />
         <IconButton
           iconID="rotate-right"
-          text="Rotate +90"
+          text={`${textTranslateOptions.rotate} +90`}
           onPress={() => rotate("cw")}
         />
       </View>
       <View style={styles.row}>
-        <IconButton iconID="close" text="Cancel" onPress={() => onClose()} />
-        <Text style={styles.prompt}>Rotate</Text>
+        <IconButton iconID="close" text={textTranslateOptions.cancel} onPress={() => onClose()} />
+        <Text style={styles.prompt}>{textTranslateOptions.rotate}</Text>
         <IconButton
           iconID="check"
-          text="Done"
+          text={textTranslateOptions.done}
           onPress={() => setEditingMode("operation-select")}
         />
       </View>

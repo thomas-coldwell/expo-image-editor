@@ -119,3 +119,31 @@ export const throttleBlurState = atom<boolean>({
   key: "throttleBlurState",
   default: false,
 });
+
+export interface TextTranslateOptions {
+  back: string;
+  done: string;
+  cancel: string;
+  transform: string;
+  crop: string;
+  rotate: string;
+  adjust: string;
+  blur: string;
+  blurRadius: string;
+  [key: string]: string;
+}
+
+export const textTranslateOptionsState = atom<TextTranslateOptions>({
+  key: "textTranslateOptionsState",
+  default: {
+    back: 'Back',
+    done: 'Done',
+    cancel: 'Cancel',
+    transform: 'Transform',
+    crop: 'Crop',
+    rotate: 'Rotate',
+    adjust: 'Adjust',
+    blur: 'Blur',
+    blurRadius: 'Blur Radius',
+  },
+});

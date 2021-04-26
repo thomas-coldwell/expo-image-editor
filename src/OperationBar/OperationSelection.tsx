@@ -8,11 +8,10 @@ import {
 } from "react-native";
 import { Icon } from "../components/Icon";
 import { IconButton } from "../components/IconButton";
-import { editingModeState, EditingModes } from "../Store";
+import { editingModeState, EditingModes, textTranslateOptionsState } from "../Store";
 import { useRecoilState } from "recoil";
 
 interface Operation {
-  title: string;
   iconID: string;
   operationID: EditingModes;
 }
@@ -20,24 +19,22 @@ interface Operation {
 interface Operations {
   transform: Operation[];
   adjust: Operation[];
+  custom?: Operation[];
 }
 
 const operations: Operations = {
   transform: [
     {
-      title: "Crop",
       iconID: "crop",
       operationID: "crop",
     },
     {
-      title: "Rotate",
       iconID: "rotate-90-degrees-ccw",
       operationID: "rotate",
     },
   ],
   adjust: [
     {
-      title: "Blur",
       iconID: "blur-on",
       operationID: "blur",
     },
@@ -51,14 +48,15 @@ export function OperationSelection() {
   >("transform");
 
   const [, setEditingMode] = useRecoilState(editingModeState);
+  const [textTranslateOptions] = useRecoilState(textTranslateOptionsState);
 
   return (
     <>
       <ScrollView style={styles.opRow} horizontal>
         {operations[selectedOperation].map((item, index) => (
-          <View style={styles.opContainer} key={item.title}>
+          <View style={styles.opContainer} key={item.operationID}>
             <IconButton
-              text={item.title}
+              text={textTranslateOptions[item.operationID]}
               iconID={item.iconID}
               onPress={() => setEditingMode(item.operationID)}
             />
@@ -73,7 +71,7 @@ export function OperationSelection() {
           ]}
           onPress={() => setSelectedOperation("transform")}
         >
-          <Icon iconID="transform" text="Transform" />
+          <Icon iconID="transform" text={textTranslateOptions.transform} />
         </TouchableOpacity>
         <TouchableOpacity
           style={[
@@ -82,7 +80,7 @@ export function OperationSelection() {
           ]}
           onPress={() => setSelectedOperation("adjust")}
         >
-          <Icon iconID="tune" text="Adjust" />
+          <Icon iconID="tune" text={textTranslateOptions.adjust} />
         </TouchableOpacity>
       </View>
     </>
