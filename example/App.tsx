@@ -2,9 +2,14 @@ import * as React from "react";
 import { StyleSheet, View, Button, Image, Alert } from "react-native";
 import * as ImagePicker from "expo-image-picker";
 import { ImageEditor } from "expo-image-editor";
+import "@expo/match-media";
+import { useMediaQuery } from "react-responsive";
 
 export default function App() {
   //
+  const isLandscape = useMediaQuery({ orientation: "landscape" });
+  const isMobile = useMediaQuery({ maxDeviceWidth: 768 });
+
   const [imageUri, setImageUri] = React.useState<undefined | string>(undefined);
   const [editorVisible, setEditorVisible] = React.useState(false);
 
@@ -41,11 +46,18 @@ export default function App() {
 
   return (
     <View style={styles.container}>
-      <Image style={styles.image} source={{ uri: imageUri }} />
-      <Image
-        style={[styles.image, { backgroundColor: "#333" }]}
-        source={{ uri: croppedUri }}
-      />
+      <View
+        style={[
+          styles.imageRow,
+          { flexDirection: isLandscape ? "row" : "column" },
+        ]}
+      >
+        <Image style={styles.image} source={{ uri: imageUri }} />
+        <Image
+          style={[styles.image, { backgroundColor: "#333" }]}
+          source={{ uri: croppedUri }}
+        />
+      </View>
       <View style={styles.buttonRow}>
         <Button title="Select Photo" onPress={() => selectPhoto()} />
         <Button
@@ -53,6 +65,7 @@ export default function App() {
           onPress={() => setAspectLock(!aspectLock)}
         />
       </View>
+
       <ImageEditor
         visible={editorVisible}
         onCloseEditor={() => setEditorVisible(false)}
@@ -75,22 +88,26 @@ export default function App() {
 
 const styles = StyleSheet.create({
   container: {
-    height: "100%",
-    justifyContent: "center",
+    flex: 1,
+    justifyContent: "space-around",
     alignItems: "center",
+    padding: 20,
+  },
+  imageRow: {
+    flexShrink: 1,
   },
   image: {
-    width: "90%",
-    height: 250,
+    flex: 1,
+    aspectRatio: 1,
     resizeMode: "contain",
     backgroundColor: "#ccc",
-    marginBottom: "5%",
+    margin: "3%",
   },
   buttonRow: {
     width: "100%",
-    height: 150,
     flexDirection: "column",
     justifyContent: "space-around",
     alignItems: "center",
+    marginVertical: 40,
   },
 });

@@ -9,6 +9,7 @@
     "netlify": "expo build:web && netlify deploy --dir=web-build --prod"
   },
   "dependencies": {
+    "@expo/match-media": "^0.0.0-beta.2",
     "@miblanchard/react-native-slider": "^1.5.0",
     "@react-hook/throttle": "^2.2.0",
     "expo": "^39.0.0",
@@ -28,6 +29,7 @@
     "react-native-gesture-handler": "~1.7.0",
     "react-native-screens": "~2.10.1",
     "react-native-web": "~0.13.7",
+    "react-responsive": "8.0.1",
     "recoil": "^0.0.10"
   },
   "devDependencies": {
@@ -37,6 +39,7 @@
     "@types/expo__vector-icons": "^9.0.1",
     "@types/react": "~16.9.35",
     "@types/react-native": "~0.63.2",
+    "@types/react-responsive": "^8.0.2",
     "babel-plugin-module-resolver": "^4.1.0",
     "babel-preset-expo": "^8.3.0",
     "typescript": "~3.9.2",
