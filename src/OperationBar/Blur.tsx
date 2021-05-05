@@ -108,7 +108,7 @@ export function Blur() {
 
   const [sliderValue, setSliderValue] = React.useState(15);
   const [blur, setBlur] = React.useState(15);
-  const [glProgram, setGLProgram] = React.useState(null);
+  const [glProgram, setGLProgram] = React.useState<WebGLProgram | null>(null);
 
   const onClose = () => {
     // If closing reset the image back to its original
@@ -121,45 +121,47 @@ export function Blur() {
     setProcessing(true);
     // Take a snapshot of the GLView's current framebuffer and set that as the new image data
     const gl = glContext;
-    gl.drawArrays(gl.TRIANGLES, 0, 6);
-    const output = await GLView.takeSnapshotAsync(gl);
-    // Do any addtional platform processing of the result and set it as the
-    // new image data
-    if (Platform.OS === "web") {
-      const fileReaderInstance = new FileReader();
-      fileReaderInstance.readAsDataURL(output.uri as any);
-      fileReaderInstance.onload = async () => {
-        const base64data = fileReaderInstance.result;
+    if (gl) {
+      gl.drawArrays(gl.TRIANGLES, 0, 6);
+      const output = await GLView.takeSnapshotAsync(gl);
+      // Do any addtional platform processing of the result and set it as the
+      // new image data
+      if (Platform.OS === "web") {
+        const fileReaderInstance = new FileReader();
+        fileReaderInstance.readAsDataURL(output.uri as any);
+        fileReaderInstance.onload = async () => {
+          const base64data = fileReaderInstance.result;
+          const flippedOutput = await ImageManinpulator.manipulateAsync(
+            base64data as string,
+            [{ flip: ImageManinpulator.FlipType.Vertical }]
+          );
+          setImageData({
+            uri: flippedOutput.uri,
+            width: flippedOutput.width,
+            height: flippedOutput.height,
+          });
+        };
+      } else {
         const flippedOutput = await ImageManinpulator.manipulateAsync(
-          base64data as string,
+          output.uri as string,
           [{ flip: ImageManinpulator.FlipType.Vertical }]
         );
         setImageData({
-          uri: flippedOutput.uri,
+          uri: flippedOutput.uri as string,
           width: flippedOutput.width,
           height: flippedOutput.height,
         });
-      };
-    } else {
-      const flippedOutput = await ImageManinpulator.manipulateAsync(
-        output.uri as string,
-        [{ flip: ImageManinpulator.FlipType.Vertical }]
-      );
-      setImageData({
-        uri: flippedOutput.uri as string,
-        width: flippedOutput.width,
-        height: flippedOutput.height,
-      });
-    }
+      }
 
-    // Reset back to operation selection mode
-    setProcessing(false);
-    setGLContext(null);
-    // Small timeout so it can set processing state to flase BEFORE
-    // Blur component is unmounted...
-    setTimeout(() => {
-      setEditingMode("operation-select");
-    }, 100);
+      // Reset back to operation selection mode
+      setProcessing(false);
+      setGLContext(null);
+      // Small timeout so it can set processing state to flase BEFORE
+      // Blur component is unmounted...
+      setTimeout(() => {
+        setEditingMode("operation-select");
+      }, 100);
+    }
   };
 
   React.useEffect(() => {
@@ -337,7 +339,7 @@ export function Blur() {
     }
   }, [blur, glContext, glProgram]);
 
-  const throttleSliderBlur = React.useRef<any>(
+  const throttleSliderBlur = React.useRef<(value: number) => void>(
     throttle((value) => setBlur(value), 50, { leading: true })
   ).current;
 

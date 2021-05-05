@@ -7,9 +7,13 @@ export interface ImageData {
   width: number;
 }
 
-export const imageDataState = atom<ImageData | null>({
+export const imageDataState = atom<ImageData>({
   key: "imageDataState",
-  default: null,
+  default: {
+    uri: "",
+    width: 0,
+    height: 0,
+  },
 });
 
 export const imageScaleFactorState = atom<number>({

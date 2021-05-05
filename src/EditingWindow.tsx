@@ -11,15 +11,14 @@ import {
 } from "./Store";
 import { ExpoWebGLRenderingContext, GLView } from "expo-gl";
 
+type ImageLayout = {
+  height: number;
+  width: number;
+} | null;
+
 function EditingWindow() {
   //
-  const [state, setState] = React.useState({
-    imageScaleFactor: null,
-    imageLayout: {
-      height: null,
-      width: null,
-    },
-  });
+  const [imageLayout, setImageLayout] = React.useState<ImageLayout>(null);
 
   const [imageData] = useRecoilState(imageDataState);
   const [, setImageBounds] = useRecoilState(imageBoundsState);
@@ -40,9 +39,9 @@ function EditingWindow() {
     onUpdateCropLayout(layout);
   };
 
-  const onUpdateCropLayout = (layout) => {
+  const onUpdateCropLayout = (layout: ImageLayout) => {
     // Check layout is not null
-    if (layout.height != null && layout.width != null) {
+    if (layout) {
       // Find the start point of the photo on the screen and its
       // width / height from there
       const editingWindowAspectRatio = layout.height / layout.width;
@@ -73,32 +72,30 @@ function EditingWindow() {
       }
       setImageBounds(bounds);
       setImageScaleFactor(imageScaleFactor);
-      setState({
-        ...state,
-        imageScaleFactor,
-        imageLayout: {
-          height: layout.height,
-          width: layout.width,
-        },
+      setImageLayout({
+        height: layout.height,
+        width: layout.width,
       });
     }
   };
 
   const getGLLayout = () => {
-    const { height: windowHeight, width: windowWidth } = state.imageLayout;
-    const windowAspectRatio = windowWidth / windowHeight;
-    const { height: imageHeight, width: imageWidth } = imageData;
-    const imageAspectRatio = imageWidth / imageHeight;
-    // If the window is taller than img...
-    if (windowAspectRatio < imageAspectRatio) {
-      return { width: windowWidth, height: windowWidth / imageAspectRatio };
-    } else {
-      return { height: windowHeight, width: windowHeight * imageAspectRatio };
+    if (imageLayout) {
+      const { height: windowHeight, width: windowWidth } = imageLayout;
+      const windowAspectRatio = windowWidth / windowHeight;
+      const { height: imageHeight, width: imageWidth } = imageData;
+      const imageAspectRatio = imageWidth / imageHeight;
+      // If the window is taller than img...
+      if (windowAspectRatio < imageAspectRatio) {
+        return { width: windowWidth, height: windowWidth / imageAspectRatio };
+      } else {
+        return { height: windowHeight, width: windowHeight * imageAspectRatio };
+      }
     }
   };
 
   React.useEffect(() => {
-    onUpdateCropLayout(state.imageLayout);
+    onUpdateCropLayout(imageLayout);
   }, [imageData]);
 
   const onGLContextCreate = async (gl: ExpoWebGLRenderingContext) => {
@@ -129,9 +126,7 @@ function EditingWindow() {
           onLayout={({ nativeEvent }) => getImageFrame(nativeEvent.layout)}
         />
       )}
-      {isCropping && state.imageLayout.height != null ? (
-        <ImageCropOverlay />
-      ) : null}
+      {isCropping && imageLayout != null ? <ImageCropOverlay /> : null}
     </View>
   );
 }
