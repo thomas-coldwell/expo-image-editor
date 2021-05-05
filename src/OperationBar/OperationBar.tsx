@@ -1,15 +1,6 @@
 import * as React from "react";
-import {
-  Animated,
-  Platform,
-  StyleSheet,
-  View,
-  TouchableOpacity,
-  ScrollView,
-} from "react-native";
-import { Icon } from "../components/Icon";
-import { IconButton } from "../components/IconButton";
-import { editingModeState, EditingModes } from "../Store";
+import { Animated, StyleSheet, View } from "react-native";
+import { editingModeState } from "../Store";
 import { useRecoilState } from "recoil";
 import { OperationSelection } from "./OperationSelection";
 import { Crop } from "./Crop";

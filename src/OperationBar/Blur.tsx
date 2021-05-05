@@ -9,7 +9,6 @@ import {
   imageBoundsState,
   imageDataState,
   processingState,
-  throttleBlurState,
 } from "../Store";
 import { Slider } from "@miblanchard/react-native-slider";
 import { Asset } from "expo-asset";
@@ -17,6 +16,7 @@ import { GLView } from "expo-gl";
 import * as ImageManinpulator from "expo-image-manipulator";
 import * as FileSystem from "expo-file-system";
 import _, { debounce, throttle } from "lodash";
+import { EditorContext } from "expo-image-editor";
 
 const vertShader = `
 precision highp float;
@@ -104,7 +104,7 @@ export function Blur() {
   const [, setEditingMode] = useRecoilState(editingModeState);
   const [glContext, setGLContext] = useRecoilState(glContextState);
   const [imageBounds] = useRecoilState(imageBoundsState);
-  const [throttleBlur] = useRecoilState(throttleBlurState);
+  const { throttleBlur } = React.useContext(EditorContext);
 
   const [sliderValue, setSliderValue] = React.useState(15);
   const [blur, setBlur] = React.useState(15);

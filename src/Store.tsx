@@ -1,19 +1,15 @@
 import { ExpoWebGLRenderingContext } from "expo-gl";
 import { atom } from "recoil";
 
-interface ImageData {
+export interface ImageData {
   uri: string;
   height: number;
   width: number;
 }
 
-export const imageDataState = atom<ImageData>({
+export const imageDataState = atom<ImageData | null>({
   key: "imageDataState",
-  default: {
-    uri: undefined,
-    width: 0,
-    height: 0,
-  },
+  default: null,
 });
 
 export const imageScaleFactorState = atom<number>({
@@ -21,7 +17,7 @@ export const imageScaleFactorState = atom<number>({
   default: 1,
 });
 
-interface ImageBounds {
+export interface ImageBounds {
   x: number;
   y: number;
   height: number;
@@ -48,7 +44,7 @@ export const processingState = atom<boolean>({
   default: false,
 });
 
-interface AccumulatedPan {
+export interface AccumulatedPan {
   x: number;
   y: number;
 }
@@ -61,7 +57,7 @@ export const accumulatedPanState = atom<AccumulatedPan>({
   },
 });
 
-interface ImageDimensions {
+export interface ImageDimensions {
   width: number;
   height: number;
 }
@@ -81,24 +77,6 @@ export const editingModeState = atom<EditingModes>({
   default: "operation-select",
 });
 
-export const fixedCropAspectRatioState = atom<number>({
-  key: "fixedCropAspectRatioState",
-  default: 1,
-});
-
-export const lockAspectRatioState = atom<boolean>({
-  key: "lockAspectRatioState",
-  default: false,
-});
-
-export const minimumCropDimensionsState = atom<ImageDimensions>({
-  key: "minimumCropDimensionsState",
-  default: {
-    width: 0,
-    height: 0,
-  },
-});
-
 interface GLContext {
   gl: ExpoWebGLRenderingContext | null;
   program: WebGLProgram;
@@ -110,12 +88,7 @@ export const glContextState = atom<GLContext["gl"]>({
   default: null,
 });
 
-export const glProgramState = atom<GLContext["program"]>({
+export const glProgramState = atom<GLContext["program"] | null>({
   key: "glProgramState",
   default: null,
-});
-
-export const throttleBlurState = atom<boolean>({
-  key: "throttleBlurState",
-  default: false,
 });

@@ -6,55 +6,65 @@ import * as ImageManipulator from "expo-image-manipulator";
 import { Processing } from "./Processing";
 import { useRecoilState, RecoilRoot } from "recoil";
 import {
-  imageBoundsState,
-  accumulatedPanState,
-  imageScaleFactorState,
-  cropSizeState,
   processingState,
   imageDataState,
   editingModeState,
   readyState,
-  fixedCropAspectRatioState,
-  lockAspectRatioState,
-  minimumCropDimensionsState,
-  throttleBlurState,
+  ImageDimensions,
 } from "./Store";
 import { OperationBar } from "./OperationBar/OperationBar";
 const noScroll = require("no-scroll");
 
-export type Mode = "full" | "crop-only" | "rotate-only";
+type EditorContextType = {
+  throttleBlur: boolean;
+  minimumCropDimensions: ImageDimensions;
+  fixedAspectRatio: number;
+  lockAspectRatio: boolean;
+  mode: Mode;
+};
+
+export const EditorContext = React.createContext<EditorContextType>({
+  throttleBlur: true,
+  minimumCropDimensions: {
+    width: 0,
+    height: 0,
+  },
+  fixedAspectRatio: 1.6,
+  lockAspectRatio: false,
+  mode: "full",
+});
+
+export type Mode = "full" | "crop-only";
 
 export interface ImageEditorProps {
   visible: boolean;
   onCloseEditor: () => void;
   imageUri: string | undefined;
-  fixedCropAspectRatio: number;
-  minimumCropDimensions: {
+  fixedCropAspectRatio?: number;
+  minimumCropDimensions?: {
     width: number;
     height: number;
   };
   onEditingComplete: (result: any) => void;
-  lockAspectRatio: boolean;
+  lockAspectRatio?: boolean;
   throttleBlur?: boolean;
+  mode?: Mode;
 }
 
 function ImageEditorCore(props: ImageEditorProps) {
-  const [imageBounds, setImageBounds] = useRecoilState(imageBoundsState);
+  //
+  const {
+    mode = "full",
+    throttleBlur = true,
+    minimumCropDimensions = { width: 0, height: 0 },
+    fixedCropAspectRatio: fixedAspectRatio = 1.6,
+    lockAspectRatio = false,
+  } = props;
+
   const [imageData, setImageData] = useRecoilState(imageDataState);
-  const [accumulatedPan, setAccumulatedPan] = useRecoilState(
-    accumulatedPanState
-  );
-  const [imageScaleFactor] = useRecoilState(imageScaleFactorState);
-  const [cropSize, setCropSize] = useRecoilState(cropSizeState);
   const [ready, setReady] = useRecoilState(readyState);
   const [processing, setProcessing] = useRecoilState(processingState);
   const [editingMode, setEditingMode] = useRecoilState(editingModeState);
-  const [, setFixedCropAspectRatio] = useRecoilState(fixedCropAspectRatioState);
-  const [, setLockAspectRatio] = useRecoilState(lockAspectRatioState);
-  const [, setMinimumCropDimensions] = useRecoilState(
-    minimumCropDimensionsState
-  );
-  const [, setThrottleBlur] = useRecoilState(throttleBlurState);
 
   // Initialise the image data when it is set through the props
   React.useEffect(() => {
@@ -93,20 +103,6 @@ function ImageEditorCore(props: ImageEditorProps) {
     })();
   }, [props.imageUri]);
 
-  // Initialise / update the crop AR / AR lock / min crop dims set through props
-  React.useEffect(() => {
-    setFixedCropAspectRatio(props.fixedCropAspectRatio);
-  }, [props.fixedCropAspectRatio]);
-  React.useEffect(() => {
-    setLockAspectRatio(props.lockAspectRatio);
-  }, [props.lockAspectRatio]);
-  React.useEffect(() => {
-    setMinimumCropDimensions(props.minimumCropDimensions);
-  }, [props.minimumCropDimensions]);
-  React.useEffect(() => {
-    setThrottleBlur(Boolean(props.throttleBlur));
-  }, [props.throttleBlur]);
-
   const onFinishEditing = async () => {
     setProcessing(false);
     props.onEditingComplete(imageData);
@@ -128,7 +124,15 @@ function ImageEditorCore(props: ImageEditorProps) {
   }, [props.visible]);
 
   return (
-    <>
+    <EditorContext.Provider
+      value={{
+        mode,
+        minimumCropDimensions,
+        lockAspectRatio,
+        fixedAspectRatio,
+        throttleBlur,
+      }}
+    >
       <StatusBar hidden={props.visible} />
       <Modal
         visible={props.visible}
@@ -151,7 +155,7 @@ function ImageEditorCore(props: ImageEditorProps) {
         ) : null}
         {processing ? <Processing /> : null}
       </Modal>
-    </>
+    </EditorContext.Provider>
   );
 }
 

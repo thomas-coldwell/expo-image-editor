@@ -8,7 +8,6 @@ import { useMediaQuery } from "react-responsive";
 export default function App() {
   //
   const isLandscape = useMediaQuery({ orientation: "landscape" });
-  const isMobile = useMediaQuery({ maxDeviceWidth: 768 });
 
   const [imageUri, setImageUri] = React.useState<undefined | string>(undefined);
   const [editorVisible, setEditorVisible] = React.useState(false);
