@@ -91,7 +91,6 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "space-around",
     alignItems: "center",
-    padding: 20,
   },
   imageRow: {
     flexShrink: 1,
@@ -105,6 +104,7 @@ const styles = StyleSheet.create({
   },
   buttonRow: {
     width: "100%",
+    minHeight: 100,
     flexDirection: "column",
     justifyContent: "space-around",
     alignItems: "center",

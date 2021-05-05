@@ -1,11 +1,5 @@
 import * as React from "react";
-import {
-  StyleSheet,
-  View,
-  StatusBar,
-  Platform,
-  SafeAreaView,
-} from "react-native";
+import { StyleSheet, View, StatusBar, Platform, Modal } from "react-native";
 import { ControlBar } from "./ControlBar";
 import { EditingWindow } from "./EditingWindow";
 import * as ImageManipulator from "expo-image-manipulator";
@@ -135,19 +129,11 @@ function ImageEditorCore(props: ImageEditorProps) {
 
   return (
     <>
-      <StatusBar hidden />
-      <SafeAreaView
-        style={{
-          height: "100%",
-          width: "100%",
-          position: "absolute",
-          top: 0,
-          left: 0,
-          zIndex: 1000000,
-          elevation: 1000000,
-          opacity: props.visible ? 1.0 : 0.0,
-        }}
-        pointerEvents={props.visible ? "auto" : "none"}
+      <StatusBar hidden={props.visible} />
+      <Modal
+        visible={props.visible}
+        presentationStyle="fullScreen"
+        statusBarTranslucent
       >
         {ready ? (
           <View style={styles.container}>
@@ -164,7 +150,7 @@ function ImageEditorCore(props: ImageEditorProps) {
           </View>
         ) : null}
         {processing ? <Processing /> : null}
-      </SafeAreaView>
+      </Modal>
     </>
   );
 }
