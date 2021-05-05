@@ -68,7 +68,7 @@ export default function App() {
           console.log(result);
         }}
         throttleBlur={false}
-        textTranslateOptions={{
+        customLabels={{
           back: 'Voltar',
           done: 'Pronto',
           transform: 'Transformar',

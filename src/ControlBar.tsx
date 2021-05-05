@@ -2,7 +2,7 @@ import * as React from "react";
 import { View, StyleSheet } from "react-native";
 import _ from "lodash";
 import { useRecoilState } from "recoil";
-import { editingModeState, textTranslateOptionsState } from "./Store";
+import { editingModeState, customLabelsOptionsState } from "./Store";
 import { IconButton } from "./components/IconButton";
 
 interface ControlBarProps {
@@ -13,18 +13,18 @@ interface ControlBarProps {
 function ControlBar(props: ControlBarProps) {
   //
   const [editingMode] = useRecoilState(editingModeState);
-  const [textTranslateOptions] = useRecoilState(textTranslateOptionsState);
+  const [customLabelsOptions] = useRecoilState(customLabelsOptionsState);
 
   return (
     <View style={styles.container}>
       <IconButton
         iconID="arrow-back"
-        text={textTranslateOptions.back}
+        text={customLabelsOptions.back}
         onPress={() => props.onPressBack()}
       />
       <IconButton
         iconID="done"
-        text={textTranslateOptions.done}
+        text={customLabelsOptions.done}
         onPress={() => props.onFinishEditing()}
         disabled={editingMode !== "operation-select"}
       />

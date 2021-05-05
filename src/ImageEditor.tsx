@@ -24,8 +24,8 @@ import {
   lockAspectRatioState,
   minimumCropDimensionsState,
   throttleBlurState,
-  TextTranslateOptions,
-  textTranslateOptionsState,
+  CustomLabelsOptions,
+  customLabelsOptionsState,
 } from "./Store";
 import { OperationBar } from "./OperationBar/OperationBar";
 const noScroll = require("no-scroll");
@@ -44,7 +44,7 @@ export interface ImageEditorProps {
   onEditingComplete: (result: any) => void;
   lockAspectRatio: boolean;
   throttleBlur?: boolean;
-  textTranslateOptions?: TextTranslateOptions;
+  customLabels?: CustomLabelsOptions;
 }
 
 function ImageEditorCore(props: ImageEditorProps) {
@@ -64,7 +64,7 @@ function ImageEditorCore(props: ImageEditorProps) {
     minimumCropDimensionsState
   );
   const [, setThrottleBlur] = useRecoilState(throttleBlurState);
-  const [, setTextTranslateOptions] = useRecoilState(textTranslateOptionsState);
+  const [, setCustomLabelsOptions] = useRecoilState(customLabelsOptionsState);
 
   // Initialise the image data when it is set through the props
   React.useEffect(() => {
@@ -117,9 +117,9 @@ function ImageEditorCore(props: ImageEditorProps) {
     setThrottleBlur(Boolean(props.throttleBlur));
   }, [props.throttleBlur]);
   React.useEffect(() => {
-    if(props.textTranslateOptions)
-      setTextTranslateOptions(props.textTranslateOptions);
-  }, [props.textTranslateOptions]);
+    if(props.customLabels)
+      setCustomLabelsOptions(props.customLabels);
+  }, [props.customLabels]);
 
   const onFinishEditing = async () => {
     setProcessing(false);

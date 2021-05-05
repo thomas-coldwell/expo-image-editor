@@ -10,7 +10,7 @@ import {
   imageDataState,
   processingState,
   throttleBlurState,
-  textTranslateOptionsState,
+  customLabelsOptionsState,
 } from "../Store";
 import { Slider } from "@miblanchard/react-native-slider";
 import { Asset } from "expo-asset";
@@ -106,7 +106,7 @@ export function Blur() {
   const [glContext, setGLContext] = useRecoilState(glContextState);
   const [imageBounds] = useRecoilState(imageBoundsState);
   const [throttleBlur] = useRecoilState(throttleBlurState);
-  const [textTranslateOptions] = useRecoilState(textTranslateOptionsState);
+  const [customLabelsOptions] = useRecoilState(customLabelsOptionsState);
 
   const [sliderValue, setSliderValue] = React.useState(15);
   const [blur, setBlur] = React.useState(15);
@@ -374,13 +374,13 @@ export function Blur() {
         />
       </View>
       <View style={styles.row}>
-        <IconButton iconID="close" text={textTranslateOptions.cancel} onPress={() => onClose()} />
+        <IconButton iconID="close" text={customLabelsOptions.cancel} onPress={() => onClose()} />
         <Text style={styles.prompt}>
-        {textTranslateOptions.blurRadius}: {Math.round(sliderValue)}
+        {customLabelsOptions.blurRadius}: {Math.round(sliderValue)}
         </Text>
         <IconButton
           iconID="check"
-          text={textTranslateOptions.done}
+          text={customLabelsOptions.done}
           onPress={() => onSaveWithBlur()}
         />
       </View>

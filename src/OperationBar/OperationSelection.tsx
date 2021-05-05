@@ -8,7 +8,7 @@ import {
 } from "react-native";
 import { Icon } from "../components/Icon";
 import { IconButton } from "../components/IconButton";
-import { editingModeState, EditingModes, textTranslateOptionsState } from "../Store";
+import { editingModeState, EditingModes, customLabelsOptionsState } from "../Store";
 import { useRecoilState } from "recoil";
 
 interface Operation {
@@ -48,7 +48,7 @@ export function OperationSelection() {
   >("transform");
 
   const [, setEditingMode] = useRecoilState(editingModeState);
-  const [textTranslateOptions] = useRecoilState(textTranslateOptionsState);
+  const [customLabelsOptions] = useRecoilState(customLabelsOptionsState);
 
   return (
     <>
@@ -56,7 +56,7 @@ export function OperationSelection() {
         {operations[selectedOperation].map((item, index) => (
           <View style={styles.opContainer} key={item.operationID}>
             <IconButton
-              text={textTranslateOptions[item.operationID]}
+              text={customLabelsOptions[item.operationID]}
               iconID={item.iconID}
               onPress={() => setEditingMode(item.operationID)}
             />
@@ -71,7 +71,7 @@ export function OperationSelection() {
           ]}
           onPress={() => setSelectedOperation("transform")}
         >
-          <Icon iconID="transform" text={textTranslateOptions.transform} />
+          <Icon iconID="transform" text={customLabelsOptions.transform} />
         </TouchableOpacity>
         <TouchableOpacity
           style={[
@@ -80,7 +80,7 @@ export function OperationSelection() {
           ]}
           onPress={() => setSelectedOperation("adjust")}
         >
-          <Icon iconID="tune" text={textTranslateOptions.adjust} />
+          <Icon iconID="tune" text={customLabelsOptions.adjust} />
         </TouchableOpacity>
       </View>
     </>

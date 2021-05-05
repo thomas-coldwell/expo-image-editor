@@ -120,7 +120,7 @@ export const throttleBlurState = atom<boolean>({
   default: false,
 });
 
-export interface TextTranslateOptions {
+export interface CustomLabelsOptions {
   back: string;
   done: string;
   cancel: string;
@@ -133,8 +133,8 @@ export interface TextTranslateOptions {
   [key: string]: string;
 }
 
-export const textTranslateOptionsState = atom<TextTranslateOptions>({
-  key: "textTranslateOptionsState",
+export const customLabelsOptionsState = atom<CustomLabelsOptions>({
+  key: "customLabelsOptionsState",
   default: {
     back: 'Back',
     done: 'Done',
