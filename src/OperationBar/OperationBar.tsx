@@ -1,20 +1,12 @@
 import * as React from "react";
-import {
-  Animated,
-  Platform,
-  StyleSheet,
-  View,
-  TouchableOpacity,
-  ScrollView,
-} from "react-native";
-import { Icon } from "../components/Icon";
-import { IconButton } from "../components/IconButton";
-import { editingModeState, EditingModes } from "../Store";
+import { Animated, LayoutRectangle, StyleSheet, View } from "react-native";
+import { editingModeState } from "../Store";
 import { useRecoilState } from "recoil";
 import { OperationSelection } from "./OperationSelection";
 import { Crop } from "./Crop";
 import { Rotate } from "./Rotate";
 import { Blur } from "./Blur";
+import { useState } from "react";
 
 export function OperationBar() {
   //
@@ -34,14 +26,14 @@ export function OperationBar() {
   };
 
   return (
-    <Animated.View style={styles.container}>
+    <View style={styles.container}>
       <OperationSelection />
       {editingMode !== "operation-select" && (
         <View style={[styles.container, { position: "absolute" }]}>
           {getOperationWindow()}
         </View>
       )}
-    </Animated.View>
+    </View>
   );
 }
 
@@ -50,5 +42,6 @@ const styles = StyleSheet.create({
     height: 160,
     width: "100%",
     backgroundColor: "#333",
+    justifyContent: "center",
   },
 });

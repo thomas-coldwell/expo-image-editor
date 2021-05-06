@@ -2,30 +2,69 @@ import * as React from "react";
 import { View, StyleSheet } from "react-native";
 import _ from "lodash";
 import { useRecoilState } from "recoil";
-import { editingModeState } from "./Store";
+import { editingModeState, imageDataState, processingState } from "./Store";
 import { IconButton } from "./components/IconButton";
+import { useContext } from "react";
+import { EditorContext } from "expo-image-editor";
+import { useEffect } from "react";
+import { usePerformCrop } from "./customHooks/usePerformCrop";
 
-interface ControlBarProps {
-  onPressBack: () => void;
-  onFinishEditing: () => void;
-}
-
-function ControlBar(props: ControlBarProps) {
+function ControlBar() {
   //
-  const [editingMode] = useRecoilState(editingModeState);
+  const [editingMode, setEditingMode] = useRecoilState(editingModeState);
+  const [imageData] = useRecoilState(imageDataState);
+  const [processing, setProcessing] = useRecoilState(processingState);
+  const { mode, onCloseEditor, onEditingComplete } = useContext(EditorContext);
+
+  const performCrop = usePerformCrop();
+
+  const shouldDisableDoneButton =
+    editingMode !== "operation-select" && mode !== "crop-only";
+
+  const onFinishEditing = async () => {
+    if (mode === "full") {
+      setProcessing(false);
+      onEditingComplete(imageData);
+      onCloseEditor();
+    } else if (mode === "crop-only") {
+      await performCrop();
+    }
+  };
+
+  const onPressBack = () => {
+    if (mode === "full") {
+      if (editingMode === "operation-select") {
+        onCloseEditor();
+      } else {
+        setEditingMode("operation-select");
+      }
+    } else if (mode === "crop-only") {
+      onCloseEditor();
+    }
+  };
+
+  // Complete the editing process if we are in crop only mode after the editingMode gets set
+  // back to operation select (happens internally in usePerformCrop) - can't do it in onFinishEditing
+  // else it gets stale state - may need to refactor the hook as this feels hacky
+  useEffect(() => {
+    if (
+      mode === "crop-only" &&
+      imageData.uri &&
+      editingMode === "operation-select"
+    ) {
+      onEditingComplete(imageData);
+      onCloseEditor();
+    }
+  }, [imageData, editingMode]);
 
   return (
     <View style={styles.container}>
-      <IconButton
-        iconID="arrow-back"
-        text="Back"
-        onPress={() => props.onPressBack()}
-      />
+      <IconButton iconID="arrow-back" text="Back" onPress={onPressBack} />
       <IconButton
         iconID="done"
         text="Done"
-        onPress={() => props.onFinishEditing()}
-        disabled={editingMode !== "operation-select"}
+        onPress={onFinishEditing}
+        disabled={shouldDisableDoneButton}
       />
     </View>
   );

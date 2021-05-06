@@ -2,15 +2,7 @@ import * as React from "react";
 import { StyleSheet, View, Text, Platform, Alert } from "react-native";
 import { useRecoilState } from "recoil";
 import { IconButton } from "../components/IconButton";
-import {
-  accumulatedPanState,
-  cropSizeState,
-  editingModeState,
-  imageBoundsState,
-  imageDataState,
-  imageScaleFactorState,
-  processingState,
-} from "../Store";
+import { editingModeState, imageDataState, processingState } from "../Store";
 import * as ImageManipulator from "expo-image-manipulator";
 
 export function Rotate() {

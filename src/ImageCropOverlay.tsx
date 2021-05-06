@@ -2,24 +2,20 @@ import * as React from "react";
 import { Animated, StyleSheet, View, TouchableOpacity } from "react-native";
 import _ from "lodash";
 import { useRecoilState } from "recoil";
+import { cropSizeState, imageBoundsState, accumulatedPanState } from "./Store";
 import {
-  cropSizeState,
-  imageBoundsState,
-  accumulatedPanState,
-  fixedCropAspectRatioState,
-  lockAspectRatioState,
-  minimumCropDimensionsState,
-} from "./Store";
-import {
+  GestureHandlerRootView,
   PanGestureHandler,
   PanGestureHandlerGestureEvent,
   State,
 } from "react-native-gesture-handler";
+import { useContext } from "react";
+import { EditorContext } from "expo-image-editor";
 
 const horizontalSections = ["top", "middle", "bottom"];
 const verticalSections = ["left", "middle", "right"];
 
-function ImageCropOverlay() {
+const ImageCropOverlay = () => {
   // Record which section of the fram window has been pressed
   // this determines whether it is a translation or scaling gesture
   const [selectedFrameSection, setSelectedFrameSection] = React.useState("");
@@ -30,9 +26,12 @@ function ImageCropOverlay() {
   const [accumulatedPan, setAccumluatedPan] = useRecoilState(
     accumulatedPanState
   );
-  const [fixedAspectRatio] = useRecoilState(fixedCropAspectRatioState);
-  const [lockAspectRatio] = useRecoilState(lockAspectRatioState);
-  const [minimumCropDimensions] = useRecoilState(minimumCropDimensionsState);
+  // Editor context
+  const {
+    fixedAspectRatio,
+    lockAspectRatio,
+    minimumCropDimensions,
+  } = useContext(EditorContext);
 
   const [animatedCropSize] = React.useState({
     width: new Animated.Value(cropSize.width),
@@ -152,19 +151,21 @@ function ImageCropOverlay() {
   }: Partial<PanGestureHandlerGestureEvent["nativeEvent"]>) => {
     let x = 0;
     let y = 0;
-    if (translationX < translationY) {
-      x = (isLeft ? -1 : 1) * translationX;
-      if (lockAspectRatio) {
-        y = x / fixedAspectRatio;
+    if (translationX && translationY) {
+      if (translationX < translationY) {
+        x = (isLeft ? -1 : 1) * translationX;
+        if (lockAspectRatio) {
+          y = x / fixedAspectRatio;
+        } else {
+          y = (isTop ? -1 : 1) * translationY;
+        }
       } else {
         y = (isTop ? -1 : 1) * translationY;
-      }
-    } else {
-      y = (isTop ? -1 : 1) * translationY;
-      if (lockAspectRatio) {
-        x = y * fixedAspectRatio;
-      } else {
-        x = (isLeft ? -1 : 1) * translationX;
+        if (lockAspectRatio) {
+          x = y * fixedAspectRatio;
+        } else {
+          x = (isLeft ? -1 : 1) * translationX;
+        }
       }
     }
     return { x, y };
@@ -284,7 +285,7 @@ function ImageCropOverlay() {
   };
 
   return (
-    <View style={styles.container}>
+    <GestureHandlerRootView style={styles.container}>
       <PanGestureHandler
         onGestureEvent={onOverlayMove}
         onHandlerStateChange={(e) => onHandlerStateChange(e)}
@@ -339,9 +340,9 @@ function ImageCropOverlay() {
           }
         </Animated.View>
       </PanGestureHandler>
-    </View>
+    </GestureHandlerRootView>
   );
-}
+};
 
 export { ImageCropOverlay };
 

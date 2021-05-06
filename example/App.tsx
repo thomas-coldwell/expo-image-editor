@@ -4,11 +4,11 @@ import * as ImagePicker from "expo-image-picker";
 import { ImageEditor } from "expo-image-editor";
 import "@expo/match-media";
 import { useMediaQuery } from "react-responsive";
+import { Platform } from "react-native";
 
 export default function App() {
   //
   const isLandscape = useMediaQuery({ orientation: "landscape" });
-  const isMobile = useMediaQuery({ maxDeviceWidth: 768 });
 
   const [imageUri, setImageUri] = React.useState<undefined | string>(undefined);
   const [editorVisible, setEditorVisible] = React.useState(false);
@@ -81,6 +81,9 @@ export default function App() {
           console.log(result);
         }}
         throttleBlur={false}
+        mode="full"
+        // allowedTransformOperations={["crop"]}
+        // allowedAdjustmentOperations={["blur"]}
       />
     </View>
   );
@@ -91,20 +94,23 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "space-around",
     alignItems: "center",
-    padding: 20,
   },
   imageRow: {
-    flexShrink: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    ...(Platform.OS === "web" ? { width: "100%" } : { flexShrink: 1 }),
   },
   image: {
-    flex: 1,
-    aspectRatio: 1,
     resizeMode: "contain",
     backgroundColor: "#ccc",
     margin: "3%",
+    ...(Platform.OS === "web"
+      ? { width: 300, height: 300 }
+      : { flex: 1, aspectRatio: 1 }),
   },
   buttonRow: {
     width: "100%",
+    minHeight: 100,
     flexDirection: "column",
     justifyContent: "space-around",
     alignItems: "center",
