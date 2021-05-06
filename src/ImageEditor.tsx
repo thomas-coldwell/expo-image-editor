@@ -1,5 +1,5 @@
 import * as React from "react";
-import { StyleSheet, View, StatusBar, Platform, Modal } from "react-native";
+import { StyleSheet, View, StatusBar, Platform } from "react-native";
 import { ControlBar } from "./ControlBar";
 import { EditingWindow } from "./EditingWindow";
 import * as ImageManipulator from "expo-image-manipulator";
@@ -13,8 +13,7 @@ import {
   ImageDimensions,
 } from "./Store";
 import { OperationBar } from "./OperationBar/OperationBar";
-import { usePerformCrop } from "./customHooks/usePerformCrop";
-import { useEffect } from "react";
+import { UniversalModal } from "./UniversalModal";
 const noScroll = require("no-scroll");
 
 type EditorContextType = {
@@ -142,7 +141,7 @@ function ImageEditorCore(props: ImageEditorProps) {
       }}
     >
       <StatusBar hidden={props.visible} />
-      <Modal
+      <UniversalModal
         visible={props.visible}
         presentationStyle="fullScreen"
         statusBarTranslucent
@@ -155,7 +154,7 @@ function ImageEditorCore(props: ImageEditorProps) {
           </View>
         ) : null}
         {processing ? <Processing /> : null}
-      </Modal>
+      </UniversalModal>
     </EditorContext.Provider>
   );
 }
