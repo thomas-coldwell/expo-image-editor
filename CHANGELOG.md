@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.5.1](https://github.com/thomas-coldwell/expo-image-editor/compare/v1.5.0...v1.5.1) (2021-05-06)
+
+
+### Features
+
+* Created NPM publish action ([1dc0feb](https://github.com/thomas-coldwell/expo-image-editor/commit/1dc0febdd4a66d09eef17b2c605a8756d4e3db96))
+
+
+### Bug Fixes
+
+* Updated NPM publish workflow ([4e97d7b](https://github.com/thomas-coldwell/expo-image-editor/commit/4e97d7b426f7232776798ea2259179396f813eae))
+
 ## [1.5.0](https://github.com/thomas-coldwell/expo-image-editor/compare/v1.4.4...v1.5.0) (2021-05-06)
 
 
