@@ -24,6 +24,8 @@ type EditorContextType = {
   mode: Mode;
   onCloseEditor: () => void;
   onEditingComplete: (result: any) => void;
+  allowedTransformOperations?: TransformOperations[];
+  allowedAdjustmentOperations?: AdjustmentOperations[];
 };
 
 export const EditorContext = React.createContext<EditorContextType>({
@@ -41,6 +43,10 @@ export const EditorContext = React.createContext<EditorContextType>({
 
 export type Mode = "full" | "crop-only";
 
+export type TransformOperations = "crop" | "rotate";
+export type AdjustmentOperations = "blur";
+export type EditingOperations = TransformOperations | AdjustmentOperations;
+
 export interface ImageEditorProps {
   visible: boolean;
   onCloseEditor: () => void;
@@ -54,6 +60,8 @@ export interface ImageEditorProps {
   lockAspectRatio?: boolean;
   throttleBlur?: boolean;
   mode?: Mode;
+  allowedTransformOperations?: TransformOperations[];
+  allowedAdjustmentOperations?: AdjustmentOperations[];
 }
 
 function ImageEditorCore(props: ImageEditorProps) {
@@ -64,6 +72,8 @@ function ImageEditorCore(props: ImageEditorProps) {
     minimumCropDimensions = { width: 0, height: 0 },
     fixedCropAspectRatio: fixedAspectRatio = 1.6,
     lockAspectRatio = false,
+    allowedTransformOperations,
+    allowedAdjustmentOperations,
   } = props;
 
   const [imageData, setImageData] = useRecoilState(imageDataState);
@@ -136,6 +146,8 @@ function ImageEditorCore(props: ImageEditorProps) {
         lockAspectRatio,
         fixedAspectRatio,
         throttleBlur,
+        allowedTransformOperations,
+        allowedAdjustmentOperations,
         onCloseEditor,
         onEditingComplete: props.onEditingComplete,
       }}

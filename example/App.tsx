@@ -81,7 +81,9 @@ export default function App() {
           console.log(result);
         }}
         throttleBlur={false}
-        mode="crop-only"
+        mode="full"
+        // allowedTransformOperations={["crop"]}
+        // allowedAdjustmentOperations={["blur"]}
       />
     </View>
   );

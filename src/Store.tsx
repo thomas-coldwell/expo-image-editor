@@ -1,4 +1,5 @@
 import { ExpoWebGLRenderingContext } from "expo-gl";
+import { EditingOperations } from "expo-image-editor";
 import { atom } from "recoil";
 
 export interface ImageData {
@@ -74,7 +75,7 @@ export const cropSizeState = atom<ImageDimensions>({
   },
 });
 
-export type EditingModes = "operation-select" | "crop" | "rotate" | "blur";
+export type EditingModes = "operation-select" | EditingOperations;
 
 export const editingModeState = atom<EditingModes>({
   key: "editingModeState",
