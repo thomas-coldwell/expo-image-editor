@@ -13,6 +13,8 @@ import {
   ImageDimensions,
 } from "./Store";
 import { OperationBar } from "./OperationBar/OperationBar";
+import { usePerformCrop } from "./customHooks/usePerformCrop";
+import { useEffect } from "react";
 const noScroll = require("no-scroll");
 
 type EditorContextType = {
@@ -21,6 +23,8 @@ type EditorContextType = {
   fixedAspectRatio: number;
   lockAspectRatio: boolean;
   mode: Mode;
+  onCloseEditor: () => void;
+  onEditingComplete: (result: any) => void;
 };
 
 export const EditorContext = React.createContext<EditorContextType>({
@@ -32,6 +36,8 @@ export const EditorContext = React.createContext<EditorContextType>({
   fixedAspectRatio: 1.6,
   lockAspectRatio: false,
   mode: "full",
+  onCloseEditor: () => {},
+  onEditingComplete: () => {},
 });
 
 export type Mode = "full" | "crop-only";
@@ -68,7 +74,7 @@ function ImageEditorCore(props: ImageEditorProps) {
 
   // Initialise the image data when it is set through the props
   React.useEffect(() => {
-    (async () => {
+    const initialise = async () => {
       if (props.imageUri) {
         const enableEditor = () => {
           setReady(true);
@@ -76,7 +82,7 @@ function ImageEditorCore(props: ImageEditorProps) {
           noScroll.on();
         };
         // Platform check
-        if (Platform.OS == "web") {
+        if (Platform.OS === "web") {
           let img = document.createElement("img");
           img.onload = () => {
             setImageData({
@@ -100,14 +106,9 @@ function ImageEditorCore(props: ImageEditorProps) {
           enableEditor();
         }
       }
-    })();
+    };
+    initialise();
   }, [props.imageUri]);
-
-  const onFinishEditing = async () => {
-    setProcessing(false);
-    props.onEditingComplete(imageData);
-    onCloseEditor();
-  };
 
   const onCloseEditor = () => {
     // Set no-scroll to off
@@ -121,6 +122,11 @@ function ImageEditorCore(props: ImageEditorProps) {
     if (!props.visible) {
       setReady(false);
     }
+    // Check if ther mode is set to crop only if this is the case then set the editingMode
+    // to crop
+    if (mode === "crop-only") {
+      setEditingMode("crop");
+    }
   }, [props.visible]);
 
   return (
@@ -131,6 +137,8 @@ function ImageEditorCore(props: ImageEditorProps) {
         lockAspectRatio,
         fixedAspectRatio,
         throttleBlur,
+        onCloseEditor,
+        onEditingComplete: props.onEditingComplete,
       }}
     >
       <StatusBar hidden={props.visible} />
@@ -141,16 +149,9 @@ function ImageEditorCore(props: ImageEditorProps) {
       >
         {ready ? (
           <View style={styles.container}>
-            <ControlBar
-              onPressBack={() =>
-                editingMode == "operation-select"
-                  ? props.onCloseEditor()
-                  : setEditingMode("operation-select")
-              }
-              onFinishEditing={() => onFinishEditing()}
-            />
+            <ControlBar />
             <EditingWindow />
-            <OperationBar />
+            {mode === "full" && <OperationBar />}
           </View>
         ) : null}
         {processing ? <Processing /> : null}

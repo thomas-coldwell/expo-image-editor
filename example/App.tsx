@@ -80,6 +80,7 @@ export default function App() {
           console.log(result);
         }}
         throttleBlur={false}
+        mode="crop-only"
       />
     </View>
   );
