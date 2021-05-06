@@ -1,3 +1,5 @@
 example
 yarn.lock
 yarn.log
+.expo
+.vscode
