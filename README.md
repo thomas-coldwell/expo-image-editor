@@ -3,7 +3,7 @@
 A super simple image cropping and rotation tool for Expo that runs on iOS, Android and Web!
 
 | ![Screenshot_20201013-161416](https://user-images.githubusercontent.com/31568400/95880744-c0ac9980-0d6f-11eb-8610-73d291f1013b.jpg) | ![Screenshot_20201013-161447](https://user-images.githubusercontent.com/31568400/95880752-c2765d00-0d6f-11eb-8345-ca7420fabf9b.jpg) | ![Screenshot_20201013-161347](https://user-images.githubusercontent.com/31568400/95880755-c30ef380-0d6f-11eb-9567-4eaf188a18d6.jpg) |
-|-------------------------------------------------------------------------------------------------------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------|
+| ----------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------- |
 
 Check out the demo on Netlify <a href="https://expo-image-cropping.netlify.app/">here</a>
 
@@ -79,6 +79,7 @@ function App() {
         onEditingComplete={(result) => {
           setImageData(result);
         }}
+        mode="full"
       />
     </View>
   );
@@ -87,13 +88,16 @@ function App() {
 
 ### Props
 
-| Name                  | Type     | Description                                                                                                                               |
-| --------------------- | -------- | ----------------------------------------------------------------------------------------------------------------------------------------- |
-| visible               | boolean  | Whether the editor should be visible or not.                                                                                              |
-| onCloseEditor         | function | Callback when the editor is dimissed - use this to set hide the editor.                                                                   |
-| imageUri              | string   | The uri of the image to be edited                                                                                                         |
-| fixedCropAspectRatio  | number   | The starting aspect ratio of the cropping window.                                                                                         |
-| lockAspectRatio       | boolean  | Whether the cropping window should maintain this aspect ratio or not.                                                                     |
-| minimumCropDimensions | object   | An object of `{width, height}` specifying the minimum dimensions of the crop window.                                                      |
-| onEditingComplete     | function | function that will return the result of the image editing which is an object identical to `imageData`                                     |
-| throttleBlur          | boolean  | Whether to throttle the WebGL update of the blur while adjusting (defaults to false) - useful to set to true on lower performance devices |
+| Name                        | Type     | Description                                                                                                                                                                      |
+| --------------------------- | -------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| visible                     | boolean  | Whether the editor should be visible or not.                                                                                                                                     |
+| mode                        | string   | Which mode to use the editor in can be either `full` or `crop-only`.                                                                                                             |
+| onCloseEditor               | function | Callback when the editor is dimissed - use this to set hide the editor.                                                                                                          |
+| imageUri                    | string   | The uri of the image to be edited                                                                                                                                                |
+| fixedCropAspectRatio        | number   | The starting aspect ratio of the cropping window.                                                                                                                                |
+| lockAspectRatio             | boolean  | Whether the cropping window should maintain this aspect ratio or not.                                                                                                            |
+| minimumCropDimensions       | object   | An object of `{width, height}` specifying the minimum dimensions of the crop window.                                                                                             |
+| onEditingComplete           | function | function that will return the result of the image editing which is an object identical to `imageData`                                                                            |
+| throttleBlur                | boolean  | Whether to throttle the WebGL update of the blur while adjusting (defaults to false) - useful to set to true on lower performance devices                                        |
+| allowedTransformOperations  | string[] | Which transform operations you want to exclusively allow to be used. Can include `crop` and `rotate` e.g. `['crop']` to only allow cropping                                      |
+| allowedAdjustmentOperations | string[] | Which image adjustment operations you want to exclusively allow to be used. Only `blur` can be specified at the minute e.g. `['blur']` yo only allow blur as an image adjustment |
