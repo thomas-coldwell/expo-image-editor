@@ -12,7 +12,11 @@ jobs:
       - uses: actions/setup-node@v1
         with:
           node-version: 10
-      - run: npm install
+      - run: yarn --frozen-lockfile
+      - run: |
+          cd example/
+          yarn --frozen-lockfile
+          cd ../
       - run: tsc --build
       - uses: JS-DevTools/npm-publish@v1
         with:
