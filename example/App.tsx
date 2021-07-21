@@ -21,7 +21,7 @@ export default function App() {
 
   const selectPhoto = async () => {
     // Get the permission to access the camera roll
-    const response = await ImagePicker.requestCameraRollPermissionsAsync();
+    const response = await ImagePicker.requestMediaLibraryPermissionsAsync();
     // If they said yes then launch the image picker
     if (response.granted) {
       const pickerResult = await ImagePicker.launchImageLibraryAsync();
