@@ -62,6 +62,7 @@ export interface ImageEditorProps {
   mode?: Mode;
   allowedTransformOperations?: TransformOperations[];
   allowedAdjustmentOperations?: AdjustmentOperations[];
+  asView?: boolean;
 }
 
 function ImageEditorCore(props: ImageEditorProps) {
@@ -150,13 +151,17 @@ function ImageEditorCore(props: ImageEditorProps) {
       }}
     >
       <StatusBar hidden={props.visible} />
-      <UniversalModal
-        visible={props.visible}
-        presentationStyle="fullScreen"
-        statusBarTranslucent
-      >
+      {props.asView ? (
         <ImageEditorView {...props} />
-      </UniversalModal>
+      ) : (
+        <UniversalModal
+          visible={props.visible}
+          presentationStyle="fullScreen"
+          statusBarTranslucent
+        >
+          <ImageEditorView {...props} />
+        </UniversalModal>
+      )}
     </EditorContext.Provider>
   );
 }

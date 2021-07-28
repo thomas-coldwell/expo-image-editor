@@ -31,6 +31,7 @@ export interface ImageEditorProps {
     mode?: Mode;
     allowedTransformOperations?: TransformOperations[];
     allowedAdjustmentOperations?: AdjustmentOperations[];
+    asView?: boolean;
 }
 export declare function ImageEditorView(props: ImageEditorProps): JSX.Element;
 export declare function ImageEditor(props: ImageEditorProps): JSX.Element;
