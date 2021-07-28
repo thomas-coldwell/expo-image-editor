@@ -76,10 +76,9 @@ function ImageEditorCore(props: ImageEditorProps) {
     allowedAdjustmentOperations,
   } = props;
 
-  const [imageData, setImageData] = useRecoilState(imageDataState);
-  const [ready, setReady] = useRecoilState(readyState);
-  const [processing, setProcessing] = useRecoilState(processingState);
-  const [editingMode, setEditingMode] = useRecoilState(editingModeState);
+  const [, setImageData] = useRecoilState(imageDataState);
+  const [, setReady] = useRecoilState(readyState);
+  const [, setEditingMode] = useRecoilState(editingModeState);
 
   // Initialise the image data when it is set through the props
   React.useEffect(() => {
@@ -103,10 +102,8 @@ function ImageEditorCore(props: ImageEditorProps) {
           };
           img.src = props.imageUri;
         } else {
-          const {
-            width: pickerWidth,
-            height: pickerHeight,
-          } = await ImageManipulator.manipulateAsync(props.imageUri, []);
+          const { width: pickerWidth, height: pickerHeight } =
+            await ImageManipulator.manipulateAsync(props.imageUri, []);
           setImageData({
             uri: props.imageUri,
             width: pickerWidth,
@@ -158,16 +155,30 @@ function ImageEditorCore(props: ImageEditorProps) {
         presentationStyle="fullScreen"
         statusBarTranslucent
       >
-        {ready ? (
-          <View style={styles.container}>
-            <ControlBar />
-            <EditingWindow />
-            {mode === "full" && <OperationBar />}
-          </View>
-        ) : null}
-        {processing ? <Processing /> : null}
+        <ImageEditorView {...props} />
       </UniversalModal>
     </EditorContext.Provider>
+  );
+}
+
+export function ImageEditorView(props: ImageEditorProps) {
+  //
+  const { mode = "full" } = props;
+
+  const [ready, setReady] = useRecoilState(readyState);
+  const [processing, setProcessing] = useRecoilState(processingState);
+
+  return (
+    <>
+      {ready ? (
+        <View style={styles.container}>
+          <ControlBar />
+          <EditingWindow />
+          {mode === "full" && <OperationBar />}
+        </View>
+      ) : null}
+      {processing ? <Processing /> : null}
+    </>
   );
 }
 

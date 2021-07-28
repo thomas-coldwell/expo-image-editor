@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.6.0](https://github.com/thomas-coldwell/expo-image-editor/compare/v1.5.1...v1.6.0) (2021-07-28)
+
+
+### Features
+
+* Updated to export the core image editor view ([47c159f](https://github.com/thomas-coldwell/expo-image-editor/commit/47c159fa973da0e4fddbe470b3c911ccd3d59fb8))
+* Upgraded to expo SDK 42 ([9ad9c9b](https://github.com/thomas-coldwell/expo-image-editor/commit/9ad9c9b6c0112134cc253b85752e4b9c77134820))
+
+
+### Bug Fixes
+
+* Updated to use latest permission methods for sdk42 ([2fb775d](https://github.com/thomas-coldwell/expo-image-editor/commit/2fb775dc0ae241c104c8387d6f156ca2ccf482b1))
+
 ### [1.5.1](https://github.com/thomas-coldwell/expo-image-editor/compare/v1.5.0...v1.5.1) (2021-05-06)
 
 
