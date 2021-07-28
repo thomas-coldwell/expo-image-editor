@@ -1,3 +1,2 @@
-/// <reference types="react" />
-export declare function Blur(): JSX.Element;
+export declare function Blur(): JSX.Element | null;
 //# sourceMappingURL=Blur.d.ts.map

@@ -1,1 +1,1 @@
-{"version":3,"file":"ControlBar.d.ts","sourceRoot":"","sources":["../src/ControlBar.tsx"],"names":[],"mappings":";AAOA,UAAU,eAAe;IACvB,WAAW,EAAE,MAAM,IAAI,CAAC;IACxB,eAAe,EAAE,MAAM,IAAI,CAAC;CAC7B;AAED,iBAAS,UAAU,CAAC,KAAK,EAAE,eAAe,eAmBzC;AAED,OAAO,EAAE,UAAU,EAAE,CAAC"}
+{"version":3,"file":"ControlBar.d.ts","sourceRoot":"","sources":["../src/ControlBar.tsx"],"names":[],"mappings":"AAWA,iBAAS,UAAU,gBA2DlB;AAED,OAAO,EAAE,UAAU,EAAE,CAAC"}

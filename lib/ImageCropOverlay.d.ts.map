@@ -1,1 +1,1 @@
-{"version":3,"file":"ImageCropOverlay.d.ts","sourceRoot":"","sources":["../src/ImageCropOverlay.tsx"],"names":[],"mappings":";AAqBA,iBAAS,gBAAgB,gBAkUxB;AAED,OAAO,EAAE,gBAAgB,EAAE,CAAC"}
+{"version":3,"file":"ImageCropOverlay.d.ts","sourceRoot":"","sources":["../src/ImageCropOverlay.tsx"],"names":[],"mappings":"AAyBA,QAAA,MAAM,gBAAgB,mBAmUrB,CAAC;AAEF,OAAO,EAAE,gBAAgB,EAAE,CAAC"}

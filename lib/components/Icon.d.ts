@@ -1,4 +1,3 @@
-/// <reference types="react" />
 export interface IIconProps {
     disabled?: boolean;
     iconID: string;

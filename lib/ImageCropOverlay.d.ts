@@ -1,4 +1,3 @@
-/// <reference types="react" />
-declare function ImageCropOverlay(): JSX.Element;
+declare const ImageCropOverlay: () => JSX.Element;
 export { ImageCropOverlay };
 //# sourceMappingURL=ImageCropOverlay.d.ts.map
