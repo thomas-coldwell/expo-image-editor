@@ -2,7 +2,7 @@ import * as React from "react";
 import { View, StyleSheet } from "react-native";
 import _ from "lodash";
 import { useRecoilState } from "recoil";
-import { editingModeState, imageDataState, processingState } from "./Store";
+import { editingModeState, processingState, useImageData } from "./Store";
 import { IconButton } from "./components/IconButton";
 import { useContext } from "react";
 import { EditorContext } from "expo-image-editor";
@@ -12,7 +12,7 @@ import { usePerformCrop } from "./customHooks/usePerformCrop";
 function ControlBar() {
   //
   const [editingMode, setEditingMode] = useRecoilState(editingModeState);
-  const [imageData] = useRecoilState(imageDataState);
+  const imageData = useImageData();
   const [processing, setProcessing] = useRecoilState(processingState);
   const { mode, onCloseEditor, onEditingComplete } = useContext(EditorContext);
 

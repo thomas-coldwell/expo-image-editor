@@ -38,8 +38,8 @@
     "@babel/core": "^7.8.6",
     "@expo/webpack-config": "^0.12.11",
     "@types/expo__vector-icons": "^9.0.1",
-    "@types/react-dom": "^16.9.8",
     "@types/react": "~16.9.35",
+    "@types/react-dom": "^16.9.8",
     "@types/react-native": "~0.63.2",
     "babel-preset-expo": "~8.1.0",
     "react": "^16.13.1",
@@ -63,6 +63,7 @@
     "no-scroll": "^2.1.1",
     "react-native-gesture-handler": "^1.10.3",
     "react-native-safe-area-context": "^3.2.0",
-    "recoil": "^0.0.10"
+    "recoil": "^0.0.10",
+    "zustand": "^3.5.7"
   }
 }

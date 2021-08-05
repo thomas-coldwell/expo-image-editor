@@ -3,11 +3,10 @@ import { Image, PixelRatio, StyleSheet, View } from "react-native";
 import { ImageCropOverlay } from "./ImageCropOverlay";
 import { useRecoilState } from "recoil";
 import {
-  imageDataState,
-  imageBoundsState,
-  imageScaleFactorState,
   editingModeState,
   glContextState,
+  useImageData,
+  useImageLayout,
 } from "./Store";
 import { ExpoWebGLRenderingContext, GLView } from "expo-gl";
 
@@ -20,9 +19,11 @@ function EditingWindow() {
   //
   const [imageLayout, setImageLayout] = React.useState<ImageLayout>(null);
 
-  const [imageData] = useRecoilState(imageDataState);
-  const [, setImageBounds] = useRecoilState(imageBoundsState);
-  const [, setImageScaleFactor] = useRecoilState(imageScaleFactorState);
+  const imageData = useImageData();
+  const [setImageBounds, setScaleFactor] = useImageLayout((state) => [
+    state.setImageBounds,
+    state.setScaleFactor,
+  ]);
   const [editingMode] = useRecoilState(editingModeState);
   const [, setGLContext] = useRecoilState(glContextState);
 
@@ -71,7 +72,7 @@ function EditingWindow() {
         imageScaleFactor = imageData.width / layout.width;
       }
       setImageBounds(bounds);
-      setImageScaleFactor(imageScaleFactor);
+      setScaleFactor(imageScaleFactor);
       setImageLayout({
         height: layout.height,
         width: layout.width,

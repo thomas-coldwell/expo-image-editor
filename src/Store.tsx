@@ -1,26 +1,23 @@
 import { ExpoWebGLRenderingContext } from "expo-gl";
 import { EditingOperations } from "expo-image-editor";
 import { atom } from "recoil";
+import create from "zustand";
 
 export interface ImageData {
   uri: string;
   height: number;
   width: number;
 }
+export interface ImageDataStore extends ImageData {
+  setImageData: (data: ImageData) => void;
+}
 
-export const imageDataState = atom<ImageData>({
-  key: "imageDataState",
-  default: {
-    uri: "",
-    width: 0,
-    height: 0,
-  },
-});
-
-export const imageScaleFactorState = atom<number>({
-  key: "imageScaleFactorState",
-  default: 1,
-});
+export const useImageData = create<ImageDataStore>((set) => ({
+  uri: "",
+  width: 0,
+  height: 0,
+  setImageData: (data) => set(data),
+}));
 
 export interface ImageBounds {
   x: number;
@@ -28,6 +25,25 @@ export interface ImageBounds {
   height: number;
   width: number;
 }
+
+export interface ImageLayoutStore {
+  bounds: ImageBounds;
+  scaleFactor: number;
+  setImageBounds: (bounds: ImageBounds) => void;
+  setScaleFactor: (sf: number) => void;
+}
+
+export const useImageLayout = create<ImageLayoutStore>((set) => ({
+  bounds: {
+    x: 0,
+    y: 0,
+    width: 0,
+    height: 0,
+  },
+  scaleFactor: 1,
+  setImageBounds: (bounds) => set({ bounds }),
+  setScaleFactor: (sf) => set({ scaleFactor: sf }),
+}));
 
 export const imageBoundsState = atom<ImageBounds>({
   key: "imageBoundsState",
@@ -37,6 +53,13 @@ export const imageBoundsState = atom<ImageBounds>({
     width: 0,
     height: 0,
   },
+});
+
+export type EditingModes = "operation-select" | EditingOperations;
+
+export const editingModeState = atom<EditingModes>({
+  key: "editingModeState",
+  default: "operation-select",
 });
 
 export const readyState = atom<boolean>({
@@ -73,13 +96,6 @@ export const cropSizeState = atom<ImageDimensions>({
     width: 0,
     height: 0,
   },
-});
-
-export type EditingModes = "operation-select" | EditingOperations;
-
-export const editingModeState = atom<EditingModes>({
-  key: "editingModeState",
-  default: "operation-select",
 });
 
 interface GLContext {

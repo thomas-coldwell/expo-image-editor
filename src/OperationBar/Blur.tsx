@@ -7,8 +7,8 @@ import {
   glContextState,
   glProgramState,
   imageBoundsState,
-  imageDataState,
   processingState,
+  useImageData,
 } from "../Store";
 import { Slider } from "@miblanchard/react-native-slider";
 import { Asset } from "expo-asset";
@@ -100,7 +100,7 @@ void main () {
 export function Blur() {
   //
   const [, setProcessing] = useRecoilState(processingState);
-  const [imageData, setImageData] = useRecoilState(imageDataState);
+  const { setImageData, ...imageData } = useImageData();
   const [, setEditingMode] = useRecoilState(editingModeState);
   const [glContext, setGLContext] = useRecoilState(glContextState);
   const [imageBounds] = useRecoilState(imageBoundsState);
@@ -215,18 +215,7 @@ export function Blur() {
               // Create the verticies for WebGL to form triangles on the screen
               // using the vertex shader which forms a square or rectangle in this case
               const verts = new Float32Array([
-                -1,
-                -1,
-                1,
-                -1,
-                1,
-                1,
-                -1,
-                -1,
-                -1,
-                1,
-                1,
-                1,
+                -1, -1, 1, -1, 1, 1, -1, -1, -1, 1, 1, 1,
               ]);
               // Actually pass the verticies into the buffer and tell WebGL this is static
               // for optimisations

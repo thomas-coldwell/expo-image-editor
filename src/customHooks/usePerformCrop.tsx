@@ -4,34 +4,31 @@ import {
   accumulatedPanState,
   cropSizeState,
   editingModeState,
-  imageBoundsState,
-  imageDataState,
-  imageScaleFactorState,
   processingState,
+  useImageData,
+  useImageLayout,
 } from "../Store";
 import * as ImageManipulator from "expo-image-manipulator";
 import { Alert, Platform } from "react-native";
 
 export const usePerformCrop = () => {
   const [accumulatedPan] = useRecoilState(accumulatedPanState);
-  const [imageBounds] = useRecoilState(imageBoundsState);
-  const [imageScaleFactor] = useRecoilState(imageScaleFactorState);
+  const [bounds, scaleFactor] = useImageLayout(({ bounds, scaleFactor }) => [
+    bounds,
+    scaleFactor,
+  ]);
   const [cropSize] = useRecoilState(cropSizeState);
   const [, setProcessing] = useRecoilState(processingState);
-  const [imageData, setImageData] = useRecoilState(imageDataState);
+  const { setImageData, ...imageData } = useImageData();
   const [, setEditingMode] = useRecoilState(editingModeState);
   const onPerformCrop = async () => {
     try {
       // Calculate cropping bounds
       const croppingBounds = {
-        originX: Math.round(
-          (accumulatedPan.x - imageBounds.x) * imageScaleFactor
-        ),
-        originY: Math.round(
-          (accumulatedPan.y - imageBounds.y) * imageScaleFactor
-        ),
-        width: Math.round(cropSize.width * imageScaleFactor),
-        height: Math.round(cropSize.height * imageScaleFactor),
+        originX: Math.round((accumulatedPan.x - bounds.x) * scaleFactor),
+        originY: Math.round((accumulatedPan.y - bounds.y) * scaleFactor),
+        width: Math.round(cropSize.width * scaleFactor),
+        height: Math.round(cropSize.height * scaleFactor),
       };
       // Set the editor state to processing and perform the crop
       setProcessing(true);

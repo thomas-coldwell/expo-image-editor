@@ -7,10 +7,10 @@ import { Processing } from "./Processing";
 import { useRecoilState, RecoilRoot } from "recoil";
 import {
   processingState,
-  imageDataState,
   editingModeState,
   readyState,
   ImageDimensions,
+  useImageData,
 } from "./Store";
 import { OperationBar } from "./OperationBar/OperationBar";
 import { UniversalModal } from "./UniversalModal";
@@ -77,7 +77,7 @@ function ImageEditorCore(props: ImageEditorProps) {
     allowedAdjustmentOperations,
   } = props;
 
-  const [, setImageData] = useRecoilState(imageDataState);
+  const setImageData = useImageData((state) => state.setImageData);
   const [, setReady] = useRecoilState(readyState);
   const [, setEditingMode] = useRecoilState(editingModeState);
 

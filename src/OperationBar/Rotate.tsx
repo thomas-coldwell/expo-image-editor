@@ -2,13 +2,13 @@ import * as React from "react";
 import { StyleSheet, View, Text, Platform, Alert } from "react-native";
 import { useRecoilState } from "recoil";
 import { IconButton } from "../components/IconButton";
-import { editingModeState, imageDataState, processingState } from "../Store";
+import { editingModeState, processingState, useImageData } from "../Store";
 import * as ImageManipulator from "expo-image-manipulator";
 
 export function Rotate() {
   //
   const [, setProcessing] = useRecoilState(processingState);
-  const [imageData, setImageData] = useRecoilState(imageDataState);
+  const { setImageData, ...imageData } = useImageData();
   const [, setEditingMode] = useRecoilState(editingModeState);
 
   const [originalImageData] = React.useState(imageData);

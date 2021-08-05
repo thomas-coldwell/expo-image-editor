@@ -1,5 +1,5 @@
 import * as React from "react";
-import { StyleSheet, View, Button, Image, Alert } from "react-native";
+import { StyleSheet, View, Button, Image, Alert, Text } from "react-native";
 import * as ImagePicker from "expo-image-picker";
 import { ImageEditor } from "expo-image-editor";
 import "@expo/match-media";
@@ -52,7 +52,9 @@ export default function App() {
           { flexDirection: isLandscape ? "row" : "column" },
         ]}
       >
+        <Text>Input:</Text>
         <Image style={styles.image} source={{ uri: imageUri }} />
+        <Text>Output:</Text>
         <Image
           style={[styles.image, { backgroundColor: "#333" }]}
           source={{ uri: croppedUri }}
@@ -94,6 +96,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "space-around",
     alignItems: "center",
+    padding: 15,
   },
   imageRow: {
     justifyContent: "center",
