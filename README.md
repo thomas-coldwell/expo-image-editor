@@ -91,6 +91,7 @@ function App() {
 | Name                        | Type     | Description                                                                                                                                                                      |
 | --------------------------- | -------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | visible                     | boolean  | Whether the editor should be visible or not.                                                                                                                                     |
+| asView                      | boolean  | If `true` this will remove the modal wrapper and return the image editor in a regular `<View />`                                                                                 |
 | mode                        | string   | Which mode to use the editor in can be either `full` or `crop-only`.                                                                                                             |
 | onCloseEditor               | function | Callback when the editor is dimissed - use this to set hide the editor.                                                                                                          |
 | imageUri                    | string   | The uri of the image to be edited                                                                                                                                                |
