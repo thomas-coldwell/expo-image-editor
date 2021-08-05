@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.6.3](https://github.com/thomas-coldwell/expo-image-editor/compare/v1.6.2...v1.6.3) (2021-08-05)
+
+
+### Bug Fixes
+
+* Update readme ([dd5a8b3](https://github.com/thomas-coldwell/expo-image-editor/commit/dd5a8b3388c1dfbaf7b904f42e8701a871ecd997))
+
 ### [1.6.2](https://github.com/thomas-coldwell/expo-image-editor/compare/v1.6.0...v1.6.2) (2021-07-28)
 
 
