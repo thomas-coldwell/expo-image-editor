@@ -4,7 +4,7 @@ import { MaterialIcons } from "@expo/vector-icons";
 
 export interface IIconProps {
   disabled?: boolean;
-  iconID: string;
+  iconID: React.ComponentProps<typeof MaterialIcons>["name"];
   text: string;
 }
 

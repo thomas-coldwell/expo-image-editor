@@ -1,1 +1,0 @@
-{"version":3,"file":"UniversalModal.d.ts","sourceRoot":"","sources":["../src/UniversalModal.tsx"],"names":[],"mappings":"AAAA,OAAO,KAAK,MAAM,OAAO,CAAC;AAC1B,OAAO,EAAE,KAAK,IAAI,OAAO,EAAY,MAAM,cAAc,CAAC;AAI1D,UAAU,oBAAqB,SAAQ,KAAK,CAAC,cAAc,CAAC,OAAO,OAAO,CAAC;IACzE,QAAQ,EAAE,KAAK,CAAC,SAAS,CAAC;CAC3B;AAED,eAAO,MAAM,cAAc,UAAW,oBAAoB,gBAUzD,CAAC"}
