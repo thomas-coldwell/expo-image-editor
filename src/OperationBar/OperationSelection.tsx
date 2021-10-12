@@ -21,7 +21,7 @@ import { useMemo } from "react";
 
 interface Operation<T> {
   title: string;
-  iconID: string;
+  iconID: React.ComponentProps<typeof Icon>["iconID"];
   operationID: T;
 }
 
