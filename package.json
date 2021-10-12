@@ -1,6 +1,6 @@
 {
   "name": "expo-image-editor",
-  "version": "1.6.3",
+  "version": "1.7.0",
   "description": "",
   "main": "lib/commonjs/index.js",
   "types": "lib/typescript/src/index.d.ts",
