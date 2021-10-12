@@ -34,33 +34,27 @@
     "url": "https://github.com/thomas-coldwell/expo-image-editor"
   },
   "peerDependencies": {
-    "react": "*",
-    "react-native": "*",
-    "expo-image-manipulator": "*",
+    "@expo/vector-icons": "*",
+    "expo-asset": "*",
+    "expo-file-system": "*",
     "expo-gl": "*",
     "expo-gl-cpp": "*",
-    "expo-file-system": "*",
-    "expo-asset": "*",
-    "@expo/vector-icons": "*"
+    "expo-image-manipulator": "*",
+    "react": "*",
+    "react-native": "*"
   },
   "devDependencies": {
     "@babel/core": "^7.8.6",
-    "@expo/webpack-config": "^0.12.11",
     "@expo/vector-icons": "^12.0.5",
+    "@expo/webpack-config": "^0.12.11",
+    "@miblanchard/react-native-slider": "^1.5.0",
+    "@react-hook/throttle": "^2.2.0",
+    "@release-it/conventional-changelog": "^3.3.0",
+    "@types/lodash": "^4.14.157",
     "@types/react": "~16.9.35",
     "@types/react-dom": "^16.9.8",
     "@types/react-native": "~0.63.2",
     "babel-preset-expo": "~8.1.0",
-    "react": "^16.13.1",
-    "react-dom": "^16.13.1",
-    "react-native": "https://github.com/expo/react-native/archive/sdk-42.0.0.tar.gz",
-    "react-native-builder-bob": "^0.18.2",
-    "react-native-web": "~0.13.12",
-    "standard-version": "^9.2.0",
-    "typescript": "^3.9.3",
-    "@miblanchard/react-native-slider": "^1.5.0",
-    "@react-hook/throttle": "^2.2.0",
-    "@types/lodash": "^4.14.157",
     "expo-asset": "^8.1.7",
     "expo-file-system": "^9.2.0",
     "expo-gl": "^9.1.1",
@@ -69,9 +63,17 @@
     "modal-enhanced-react-native-web": "^0.2.0",
     "modal-react-native-web": "^0.2.0",
     "no-scroll": "^2.1.1",
+    "react": "^16.13.1",
+    "react-dom": "^16.13.1",
+    "react-native": "https://github.com/expo/react-native/archive/sdk-42.0.0.tar.gz",
+    "react-native-builder-bob": "^0.18.2",
     "react-native-gesture-handler": "^1.10.3",
     "react-native-safe-area-context": "^3.2.0",
-    "recoil": "^0.0.10"
+    "react-native-web": "~0.13.12",
+    "recoil": "^0.0.10",
+    "release-it": "^14.11.6",
+    "standard-version": "^9.2.0",
+    "typescript": "^3.9.3"
   },
   "react-native-builder-bob": {
     "source": "src",
@@ -99,5 +101,26 @@
       "<rootDir>/example/node_modules",
       "<rootDir>/lib/"
     ]
+  },
+  "release-it": {
+    "git": {
+      "commitMessage": "chore: release ${version}",
+      "tagName": "v${version}"
+    },
+    "npm": {
+      "publish": true
+    },
+    "github": {
+      "release": true
+    },
+    "plugins": {
+      "@release-it/conventional-changelog": {
+        "preset": "angular"
+      }
+    }
+  },
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org"
   }
 }
