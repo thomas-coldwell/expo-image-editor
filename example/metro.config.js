@@ -2,20 +2,11 @@ const path = require("path");
 const blacklist = require("metro-config/src/defaults/blacklist");
 const escape = require("escape-string-regexp");
 const pak = require("../package.json");
+const { keys } = require("lodash");
 
 const root = path.resolve(__dirname, "..");
 
-const modules = [
-  "expo-image-manipulator",
-  "expo-image-picker",
-  "@expo/vector-icons",
-  "expo-gl",
-  "expo-file-system",
-  "expo-asset",
-  ...Object.keys({
-    ...pak.peerDependencies,
-  }),
-];
+const modules = Object.keys({ ...pak.peerDependencies });
 
 module.exports = {
   projectRoot: __dirname,

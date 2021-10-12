@@ -188,6 +188,8 @@ export function ImageEditorView(props: ImageEditorProps) {
 }
 
 export function ImageEditor(props: ImageEditorProps) {
+  //
+
   return (
     <RecoilRoot>
       <ImageEditorCore {...props} />

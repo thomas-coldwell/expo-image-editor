@@ -16,7 +16,7 @@ import {
   EditingOperations,
   EditorContext,
   TransformOperations,
-} from "../ImageEditor";
+} from "..";
 import { useMemo } from "react";
 
 interface Operation<T> {
@@ -54,10 +54,8 @@ const operations: Operations = {
 
 export function OperationSelection() {
   //
-  const {
-    allowedTransformOperations,
-    allowedAdjustmentOperations,
-  } = useContext(EditorContext);
+  const { allowedTransformOperations, allowedAdjustmentOperations } =
+    useContext(EditorContext);
 
   const isTransformOnly =
     allowedTransformOperations && !allowedAdjustmentOperations;
@@ -102,17 +100,20 @@ export function OperationSelection() {
   return (
     <>
       <ScrollView style={styles.opRow} horizontal>
-        {filteredOperations[selectedOperationGroup].map(
-          (item: Operation<EditingOperations>, index: number) => (
-            <View style={styles.opContainer} key={item.title}>
-              <IconButton
-                text={item.title}
-                iconID={item.iconID}
-                onPress={() => setEditingMode(item.operationID)}
-              />
-            </View>
+        {
+          //@ts-ignore
+          filteredOperations[selectedOperationGroup].map(
+            (item: Operation<EditingOperations>, index: number) => (
+              <View style={styles.opContainer} key={item.title}>
+                <IconButton
+                  text={item.title}
+                  iconID={item.iconID}
+                  onPress={() => setEditingMode(item.operationID)}
+                />
+              </View>
+            )
           )
-        )}
+        }
       </ScrollView>
       {!isTransformOnly && !isAdjustmentOnly ? (
         <View style={styles.modeRow}>

@@ -2,17 +2,20 @@
   "name": "expo-image-editor",
   "version": "1.6.3",
   "description": "",
-  "main": "lib/ImageEditor",
-  "types": "lib/ImageEditor.d.ts",
-  "react-native": "src/ImageEditor",
-  "source": "src/ImageEditor",
-  "module": "lib/ImageEditor",
+  "main": "lib/commonjs/index.js",
+  "types": "lib/typescript/src/index.d.ts",
+  "react-native": "src/index",
+  "source": "src/index",
+  "module": "lib/module/index.js",
   "scripts": {
-    "build": "tsc -p .",
     "test": "echo \"Error: no test specified\" && exit 1",
     "sv:patch": "standard-version --release-as patch",
     "sv:minor": "standard-version --release-as minor",
-    "sv:major": "standard-version --release-as major"
+    "sv:major": "standard-version --release-as major",
+    "prepare": "bob build",
+    "release": "release-it",
+    "example": "yarn --cwd example",
+    "bootstrap": "yarn example && yarn && yarn pods"
   },
   "keywords": [
     "react",
@@ -32,24 +35,29 @@
   },
   "peerDependencies": {
     "react": "*",
-    "react-native": "*"
+    "react-native": "*",
+    "expo-image-manipulator": "*",
+    "expo-gl": "*",
+    "expo-gl-cpp": "*",
+    "expo-file-system": "*",
+    "expo-asset": "*",
+    "@expo/vector-icons": "*"
   },
   "devDependencies": {
     "@babel/core": "^7.8.6",
     "@expo/webpack-config": "^0.12.11",
-    "@types/expo__vector-icons": "^9.0.1",
-    "@types/react-dom": "^16.9.8",
+    "@expo/vector-icons": "^12.0.5",
     "@types/react": "~16.9.35",
+    "@types/react-dom": "^16.9.8",
     "@types/react-native": "~0.63.2",
     "babel-preset-expo": "~8.1.0",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
     "react-native": "https://github.com/expo/react-native/archive/sdk-42.0.0.tar.gz",
+    "react-native-builder-bob": "^0.18.2",
     "react-native-web": "~0.13.12",
     "standard-version": "^9.2.0",
-    "typescript": "^3.9.3"
-  },
-  "dependencies": {
+    "typescript": "^3.9.3",
     "@miblanchard/react-native-slider": "^1.5.0",
     "@react-hook/throttle": "^2.2.0",
     "@types/lodash": "^4.14.157",
@@ -57,12 +65,39 @@
     "expo-file-system": "^9.2.0",
     "expo-gl": "^9.1.1",
     "expo-gl-cpp": "^9.1.2",
-    "expo-image-manipulator": "~8.3.0",
+    "expo-image-manipulator": "^9.2.2",
     "modal-enhanced-react-native-web": "^0.2.0",
     "modal-react-native-web": "^0.2.0",
     "no-scroll": "^2.1.1",
     "react-native-gesture-handler": "^1.10.3",
     "react-native-safe-area-context": "^3.2.0",
     "recoil": "^0.0.10"
+  },
+  "react-native-builder-bob": {
+    "source": "src",
+    "output": "lib",
+    "targets": [
+      "commonjs",
+      "module",
+      "typescript"
+    ]
+  },
+  "files": [
+    "src",
+    "lib",
+    "!**/__tests__",
+    "!**/__fixtures__",
+    "!**/__mocks__"
+  ],
+  "eslintIgnore": [
+    "node_modules/",
+    "lib/"
+  ],
+  "jest": {
+    "preset": "react-native",
+    "modulePathIgnorePatterns": [
+      "<rootDir>/example/node_modules",
+      "<rootDir>/lib/"
+    ]
   }
 }

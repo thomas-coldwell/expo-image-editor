@@ -16,7 +16,7 @@ import { GLView } from "expo-gl";
 import * as ImageManinpulator from "expo-image-manipulator";
 import * as FileSystem from "expo-file-system";
 import _, { debounce, throttle } from "lodash";
-import { EditorContext } from "expo-image-editor";
+import { EditorContext } from "../index";
 
 const vertShader = `
 precision highp float;
@@ -215,18 +215,7 @@ export function Blur() {
               // Create the verticies for WebGL to form triangles on the screen
               // using the vertex shader which forms a square or rectangle in this case
               const verts = new Float32Array([
-                -1,
-                -1,
-                1,
-                -1,
-                1,
-                1,
-                -1,
-                -1,
-                -1,
-                1,
-                1,
-                1,
+                -1, -1, 1, -1, 1, 1, -1, -1, -1, 1, 1, 1,
               ]);
               // Actually pass the verticies into the buffer and tell WebGL this is static
               // for optimisations
