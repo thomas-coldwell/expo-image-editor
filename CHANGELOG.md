@@ -2,6 +2,23 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.7.1](https://github.com/thomas-coldwell/expo-image-editor/compare/v1.7.0...v1.7.1) (2021-10-18)
+
+
+### Features
+
+* Add release-it ([14b8398](https://github.com/thomas-coldwell/expo-image-editor/commit/14b839857c1af155939b1f4719afa943119ad47f))
+
+
+### Bug Fixes
+
+* Add yarnrc to override `yarn` cmd ([b353ac8](https://github.com/thomas-coldwell/expo-image-editor/commit/b353ac8fab8ddd37f76d914ccba72d44eeed5fc8))
+* Dependency setup ([07fc54b](https://github.com/thomas-coldwell/expo-image-editor/commit/07fc54b150f34b07a1d7699ab0ca5513087ecf70))
+* iconID prop type ([062643b](https://github.com/thomas-coldwell/expo-image-editor/commit/062643bb72fbabed555d3c3933f5681a03a50296))
+* Remove lib from checked in files ([576e4a0](https://github.com/thomas-coldwell/expo-image-editor/commit/576e4a097577a28535b9acaa3fd13e5b7cac66a4))
+* Remove workflow ([7e9f067](https://github.com/thomas-coldwell/expo-image-editor/commit/7e9f0675f6316f47b34f1dd1528b897c7520858c))
+* ts ([aee4335](https://github.com/thomas-coldwell/expo-image-editor/commit/aee4335c2e100ca3e9b6f1a05c45e45422c6fbf6))
+
 ### [1.6.3](https://github.com/thomas-coldwell/expo-image-editor/compare/v1.6.2...v1.6.3) (2021-08-05)
 
 

@@ -1,6 +1,6 @@
 {
   "name": "expo-image-editor",
-  "version": "1.7.0",
+  "version": "1.7.1",
   "description": "",
   "main": "lib/commonjs/index.js",
   "types": "lib/typescript/src/index.d.ts",
@@ -33,6 +33,12 @@
     "type": "git",
     "url": "https://github.com/thomas-coldwell/expo-image-editor"
   },
+  "dependencies": {
+    "@miblanchard/react-native-slider": "^1.5.0",
+    "@react-hook/throttle": "^2.2.0",
+    "modal-enhanced-react-native-web": "^0.2.0",
+    "no-scroll": "^2.1.1"
+  },
   "peerDependencies": {
     "@expo/vector-icons": "*",
     "expo-asset": "*",
@@ -47,8 +53,6 @@
     "@babel/core": "^7.8.6",
     "@expo/vector-icons": "^12.0.5",
     "@expo/webpack-config": "^0.12.11",
-    "@miblanchard/react-native-slider": "^1.5.0",
-    "@react-hook/throttle": "^2.2.0",
     "@release-it/conventional-changelog": "^3.3.0",
     "@types/lodash": "^4.14.157",
     "@types/react": "~16.9.35",
@@ -60,9 +64,6 @@
     "expo-gl": "^9.1.1",
     "expo-gl-cpp": "^9.1.2",
     "expo-image-manipulator": "^9.2.2",
-    "modal-enhanced-react-native-web": "^0.2.0",
-    "modal-react-native-web": "^0.2.0",
-    "no-scroll": "^2.1.1",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
     "react-native": "https://github.com/expo/react-native/archive/sdk-42.0.0.tar.gz",
