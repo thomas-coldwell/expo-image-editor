@@ -1,18 +1,21 @@
-import * as React from "react";
-import {StyleSheet, Text, SafeAreaView, View} from "react-native";
+import React, {useContext} from "react";
+import {StyleSheet, Text, SafeAreaView, View, TouchableOpacity} from "react-native";
 import {useRecoilState} from "recoil";
 import {IconButton} from "../icon";
-import {editingModeState} from "../../store";
+import {cropRatioState, editingModeState} from "../../store";
 import {usePerformCrop} from "../../hooks";
-import {useContext} from "react";
 import {EditorContext} from "../../constants";
 
 export function Crop() {
+    const [ _, setRatio ] = useRecoilState(cropRatioState)
     const [, setEditingMode] = useRecoilState(editingModeState)
     const { availableAspectRatios, lockAspectRatio } = useContext(EditorContext)
-    console.log(availableAspectRatios, lockAspectRatio)
 
     const onPerformCrop = usePerformCrop();
+
+    const onPressRatio = (ratio: number) => {
+        setRatio(ratio)
+    }
 
     return (
         <SafeAreaView style={styles.container}>
@@ -23,11 +26,12 @@ export function Crop() {
             />
             <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                 {availableAspectRatios.map((ratio, index) => (
-                    <View
+                    <TouchableOpacity
                         key={index}
                         style={{
                             marginHorizontal: 4,
                         }}
+                        onPress={() => onPressRatio(ratio)}
                     >
                         <View
                             style={{
@@ -40,7 +44,7 @@ export function Crop() {
                         <Text style={{ color: 'white', fontSize: 12, alignSelf: 'center' }}>
                             {ratio}
                         </Text>
-                    </View>
+                    </TouchableOpacity>
                 ))}
             </View>
             <IconButton iconID="check" text="Done" onPress={onPerformCrop}/>

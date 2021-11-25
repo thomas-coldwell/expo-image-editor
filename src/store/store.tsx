@@ -74,6 +74,11 @@ export const cropSizeState = atom<ImageDimensions>({
   },
 });
 
+export const cropRatioState = atom<number>({
+  key: "cropRatioState",
+  default: 1,
+})
+
 export type EditingModes = "operation-select" | EditingOperations;
 
 export const editingModeState = atom<EditingModes>({

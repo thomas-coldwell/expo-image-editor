@@ -12,7 +12,7 @@ import {
 } from "react-native-gesture-handler";
 import {useRecoilState} from "recoil";
 import {useContext} from "react";
-import {cropSizeState, imageBoundsState, accumulatedPanState} from "../../store";
+import {cropSizeState, imageBoundsState, accumulatedPanState, cropRatioState} from "../../store";
 import {EditorContext} from "../../constants";
 
 const horizontalSections = ["top", "middle", "bottom"];
@@ -24,12 +24,14 @@ export const ImageCropOverlay = () => {
     const [selectedFrameSection, setSelectedFrameSection] = React.useState("");
 
     // Shared state and bits passed through recoil to avoid prop drilling
+    const [ ratio ] = useRecoilState(cropRatioState);
     const [cropSize, setCropSize] = useRecoilState(cropSizeState);
     const [imageBounds] = useRecoilState(imageBoundsState);
     const [accumulatedPan, setAccumluatedPan] = useRecoilState(accumulatedPanState);
 
     // Editor context
     const {lockAspectRatio, minimumCropDimensions} = useContext(EditorContext);
+    const usedRatio = lockAspectRatio || ratio
 
     const [animatedCropSize] = React.useState({
         width: new Animated.Value(cropSize.width),
@@ -60,18 +62,18 @@ export const ImageCropOverlay = () => {
         const {width, height} = imageBounds;
         const imageAspectRatio = width / height;
         // Then check if the cropping aspect ratio is smaller
-        if (lockAspectRatio && lockAspectRatio < imageAspectRatio) {
+        if (usedRatio < imageAspectRatio) {
             // If so calculate the size so its not greater than the image width
             newSize.height = height;
-            newSize.width = height * lockAspectRatio;
+            newSize.width = height * usedRatio;
         } else {
             // else, calculate the size so its not greater than the image height
             newSize.width = width;
-            newSize.height = width / (lockAspectRatio || 1);
+            newSize.height = width / usedRatio;
         }
         // Set the size of the crop overlay
         setCropSize(newSize);
-    }, [imageBounds]);
+    }, [imageBounds, usedRatio]);
 
     // Function that sets which sections allow for translation when
     // pressed
@@ -106,7 +108,7 @@ export const ImageCropOverlay = () => {
                 )(nativeEvent);
             } else {
                 // Else its a scaling operation
-                const {x, y} = getTargetCropFrameBounds(nativeEvent);
+                /*const {x, y} = getTargetCropFrameBounds(nativeEvent);
                 if (isTop) {
                     panY.current.setValue(-y);
                 }
@@ -116,7 +118,7 @@ export const ImageCropOverlay = () => {
                 // Finally update the animated width to the values the crop
                 // window has been resized to
                 animatedCropSize.width.setValue(cropSize.width + x);
-                animatedCropSize.height.setValue(cropSize.height + y);
+                animatedCropSize.height.setValue(cropSize.height + y);*/
             }
         } else {
             // We need to set which section has been pressed
@@ -176,9 +178,6 @@ export const ImageCropOverlay = () => {
         if (isMovingSection()) {
             // Ensure the cropping overlay has not been moved outside of the allowed bounds
             checkCropBounds(nativeEvent);
-        } else {
-            // Else its a scaling op - check that the resizing didnt take it out of bounds
-            checkResizeBounds(nativeEvent);
         }
         // Disable the pan responder so the section tiles can register being pressed again
         setSelectedFrameSection("");
