@@ -1,13 +1,11 @@
 import * as React from "react";
 import {Image, StyleSheet, View} from "react-native";
 import {useRecoilState} from "recoil";
-import {ExpoWebGLRenderingContext, GLView} from "expo-gl";
 import {
     imageDataState,
     imageBoundsState,
     imageScaleFactorState,
     editingModeState,
-    glContextState,
 } from "../../store";
 import {ImageCropOverlay} from "../overlay";
 
@@ -23,7 +21,6 @@ export function EditingWindow() {
     const [, setImageBounds] = useRecoilState(imageBoundsState);
     const [, setImageScaleFactor] = useRecoilState(imageScaleFactorState);
     const [editingMode] = useRecoilState(editingModeState);
-    const [, setGLContext] = useRecoilState(glContextState);
 
     // Get some readable boolean states
     const isCropping = editingMode === "crop";
@@ -94,10 +91,6 @@ export function EditingWindow() {
     React.useEffect(() => {
         onUpdateCropLayout(imageLayout);
     }, [imageData]);
-
-    const onGLContextCreate = async (gl: ExpoWebGLRenderingContext) => {
-        setGLContext(gl);
-    };
 
     return (
         <View style={styles.container}>

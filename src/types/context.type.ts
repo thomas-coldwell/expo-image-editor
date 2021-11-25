@@ -4,8 +4,8 @@ import {Mode} from "./mode.type";
 
 export type EditorContextType = {
     minimumCropDimensions: ImageDimensions;
-    fixedAspectRatio: number;
-    lockAspectRatio: boolean;
+    availableAspectRatios: number[];
+    lockAspectRatio?: number;
     mode: Mode;
     onCloseEditor: () => void;
     onEditingComplete: (result: any) => void;

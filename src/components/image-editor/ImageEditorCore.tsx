@@ -14,8 +14,8 @@ export const ImageEditorCore = (props: ImageEditorProps) => {
     const {
         mode = "full",
         minimumCropDimensions = {width: 0, height: 0},
-        fixedCropAspectRatio: fixedAspectRatio = 1.6,
-        lockAspectRatio = false,
+        availableAspectRatios= [ 1 ],
+        lockAspectRatio = undefined,
         allowedTransformOperations,
     } = props;
 
@@ -86,7 +86,7 @@ export const ImageEditorCore = (props: ImageEditorProps) => {
                 mode,
                 minimumCropDimensions,
                 lockAspectRatio,
-                fixedAspectRatio,
+                availableAspectRatios,
                 allowedTransformOperations,
                 onCloseEditor,
                 onEditingComplete: props.onEditingComplete,

@@ -5,13 +5,13 @@ export interface ImageEditorProps {
     visible: boolean;
     onCloseEditor: () => void;
     imageUri: string | undefined;
-    fixedCropAspectRatio?: number;
+    availableAspectRatios: number[]
     minimumCropDimensions?: {
         width: number;
         height: number;
     };
     onEditingComplete: (result: any) => void;
-    lockAspectRatio?: boolean;
+    lockAspectRatio?: number;
     mode?: Mode;
     allowedTransformOperations?: TransformOperations[];
     asView?: boolean;

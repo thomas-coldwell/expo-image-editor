@@ -1,4 +1,3 @@
-import { ExpoWebGLRenderingContext } from "expo-gl";
 import { atom } from "recoil";
 import {EditingOperations} from "../types";
 
@@ -80,20 +79,4 @@ export type EditingModes = "operation-select" | EditingOperations;
 export const editingModeState = atom<EditingModes>({
   key: "editingModeState",
   default: "operation-select",
-});
-
-interface GLContext {
-  gl: ExpoWebGLRenderingContext | null;
-  program: WebGLProgram;
-  verts: Float32Array;
-}
-
-export const glContextState = atom<GLContext["gl"]>({
-  key: "glContextState",
-  default: null,
-});
-
-export const glProgramState = atom<GLContext["program"] | null>({
-  key: "glProgramState",
-  default: null,
 });

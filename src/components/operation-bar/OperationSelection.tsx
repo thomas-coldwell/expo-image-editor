@@ -1,9 +1,7 @@
 import * as React from "react";
 import {
     StyleSheet,
-    View,
-    ScrollView,
-    SafeAreaView, Dimensions,
+    SafeAreaView,
 } from "react-native";
 import {useRecoilState} from "recoil";
 import {useContext, useMemo} from "react";

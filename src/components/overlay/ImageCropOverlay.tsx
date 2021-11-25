@@ -29,7 +29,7 @@ export const ImageCropOverlay = () => {
     const [accumulatedPan, setAccumluatedPan] = useRecoilState(accumulatedPanState);
 
     // Editor context
-    const {fixedAspectRatio, lockAspectRatio, minimumCropDimensions} = useContext(EditorContext);
+    const {lockAspectRatio, minimumCropDimensions} = useContext(EditorContext);
 
     const [animatedCropSize] = React.useState({
         width: new Animated.Value(cropSize.width),
@@ -59,16 +59,15 @@ export const ImageCropOverlay = () => {
         let newSize = {width: 0, height: 0};
         const {width, height} = imageBounds;
         const imageAspectRatio = width / height;
-        console.log(imageAspectRatio)
         // Then check if the cropping aspect ratio is smaller
-        if (fixedAspectRatio < imageAspectRatio) {
+        if (lockAspectRatio && lockAspectRatio < imageAspectRatio) {
             // If so calculate the size so its not greater than the image width
             newSize.height = height;
-            newSize.width = height * fixedAspectRatio;
+            newSize.width = height * lockAspectRatio;
         } else {
             // else, calculate the size so its not greater than the image height
             newSize.width = width;
-            newSize.height = width / fixedAspectRatio;
+            newSize.height = width / (lockAspectRatio || 1);
         }
         // Set the size of the crop overlay
         setCropSize(newSize);
@@ -154,14 +153,14 @@ export const ImageCropOverlay = () => {
             if (translationX < translationY) {
                 x = (isLeft ? -1 : 1) * translationX;
                 if (lockAspectRatio) {
-                    y = x / fixedAspectRatio;
+                    y = x / lockAspectRatio;
                 } else {
                     y = (isTop ? -1 : 1) * translationY;
                 }
             } else {
                 y = (isTop ? -1 : 1) * translationY;
                 if (lockAspectRatio) {
-                    x = y * fixedAspectRatio;
+                    x = y * lockAspectRatio;
                 } else {
                     x = (isLeft ? -1 : 1) * translationX;
                 }
@@ -256,17 +255,17 @@ export const ImageCropOverlay = () => {
         // resize to the max it can be if so
         if (animatedHeight > maxHeight) {
             finalHeight = maxHeight;
-            if (lockAspectRatio) finalWidth = finalHeight * fixedAspectRatio;
+            if (lockAspectRatio) finalWidth = finalHeight * lockAspectRatio;
         } else if (animatedHeight < minHeight) {
             finalHeight = minHeight;
-            if (lockAspectRatio) finalWidth = finalHeight * fixedAspectRatio;
+            if (lockAspectRatio) finalWidth = finalHeight * lockAspectRatio;
         }
         if (animatedWidth > maxWidth) {
             finalWidth = maxWidth;
-            if (lockAspectRatio) finalHeight = finalWidth / fixedAspectRatio;
+            if (lockAspectRatio) finalHeight = finalWidth / lockAspectRatio;
         } else if (animatedWidth < minWidth) {
             finalWidth = minWidth;
-            if (lockAspectRatio) finalHeight = finalWidth / fixedAspectRatio;
+            if (lockAspectRatio) finalHeight = finalWidth / lockAspectRatio;
         }
         // Update the accumulated pan with the delta from the pan refs
         setAccumluatedPan({

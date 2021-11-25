@@ -4,11 +4,13 @@ import {useRecoilState} from "recoil";
 import {IconButton} from "../icon";
 import {editingModeState} from "../../store";
 import {usePerformCrop} from "../../hooks";
-
-const ratios = [ 1.91, 1, 0.8 ]
+import {useContext} from "react";
+import {EditorContext} from "../../constants";
 
 export function Crop() {
-    const [, setEditingMode] = useRecoilState(editingModeState);
+    const [, setEditingMode] = useRecoilState(editingModeState)
+    const { availableAspectRatios, lockAspectRatio } = useContext(EditorContext)
+    console.log(availableAspectRatios, lockAspectRatio)
 
     const onPerformCrop = usePerformCrop();
 
@@ -20,7 +22,7 @@ export function Crop() {
                 onPress={() => setEditingMode("operation-select")}
             />
             <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                {ratios.map((ratio, index) => (
+                {availableAspectRatios.map((ratio, index) => (
                     <View
                         key={index}
                         style={{
