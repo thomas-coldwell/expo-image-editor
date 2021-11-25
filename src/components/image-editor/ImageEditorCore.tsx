@@ -56,8 +56,8 @@ export const ImageEditorCore = (props: ImageEditorProps) => {
                 }
             }
         };
-        if (props.imageUri && props.visible) {
-            void initialise();
+        if (props.imageUri) {
+            void initialise()
         }
     }, [props.imageUri, props.visible]);
 
