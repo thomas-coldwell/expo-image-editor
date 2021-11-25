@@ -11,9 +11,8 @@ import {ImageEditorProps} from "../../types";
 export function ImageEditorView(props: ImageEditorProps) {
     const {mode = "full"} = props;
 
-    const [ready, setReady] = useRecoilState(readyState);
-    console.log("ready", ready)
-    const [processing, setProcessing] = useRecoilState(processingState);
+    const [ready] = useRecoilState(readyState);
+    const [processing] = useRecoilState(processingState);
 
     return (
         <>

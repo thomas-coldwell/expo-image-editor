@@ -58,8 +58,10 @@ export const ImageEditorCore = (props: ImageEditorProps) => {
                 }
             }
         };
-        initialise();
-    }, [props.imageUri]);
+        if (props.imageUri && props.visible) {
+            void initialise();
+        }
+    }, [props.imageUri, props.visible]);
 
     const onCloseEditor = () => {
         // Set no-scroll to off
