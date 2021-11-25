@@ -7,7 +7,7 @@ export const EditorContext = React.createContext<EditorContextType>({
         width: 0,
         height: 0,
     },
-    fixedAspectRatio: 1.6,
+    fixedAspectRatio: [ 0.8, 1, 1.91 ],
     lockAspectRatio: false,
     mode: "full",
     onCloseEditor: () => {
