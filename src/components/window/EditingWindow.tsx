@@ -73,21 +73,6 @@ export function EditingWindow() {
         }
     };
 
-    const getGLLayout = () => {
-        if (imageLayout) {
-            const {height: windowHeight, width: windowWidth} = imageLayout;
-            const windowAspectRatio = windowWidth / windowHeight;
-            const {height: imageHeight, width: imageWidth} = imageData;
-            const imageAspectRatio = imageWidth / imageHeight;
-            // If the window is taller than img...
-            if (windowAspectRatio < imageAspectRatio) {
-                return {width: windowWidth, height: windowWidth / imageAspectRatio};
-            } else {
-                return {height: windowHeight, width: windowHeight * imageAspectRatio};
-            }
-        }
-    };
-
     React.useEffect(() => {
         onUpdateCropLayout(imageLayout);
     }, [imageData]);
