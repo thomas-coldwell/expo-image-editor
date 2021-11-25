@@ -98,6 +98,7 @@ export const ImageEditorCore = (props: ImageEditorProps) => {
             ) : (
                 <UniversalModal
                     visible={props.visible}
+                    animationType={"slide"}
                     presentationStyle="fullScreen"
                     statusBarTranslucent
                 >

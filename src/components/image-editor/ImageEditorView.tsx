@@ -15,7 +15,7 @@ export function ImageEditorView(props: ImageEditorProps) {
     const [processing] = useRecoilState(processingState);
 
     return (
-        <>
+        <View style={styles.container}>
             {ready ? (
                 <View style={styles.container}>
                     <ControlBar/>
@@ -24,13 +24,13 @@ export function ImageEditorView(props: ImageEditorProps) {
                 </View>
             ) : null}
             {processing ? <Processing/> : null}
-        </>
+        </View>
     );
 }
 
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: "#222",
+        backgroundColor: "#000",
     },
 });

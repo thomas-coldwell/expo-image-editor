@@ -2,8 +2,8 @@ import * as React from "react";
 import {
     StyleSheet,
     View,
-    TouchableOpacity,
     ScrollView,
+    SafeAreaView, Dimensions,
 } from "react-native";
 import {useRecoilState} from "recoil";
 import {useContext, useMemo} from "react";
@@ -45,7 +45,7 @@ export function OperationSelection() {
 
     const isTransformOnly = allowedTransformOperations
 
-    const [selectedOperationGroup, setSelectedOperationGroup] = React.useState<"transform">("transform");
+    const selectedOperationGroup = "transform"
     const [, setEditingMode] = useRecoilState(editingModeState);
 
     const filteredOperations = useMemo(() => {
@@ -68,51 +68,34 @@ export function OperationSelection() {
     ]);
 
     return (
-        <>
-            <ScrollView style={styles.opRow} horizontal>
-                {
-                    //@ts-ignore
-                    filteredOperations[selectedOperationGroup].map(
-                        (item: Operation<EditingOperations>, index: number) => (
-                            <View style={styles.opContainer} key={item.title}>
-                                <IconButton
-                                    text={item.title}
-                                    iconID={item.iconID}
-                                    onPress={() => setEditingMode(item.operationID)}
-                                />
-                            </View>
-                        )
+        <SafeAreaView style={styles.opRow}>
+            {
+                //@ts-ignore
+                filteredOperations[selectedOperationGroup].map(
+                    (item: Operation<EditingOperations>) => (
+                        <IconButton
+                            key={item.title}
+                            text={item.title}
+                            iconID={item.iconID}
+                            style={styles.modeButton}
+                            onPress={() => setEditingMode(item.operationID)}
+                        />
                     )
-                }
-            </ScrollView>
-        </>
+                )
+            }
+        </SafeAreaView>
     );
 }
 
 const styles = StyleSheet.create({
     opRow: {
         height: 80,
-        width: "100%",
-        backgroundColor: "#333",
-    },
-    opContainer: {
-        height: "100%",
-        justifyContent: "center",
-        alignItems: "center",
-        marginLeft: 16,
-    },
-    modeRow: {
-        height: 80,
-        width: "100%",
-        flexDirection: "row",
-        alignItems: "center",
-        justifyContent: "space-around",
+        flexDirection: 'row',
+        backgroundColor: "#000",
     },
     modeButton: {
-        height: 80,
         flex: 1,
         justifyContent: "center",
         alignItems: "center",
-        backgroundColor: "#222",
     },
 });

@@ -1,5 +1,5 @@
 import * as React from "react";
-import {View, StyleSheet} from "react-native";
+import {View, StyleSheet, SafeAreaView} from "react-native";
 import {useContext, useEffect} from "react";
 import {useRecoilState} from "recoil";
 import {editingModeState, imageDataState, processingState} from "../../store";
@@ -54,26 +54,30 @@ export function ControlBar() {
     }, [imageData, editingMode]);
 
     return (
-        <View style={styles.container}>
-            <IconButton iconID="arrow-back" text="Back" onPress={onPressBack}/>
-            <IconButton
-                iconID="done"
-                text="Done"
-                onPress={onFinishEditing}
-                disabled={shouldDisableDoneButton}
-            />
-        </View>
+        <SafeAreaView>
+            <View style={styles.container}>
+                <IconButton
+                    iconID="arrow-back"
+                    text="Back"
+                    onPress={onPressBack}
+                />
+                <IconButton
+                    iconID="done"
+                    text="Done"
+                    onPress={onFinishEditing}
+                    disabled={shouldDisableDoneButton}
+                />
+            </View>
+        </SafeAreaView>
     );
 }
 
 const styles = StyleSheet.create({
     container: {
-        width: "100%",
         height: 80,
-        backgroundColor: "#333",
+        backgroundColor: "#000",
         flexDirection: "row",
         justifyContent: "space-between",
         alignItems: "center",
-        paddingHorizontal: 4,
     },
 });

@@ -24,7 +24,7 @@ export function OperationBar() {
         <View style={styles.container}>
             <OperationSelection/>
             {editingMode !== "operation-select" && (
-                <View style={[styles.container, {position: "absolute"}]}>
+                <View style={[styles.container, { position: 'absolute' }]}>
                     {getOperationWindow()}
                 </View>
             )}
@@ -34,9 +34,8 @@ export function OperationBar() {
 
 const styles = StyleSheet.create({
     container: {
-        height: 160,
         width: "100%",
-        backgroundColor: "#333",
+        backgroundColor: "#000",
         justifyContent: "center",
     },
 });
