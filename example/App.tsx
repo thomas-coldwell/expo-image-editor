@@ -80,10 +80,7 @@ export default function App() {
           setCroppedUri(result.uri);
           console.log(result);
         }}
-        throttleBlur={false}
         mode="crop-only"
-        // allowedTransformOperations={["crop"]}
-        // allowedAdjustmentOperations={["blur"]}
       />
     </View>
   );

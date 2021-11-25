@@ -1,5 +1,5 @@
 import {Mode} from "./mode.type";
-import {AdjustmentOperations, TransformOperations} from "./operation.type";
+import {TransformOperations} from "./operation.type";
 
 export interface ImageEditorProps {
     visible: boolean;
@@ -12,9 +12,7 @@ export interface ImageEditorProps {
     };
     onEditingComplete: (result: any) => void;
     lockAspectRatio?: boolean;
-    throttleBlur?: boolean;
     mode?: Mode;
     allowedTransformOperations?: TransformOperations[];
-    allowedAdjustmentOperations?: AdjustmentOperations[];
     asView?: boolean;
 }

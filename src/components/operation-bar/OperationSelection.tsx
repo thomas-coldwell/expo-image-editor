@@ -10,7 +10,6 @@ import {useContext, useMemo} from "react";
 import {Icon, IconButton} from "../icon";
 import {editingModeState} from "../../store";
 import {
-    AdjustmentOperations,
     EditingOperations,
     TransformOperations,
 } from "../../types";
@@ -24,7 +23,6 @@ interface Operation<T> {
 
 interface Operations {
     transform: Operation<TransformOperations>[];
-    adjust: Operation<AdjustmentOperations>[];
 }
 
 const operations: Operations = {
@@ -40,29 +38,19 @@ const operations: Operations = {
             operationID: "rotate",
         },
     ],
-    adjust: [
-        {
-            title: "Blur",
-            iconID: "blur-on",
-            operationID: "blur",
-        },
-    ],
 };
 
 export function OperationSelection() {
-    const {allowedTransformOperations, allowedAdjustmentOperations} = useContext(EditorContext);
+    const {allowedTransformOperations} = useContext(EditorContext);
 
-    const isTransformOnly = allowedTransformOperations && !allowedAdjustmentOperations;
-    const isAdjustmentOnly = allowedAdjustmentOperations && !allowedTransformOperations;
+    const isTransformOnly = allowedTransformOperations
 
-    const [selectedOperationGroup, setSelectedOperationGroup] = React.useState<"transform" | "adjust">(
-        isAdjustmentOnly ? "adjust" : "transform"
-    );
+    const [selectedOperationGroup, setSelectedOperationGroup] = React.useState<"transform">("transform");
     const [, setEditingMode] = useRecoilState(editingModeState);
 
     const filteredOperations = useMemo(() => {
         // If neither are specified then allow the full range of operations
-        if (!allowedTransformOperations && !allowedAdjustmentOperations) {
+        if (!allowedTransformOperations) {
             return operations;
         }
         const filteredTransforms = allowedTransformOperations
@@ -70,23 +58,13 @@ export function OperationSelection() {
                 allowedTransformOperations.includes(op.operationID)
             )
             : operations.transform;
-        const filteredAdjustments = allowedAdjustmentOperations
-            ? operations.adjust.filter((op) =>
-                allowedAdjustmentOperations.includes(op.operationID)
-            )
-            : operations.adjust;
         if (isTransformOnly) {
             return {transform: filteredTransforms, adjust: []};
         }
-        if (isAdjustmentOnly) {
-            return {adjust: filteredAdjustments, transform: []};
-        }
-        return {transform: filteredTransforms, adjust: filteredAdjustments};
+        return {transform: filteredTransforms};
     }, [
         allowedTransformOperations,
-        allowedAdjustmentOperations,
         isTransformOnly,
-        isAdjustmentOnly,
     ]);
 
     return (
@@ -107,32 +85,6 @@ export function OperationSelection() {
                     )
                 }
             </ScrollView>
-            {!isTransformOnly && !isAdjustmentOnly ? (
-                <View style={styles.modeRow}>
-                    <TouchableOpacity
-                        style={[
-                            styles.modeButton,
-                            selectedOperationGroup === "transform" && {
-                                backgroundColor: "#333",
-                            },
-                        ]}
-                        onPress={() => setSelectedOperationGroup("transform")}
-                    >
-                        <Icon iconID="transform" text="Transform"/>
-                    </TouchableOpacity>
-                    <TouchableOpacity
-                        style={[
-                            styles.modeButton,
-                            selectedOperationGroup === "adjust" && {
-                                backgroundColor: "#333",
-                            },
-                        ]}
-                        onPress={() => setSelectedOperationGroup("adjust")}
-                    >
-                        <Icon iconID="tune" text="Adjust"/>
-                    </TouchableOpacity>
-                </View>
-            ) : null}
         </>
     );
 }

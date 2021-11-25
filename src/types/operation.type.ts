@@ -1,3 +1,2 @@
 export type TransformOperations = "crop" | "rotate";
-export type AdjustmentOperations = "blur";
-export type EditingOperations = TransformOperations | AdjustmentOperations;
+export type EditingOperations = TransformOperations;

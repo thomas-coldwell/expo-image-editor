@@ -27,8 +27,6 @@ export function EditingWindow() {
 
     // Get some readable boolean states
     const isCropping = editingMode === "crop";
-    const isBlurring = editingMode === "blur";
-    const usesGL = isBlurring;
 
     const getImageFrame = (layout: {
         width: number;
@@ -103,28 +101,11 @@ export function EditingWindow() {
 
     return (
         <View style={styles.container}>
-            {usesGL ? (
-                <View style={styles.glContainer}>
-                    <GLView
-                        style={[
-                            {
-                                height: 1,
-                                width: 1,
-                                backgroundColor: "#ccc",
-                                transform: [{scaleY: -1}],
-                            },
-                            getGLLayout(),
-                        ]}
-                        onContextCreate={onGLContextCreate}
-                    />
-                </View>
-            ) : (
-                <Image
-                    style={styles.image}
-                    source={{uri: imageData.uri}}
-                    onLayout={({nativeEvent}) => getImageFrame(nativeEvent.layout)}
-                />
-            )}
+            <Image
+                style={styles.image}
+                source={{uri: imageData.uri}}
+                onLayout={({nativeEvent}) => getImageFrame(nativeEvent.layout)}
+            />
             {isCropping && imageLayout != null ? <ImageCropOverlay/> : null}
         </View>
     );

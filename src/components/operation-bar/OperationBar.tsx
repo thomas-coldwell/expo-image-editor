@@ -5,7 +5,6 @@ import {editingModeState} from "../../store";
 import {OperationSelection} from "./OperationSelection";
 import {Crop} from "./Crop";
 import {Rotate} from "./Rotate";
-import {Blur} from "./Blur";
 
 export function OperationBar() {
     const [editingMode] = useRecoilState(editingModeState);
@@ -16,8 +15,6 @@ export function OperationBar() {
                 return <Crop/>;
             case "rotate":
                 return <Rotate/>;
-            case "blur":
-                return <Blur/>;
             default:
                 return null;
         }

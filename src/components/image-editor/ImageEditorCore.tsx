@@ -13,12 +13,10 @@ import {ImageEditorView} from "./ImageEditorView";
 export const ImageEditorCore = (props: ImageEditorProps) => {
     const {
         mode = "full",
-        throttleBlur = true,
         minimumCropDimensions = {width: 0, height: 0},
         fixedCropAspectRatio: fixedAspectRatio = 1.6,
         lockAspectRatio = false,
         allowedTransformOperations,
-        allowedAdjustmentOperations,
     } = props;
 
     const [, setImageData] = useRecoilState(imageDataState);
@@ -89,9 +87,7 @@ export const ImageEditorCore = (props: ImageEditorProps) => {
                 minimumCropDimensions,
                 lockAspectRatio,
                 fixedAspectRatio,
-                throttleBlur,
                 allowedTransformOperations,
-                allowedAdjustmentOperations,
                 onCloseEditor,
                 onEditingComplete: props.onEditingComplete,
             }}
