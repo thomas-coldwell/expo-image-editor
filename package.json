@@ -39,7 +39,9 @@
     "expo-image-picker": "^11.0.3",
     "modal-enhanced-react-native-web": "^0.2.0",
     "no-scroll": "^2.1.1",
-    "react-responsive": "^9.0.0-beta.5"
+    "react-responsive": "^9.0.0-beta.5",
+    "recoil": "^0.0.10",
+    "react-native-gesture-handler": "^1.10.3"
   },
   "peerDependencies": {
     "@expo/vector-icons": "*",
@@ -70,10 +72,8 @@
     "react-dom": "^16.13.1",
     "react-native": "https://github.com/expo/react-native/archive/sdk-42.0.0.tar.gz",
     "react-native-builder-bob": "^0.18.2",
-    "react-native-gesture-handler": "^1.10.3",
     "react-native-safe-area-context": "^3.2.0",
     "react-native-web": "~0.13.12",
-    "recoil": "^0.0.10",
     "release-it": "^14.11.6",
     "standard-version": "^9.2.0",
     "typescript": "^3.9.3"
