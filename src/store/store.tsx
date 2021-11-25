@@ -1,6 +1,6 @@
 import { ExpoWebGLRenderingContext } from "expo-gl";
-import { EditingOperations } from "./index";
 import { atom } from "recoil";
+import {EditingOperations} from "../types";
 
 export interface ImageData {
   uri: string;

@@ -1,17 +1,14 @@
 import * as React from 'react';
 import { View, StyleSheet, ActivityIndicator } from 'react-native';
 
-function Processing() {
-
+export function Processing() {
   return(
     <View style={styles.container}>
       <ActivityIndicator size="large" color="#ffffff" />
     </View>
   );
-
 }
 
-export { Processing };
 
 const styles = StyleSheet.create({
   container: {
