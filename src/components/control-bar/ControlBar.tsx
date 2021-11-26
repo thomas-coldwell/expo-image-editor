@@ -2,30 +2,14 @@ import * as React from "react";
 import {View, StyleSheet, SafeAreaView} from "react-native";
 import {useContext, useEffect} from "react";
 import {useRecoilState} from "recoil";
-import {editingModeState, imageDataState, processingState} from "../../store";
+import {editingModeState, imageDataState} from "../../store";
 import {IconButton} from "../icon";
-import {usePerformCrop} from "../../hooks";
 import {EditorContext} from "../../constants";
 
 export function ControlBar() {
     const [editingMode, setEditingMode] = useRecoilState(editingModeState);
     const [imageData] = useRecoilState(imageDataState);
-    const [processing, setProcessing] = useRecoilState(processingState);
     const {mode, onCloseEditor, onEditingComplete} = useContext(EditorContext);
-
-    const performCrop = usePerformCrop();
-
-    const shouldDisableDoneButton = editingMode !== "operation-select" && mode !== "crop-only";
-
-    const onFinishEditing = async () => {
-        if (mode === "full") {
-            setProcessing(false);
-            onEditingComplete(imageData);
-            onCloseEditor();
-        } else if (mode === "crop-only") {
-            await performCrop();
-        }
-    };
 
     const onPressBack = () => {
         if (mode === "full") {
@@ -58,14 +42,7 @@ export function ControlBar() {
             <View style={styles.container}>
                 <IconButton
                     iconID="arrow-back"
-                    text="Back"
                     onPress={onPressBack}
-                />
-                <IconButton
-                    iconID="done"
-                    text="Done"
-                    onPress={onFinishEditing}
-                    disabled={shouldDisableDoneButton}
                 />
             </View>
         </SafeAreaView>
@@ -74,7 +51,7 @@ export function ControlBar() {
 
 const styles = StyleSheet.create({
     container: {
-        height: 80,
+        height: 40,
         backgroundColor: "#000",
         flexDirection: "row",
         justifyContent: "space-between",

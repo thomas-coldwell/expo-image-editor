@@ -5,7 +5,7 @@ import { MaterialIcons } from "@expo/vector-icons";
 export interface IIconProps {
   disabled?: boolean;
   iconID: React.ComponentProps<typeof MaterialIcons>["name"];
-  text: string;
+  text?: string;
 }
 
 export function Icon(props: IIconProps) {
@@ -16,9 +16,11 @@ export function Icon(props: IIconProps) {
         size={26}
         color={props.disabled ? "grey" : "white"}
       />
-      <Text style={[styles.text, props.disabled && { color: "grey" }]}>
-        {props.text}
-      </Text>
+      {props.text && (
+          <Text style={[styles.text, props.disabled && { color: "grey" }]}>
+            {props.text}
+          </Text>
+      )}
     </View>
   );
 }
