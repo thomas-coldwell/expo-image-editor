@@ -4,7 +4,7 @@ import * as React from "react";
 import {Platform, StatusBar} from "react-native";
 import {useRecoilState} from "recoil";
 import * as ImageManipulator from "expo-image-manipulator";
-import {editingModeState, imageDataState, readyState} from "../../store";
+import {imageDataState, readyState} from "../../store";
 import {EditorContext} from "../../constants";
 import {UniversalModal} from "../modal";
 import {ImageEditorProps} from "../../types";
@@ -12,11 +12,8 @@ import {ImageEditorView} from "./ImageEditorView";
 
 export const ImageEditorCore = (props: ImageEditorProps) => {
     const {
-        mode = "full",
-        minimumCropDimensions = {width: 0, height: 0},
         availableAspectRatios= [ 1 ],
         lockAspectRatio = undefined,
-        allowedTransformOperations,
         translations = {
             cancel: 'Cancel',
             validate: 'Validate'
@@ -25,7 +22,6 @@ export const ImageEditorCore = (props: ImageEditorProps) => {
 
     const [, setImageData] = useRecoilState(imageDataState);
     const [, setReady] = useRecoilState(readyState);
-    const [, setEditingMode] = useRecoilState(editingModeState);
 
     // Initialise the image data when it is set through the props
     React.useEffect(() => {
@@ -77,39 +73,27 @@ export const ImageEditorCore = (props: ImageEditorProps) => {
         if (!props.visible) {
             setReady(false);
         }
-        // Check if ther mode is set to crop only if this is the case then set the editingMode
-        // to crop
-        if (mode === "crop-only") {
-            setEditingMode("crop");
-        }
     }, [props.visible]);
 
     return (
         <EditorContext.Provider
             value={{
-                mode,
-                minimumCropDimensions,
                 lockAspectRatio,
                 availableAspectRatios,
-                allowedTransformOperations,
                 translations,
                 onCloseEditor,
                 onEditingComplete: props.onEditingComplete,
             }}
         >
             <StatusBar hidden={props.visible}/>
-            {props.asView ? (
-                <ImageEditorView {...props} />
-            ) : (
-                <UniversalModal
-                    visible={props.visible}
-                    animationType={"slide"}
-                    presentationStyle="fullScreen"
-                    statusBarTranslucent
-                >
-                    <ImageEditorView {...props} />
-                </UniversalModal>
-            )}
+            <UniversalModal
+                visible={props.visible}
+                animationType={"slide"}
+                presentationStyle="fullScreen"
+                statusBarTranslucent
+            >
+                <ImageEditorView />
+            </UniversalModal>
         </EditorContext.Provider>
     );
 }

@@ -1,10 +1,9 @@
 import React, {useContext} from "react";
 import {StyleSheet, Text, View, TouchableOpacity} from "react-native";
 import {useRecoilState} from "recoil";
-import {cropRatioState, editingModeState} from "../../store";
+import {cropRatioState} from "../../store";
 import {usePerformCrop} from "../../hooks";
 import {EditorContext} from "../../constants";
-import {Button} from "../button";
 import {OperationBarSelectedFooter} from "../operation-bar-selected-footer";
 
 export function Crop() {

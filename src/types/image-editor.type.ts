@@ -1,19 +1,15 @@
-import {Mode} from "./mode.type";
-import {TransformOperations} from "./operation.type";
+type ImageSize = { width: number, height: number }
 
 export interface ImageEditorProps {
     visible: boolean;
-    onCloseEditor: () => void;
-    imageUri: string | undefined;
+    imageUri: string;
     availableAspectRatios: number[]
-    minimumCropDimensions?: { width: number; height: number; };
-    onEditingComplete: (result: any) => void;
     lockAspectRatio?: number;
-    mode?: Mode;
-    allowedTransformOperations?: TransformOperations[];
-    asView?: boolean;
+    dimensionByAspectRatios: ImageSize[]
     translations?: {
         cancel?: string;
         validate?: string;
     }
+    onEditingComplete: (result: any) => void;
+    onCloseEditor: () => void;
 }

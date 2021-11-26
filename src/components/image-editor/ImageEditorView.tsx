@@ -6,11 +6,8 @@ import {EditingWindow} from "../window";
 import {OperationBar} from "../operation-bar";
 import {Processing} from "../processing";
 import {processingState, readyState} from "../../store";
-import {ImageEditorProps} from "../../types";
 
-export function ImageEditorView(props: ImageEditorProps) {
-    const {mode = "full"} = props;
-
+export function ImageEditorView() {
     const [ready] = useRecoilState(readyState);
     const [processing] = useRecoilState(processingState);
 
@@ -20,7 +17,7 @@ export function ImageEditorView(props: ImageEditorProps) {
                 <View style={styles.container}>
                     <ControlBar/>
                     <EditingWindow/>
-                    {mode === "full" && <OperationBar/>}
+                    <OperationBar/>
                 </View>
             ) : null}
             {processing ? <Processing/> : null}
