@@ -19,7 +19,7 @@ export const useResizeToDesiredDimensions = () => {
             return await ImageManipulator.manipulateAsync(
                 imageData.uri,
                 [{resize: {width: desiredDimensions.width, height: desiredDimensions.height}}],
-                {format: SaveFormat.JPEG, compress: 0.7}
+                {format: SaveFormat.JPEG, compress: 0.75}
             )
         }
 
