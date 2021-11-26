@@ -36,6 +36,7 @@
   "dependencies": {
     "@miblanchard/react-native-slider": "^1.5.0",
     "@react-hook/throttle": "^2.2.0",
+    "expo-image-editor": "github:ko-platform/expo-image-editor#ko-image-editor",
     "expo-image-picker": "^11.0.3",
     "modal-enhanced-react-native-web": "^0.2.0",
     "no-scroll": "^2.1.1",

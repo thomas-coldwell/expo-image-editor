@@ -1,5 +1,5 @@
 import * as React from "react";
-import {Image, StyleSheet, View} from "react-native";
+import {Dimensions, Image, StyleSheet, View} from "react-native";
 import {useRecoilState} from "recoil";
 import {
     imageDataState,
@@ -22,6 +22,9 @@ export function EditingWindow() {
     const [, setImageScaleFactor] = useRecoilState(imageScaleFactorState);
     const [editingMode] = useRecoilState(editingModeState);
 
+    const imageRatio = imageData.width / imageData.height
+    const imageHeightFromWidth = Dimensions.get("window").width / imageRatio;
+
     // Get some readable boolean states
     const isCropping = editingMode === "crop";
 
@@ -41,6 +44,7 @@ export function EditingWindow() {
             const editingWindowAspectRatio = layout.height / layout.width;
             //
             const imageAspectRatio = imageData.height / imageData.width;
+
             let bounds = {x: 0, y: 0, width: 0, height: 0};
             let imageScaleFactor = 1;
             // Check which is larger
@@ -79,12 +83,14 @@ export function EditingWindow() {
 
     return (
         <View style={styles.container}>
-            <Image
-                style={styles.image}
-                source={{uri: imageData.uri}}
-                onLayout={({nativeEvent}) => getImageFrame(nativeEvent.layout)}
-            />
-            {isCropping && imageLayout != null ? <ImageCropOverlay/> : null}
+            <View style={styles.imageContainer}>
+                <Image
+                    style={[styles.image, { width: Dimensions.get('window').width, height: imageHeightFromWidth }]}
+                    source={{uri: imageData.uri}}
+                    onLayout={({nativeEvent}) => getImageFrame(nativeEvent.layout)}
+                />
+                {isCropping && imageLayout != null ? <ImageCropOverlay /> : null}
+            </View>
         </View>
     );
 }
@@ -93,13 +99,11 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
     },
-    image: {
-        flex: 1,
-        resizeMode: "contain",
+    imageContainer: {
+        justifyContent: 'center',
+        alignItems: 'center'
     },
-    glContainer: {
-        flex: 1,
-        justifyContent: "center",
-        alignItems: "center",
+    image: {
+        resizeMode: "contain",
     },
 });

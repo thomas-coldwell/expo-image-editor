@@ -1,4 +1,4 @@
-import {StyleSheet, View} from "react-native";
+import {SafeAreaView, StyleSheet, View} from "react-native";
 import * as React from "react";
 import {useRecoilState} from "recoil";
 import {ControlBar} from "../control-bar";
@@ -12,7 +12,7 @@ export function ImageEditorView() {
     const [processing] = useRecoilState(processingState);
 
     return (
-        <View style={styles.container}>
+        <SafeAreaView style={styles.container}>
             {ready ? (
                 <View style={styles.container}>
                     <ControlBar/>
@@ -21,7 +21,7 @@ export function ImageEditorView() {
                 </View>
             ) : null}
             {processing ? <Processing/> : null}
-        </View>
+        </SafeAreaView>
     );
 }
 

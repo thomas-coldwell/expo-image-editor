@@ -1183,7 +1183,7 @@
   dependencies:
     "cross-spawn" "^6.0.5"
 
-"@expo/vector-icons@^12.0.5":
+"@expo/vector-icons@*", "@expo/vector-icons@^12.0.5":
   "integrity" "sha512-zWvHBmkpbi1KrPma6Y+r/bsGI6MjbM1MBSe6W9A4uYMLhNI5NR4JtTnqxhf7g1XdpaDtBdv5aOWKEx4d5rxnhg=="
   "resolved" "https://registry.npmjs.org/@expo/vector-icons/-/vector-icons-12.0.5.tgz"
   "version" "12.0.5"
@@ -5018,7 +5018,7 @@
     "snapdragon" "^0.8.1"
     "to-regex" "^3.0.1"
 
-"expo-asset@^8.1.7":
+"expo-asset@*", "expo-asset@^8.1.7":
   "integrity" "sha512-qCm5d14tzswY8DcmRJ+0WkY9tc3OiVikBAiw2hCMC+bFpK/bEdqy4Zwfd69MFIAJ0taJpHWhdUoBRO0byQLlfg=="
   "resolved" "https://registry.npmjs.org/expo-asset/-/expo-asset-8.3.3.tgz"
   "version" "8.3.3"
@@ -5029,19 +5029,32 @@
     "path-browserify" "^1.0.0"
     "url-parse" "^1.4.4"
 
-"expo-file-system@^9.2.0":
+"expo-file-system@*", "expo-file-system@^9.2.0":
   "integrity" "sha512-x83IVep6PVfzGLpzR5fhWgKGlDaF95vfRzvmLyOMnbSuM8gY9a8C92taxZxfitryy9+D46lbRcnxPvBqFkXMNg=="
   "resolved" "https://registry.npmjs.org/expo-file-system/-/expo-file-system-9.3.0.tgz"
   "version" "9.3.0"
   dependencies:
     "uuid" "^3.4.0"
 
-"expo-gl-cpp@^9.1.2":
+"expo-gl-cpp@*", "expo-gl-cpp@^9.1.2":
   "integrity" "sha512-DXXPABfFCi75Tn8xyOJBK34cj9CD4VYsSy5/nxqX20TzXqyC/cuD44lcKIJKjhaC4QTXzPhJK+RhJj1eL3bb3w=="
   "resolved" "https://registry.npmjs.org/expo-gl-cpp/-/expo-gl-cpp-9.2.0.tgz"
   "version" "9.2.0"
 
-"expo-image-manipulator@^9.2.2":
+"expo-image-editor@github:ko-platform/expo-image-editor#ko-image-editor":
+  "resolved" "git+ssh://git@github.com/ko-platform/expo-image-editor.git#7c79e77df42c3b27722306b3da733d13c21c7fa5"
+  "version" "1.7.1"
+  dependencies:
+    "@miblanchard/react-native-slider" "^1.5.0"
+    "@react-hook/throttle" "^2.2.0"
+    "expo-image-picker" "^11.0.3"
+    "modal-enhanced-react-native-web" "^0.2.0"
+    "no-scroll" "^2.1.1"
+    "react-native-gesture-handler" "^1.10.3"
+    "react-responsive" "^9.0.0-beta.5"
+    "recoil" "^0.0.10"
+
+"expo-image-manipulator@*", "expo-image-manipulator@^9.2.2":
   "integrity" "sha512-rnwUpLmySEhclES+632/vl4cBQyjWE16PdR003WxvN/YBynTlYIi7If2FZRFt5lktX0Rz988XVE89EavHPn2ug=="
   "resolved" "https://registry.npmjs.org/expo-image-manipulator/-/expo-image-manipulator-9.2.2.tgz"
   "version" "9.2.2"

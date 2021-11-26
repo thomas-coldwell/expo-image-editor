@@ -24,5 +24,4 @@ export const useResizeToDesiredDimensions = () => {
 
         return imageData
     }
-
 }
