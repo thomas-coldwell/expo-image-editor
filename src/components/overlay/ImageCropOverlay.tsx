@@ -2,11 +2,8 @@ import * as React from "react";
 import {
     Animated,
     StyleSheet,
-    View,
 } from "react-native";
 import {
-    GestureHandlerRootView,
-    PanGestureHandler,
     PanGestureHandlerGestureEvent,
     State,
 } from "react-native-gesture-handler";
@@ -175,93 +172,12 @@ export const ImageCropOverlay = () => {
     };
 
     return (
-        <GestureHandlerRootView style={styles.container}>
-            <PanGestureHandler
-                onGestureEvent={onOverlayMove}
-                onHandlerStateChange={(e) => onHandlerStateChange(e)}
-            >
-                <Animated.View
-                    style={[
-                        styles.overlay,
-                        animatedCropSize,
-                        {
-                            transform: [
-                                {translateX: Animated.add(panX.current, accumulatedPan.x)},
-                                {translateY: Animated.add(panY.current, accumulatedPan.y)},
-                            ],
-                        },
-                    ]}
-                >
-                    {
-                        // For reendering out each section of the crop overlay frame
-                        horizontalSections.map((hsection) => {
-                            return (
-                                <View style={styles.sectionRow} key={hsection}>
-                                    {verticalSections.map((vsection) => {
-                                        const key = hsection + vsection;
-                                        return (
-                                            <View style={[styles.defaultSection]} key={key}>
-                                                {
-                                                    // Add the corner markers to the topleft,
-                                                    // topright, bottomleft and bottomright corners to indicate resizing
-                                                    key == "topleft" ||
-                                                    key == "topright" ||
-                                                    key == "bottomleft" ||
-                                                    key == "bottomright" ? (
-                                                        <View
-                                                            style={[
-                                                                styles.cornerMarker,
-                                                                hsection == "top"
-                                                                    ? {top: -4, borderTopWidth: 7}
-                                                                    : {bottom: -4, borderBottomWidth: 7},
-                                                                vsection == "left"
-                                                                    ? {left: -4, borderLeftWidth: 7}
-                                                                    : {right: -4, borderRightWidth: 7},
-                                                            ]}
-                                                        />
-                                                    ) : null
-                                                }
-                                            </View>
-                                        );
-                                    })}
-                                </View>
-                            );
-                        })
-                    }
-                </Animated.View>
-            </PanGestureHandler>
-        </GestureHandlerRootView>
+        <Animated.View style={[ animatedCropSize, { backgroundColor: 'yellow' } ]}>
+
+        </Animated.View>
     );
 };
 
 const styles = StyleSheet.create({
-    container: {
-        height: "100%",
-        width: "100%",
-        position: "absolute",
-    },
-    overlay: {
-        height: 40,
-        width: 40,
-        backgroundColor: "#33333355",
-        borderColor: "#ffffff88",
-        borderWidth: 1,
-    },
-    sectionRow: {
-        flexDirection: "row",
-        flex: 1,
-    },
-    defaultSection: {
-        flex: 1,
-        borderWidth: 0.5,
-        borderColor: "#ffffff88",
-        justifyContent: "center",
-        alignItems: "center",
-    },
-    cornerMarker: {
-        position: "absolute",
-        borderColor: "#ffffff",
-        height: 30,
-        width: 30,
-    },
+
 });

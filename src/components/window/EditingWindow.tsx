@@ -1,5 +1,5 @@
 import * as React from "react";
-import {Dimensions, Image, StyleSheet, View} from "react-native";
+import {Dimensions, Image, ImageBackground, StyleSheet, View} from "react-native";
 import {useRecoilState} from "recoil";
 import {
     imageDataState,
@@ -84,12 +84,15 @@ export function EditingWindow() {
     return (
         <View style={styles.container}>
             <View style={styles.imageContainer}>
-                <Image
-                    style={[styles.image, { width: Dimensions.get('window').width, height: imageHeightFromWidth }]}
+                <ImageBackground
+                    style={[{ width: Dimensions.get('window').width, height: imageHeightFromWidth, justifyContent: 'center', alignItems: 'center' }]}
                     source={{uri: imageData.uri}}
-                    onLayout={({nativeEvent}) => getImageFrame(nativeEvent.layout)}
-                />
-                {isCropping && imageLayout != null ? <ImageCropOverlay /> : null}
+                    onLayout={(event) => {
+                        getImageFrame(event.nativeEvent.layout);
+                    }}
+                >
+                    {isCropping && imageLayout != null ? <ImageCropOverlay /> : null}
+                </ImageBackground>
             </View>
         </View>
     );
@@ -102,8 +105,5 @@ const styles = StyleSheet.create({
     imageContainer: {
         justifyContent: 'center',
         alignItems: 'center'
-    },
-    image: {
-        resizeMode: "contain",
     },
 });
