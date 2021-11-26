@@ -1,8 +1,5 @@
 import * as React from "react";
-import {
-    StyleSheet,
-    SafeAreaView,
-} from "react-native";
+import {StyleSheet, View,} from "react-native";
 import {useRecoilState} from "recoil";
 import {useContext, useMemo} from "react";
 import {Icon, IconButton} from "../icon";
@@ -66,7 +63,7 @@ export function OperationSelection() {
     ]);
 
     return (
-        <SafeAreaView style={styles.opRow}>
+        <View style={styles.opRow}>
             {
                 //@ts-ignore
                 filteredOperations[selectedOperationGroup].map(
@@ -81,13 +78,13 @@ export function OperationSelection() {
                     )
                 )
             }
-        </SafeAreaView>
+        </View>
     );
 }
 
 const styles = StyleSheet.create({
     opRow: {
-        height: 80,
+        paddingTop: 8,
         flexDirection: 'row',
         backgroundColor: "#000",
     },

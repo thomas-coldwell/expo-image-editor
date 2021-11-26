@@ -1,5 +1,5 @@
 import * as React from "react";
-import {StyleSheet, View} from "react-native";
+import {SafeAreaView, View} from "react-native";
 import {useRecoilState} from "recoil";
 import {editingModeState} from "../../store";
 import {OperationSelection} from "./OperationSelection";
@@ -21,21 +21,15 @@ export function OperationBar() {
     };
 
     return (
-        <View style={styles.container}>
-            <OperationSelection/>
+        <SafeAreaView>
+            {editingMode === "operation-select" && (
+                <OperationSelection/>
+            )}
             {editingMode !== "operation-select" && (
-                <View style={[styles.container, { position: 'absolute' }]}>
+                <View>
                     {getOperationWindow()}
                 </View>
             )}
-        </View>
+        </SafeAreaView>
     );
 }
-
-const styles = StyleSheet.create({
-    container: {
-        width: "100%",
-        backgroundColor: "#000",
-        justifyContent: "center",
-    },
-});

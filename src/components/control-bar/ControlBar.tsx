@@ -2,14 +2,18 @@ import * as React from "react";
 import {View, StyleSheet, SafeAreaView} from "react-native";
 import {useContext, useEffect} from "react";
 import {useRecoilState} from "recoil";
-import {editingModeState, imageDataState} from "../../store";
+import {editingModeState, imageDataState, processingState} from "../../store";
 import {IconButton} from "../icon";
 import {EditorContext} from "../../constants";
+import {usePerformCrop} from "../../hooks";
 
 export function ControlBar() {
     const [editingMode, setEditingMode] = useRecoilState(editingModeState);
     const [imageData] = useRecoilState(imageDataState);
+    const [processing, setProcessing] = useRecoilState(processingState);
     const {mode, onCloseEditor, onEditingComplete} = useContext(EditorContext);
+
+    const shouldDisableDoneButton = editingMode !== "operation-select" && mode !== "crop-only";
 
     const onPressBack = () => {
         if (mode === "full") {
@@ -20,6 +24,16 @@ export function ControlBar() {
             }
         } else if (mode === "crop-only") {
             onCloseEditor();
+        }
+    };
+
+    const onFinishEditing = async () => {
+        if (mode === "full") {
+            setProcessing(false);
+            onEditingComplete(imageData);
+            onCloseEditor();
+        } else if (mode === "crop-only") {
+            await usePerformCrop();
         }
     };
 
@@ -44,6 +58,11 @@ export function ControlBar() {
                     iconID="arrow-back"
                     onPress={onPressBack}
                 />
+                <IconButton
+                    iconID="done"
+                    onPress={onFinishEditing}
+                    disabled={shouldDisableDoneButton}
+                />
             </View>
         </SafeAreaView>
     );
@@ -51,8 +70,9 @@ export function ControlBar() {
 
 const styles = StyleSheet.create({
     container: {
+        paddingTop: 8,
+        paddingHorizontal: 8,
         height: 40,
-        backgroundColor: "#000",
         flexDirection: "row",
         justifyContent: "space-between",
         alignItems: "center",
