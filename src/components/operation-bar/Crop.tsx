@@ -5,11 +5,11 @@ import {cropRatioState, editingModeState} from "../../store";
 import {usePerformCrop} from "../../hooks";
 import {EditorContext} from "../../constants";
 import {Button} from "../button";
+import {OperationBarSelectedFooter} from "../operation-bar-selected-footer";
 
 export function Crop() {
     const [ _, setRatio ] = useRecoilState(cropRatioState)
-    const [, setEditingMode] = useRecoilState(editingModeState)
-    const { availableAspectRatios, lockAspectRatio, translations } = useContext(EditorContext)
+    const { availableAspectRatios, lockAspectRatio } = useContext(EditorContext)
     const ratios = lockAspectRatio ? [ lockAspectRatio ] : availableAspectRatios
 
     const onPerformCrop = usePerformCrop();
@@ -20,10 +20,6 @@ export function Crop() {
 
     const onValidate = () => {
         return onPerformCrop()
-    }
-
-    const onCancel = () => {
-        setEditingMode("operation-select")
     }
 
     return (
@@ -49,19 +45,7 @@ export function Crop() {
                     </TouchableOpacity>
                 ))}
             </View>
-            <View style={styles.footer}>
-                <Button
-                    text={translations?.cancel as string}
-                    backgroundColor={'#FFF'}
-                    textColor={'#0028FF'}
-                    onPress={onCancel}
-                />
-                <Button
-                    text={translations?.validate  as string}
-                    backgroundColor={'#0028FF'}
-                    onPress={onValidate}
-                />
-            </View>
+            <OperationBarSelectedFooter onValidate={onValidate} />
         </>
     );
 }
@@ -83,11 +67,5 @@ const styles = StyleSheet.create({
         color: 'white',
         fontSize: 12,
         alignSelf: 'center'
-    },
-    footer: {
-        padding: 8,
-        flexDirection: "row",
-        justifyContent: 'space-between',
-        alignItems: "center",
     },
 });

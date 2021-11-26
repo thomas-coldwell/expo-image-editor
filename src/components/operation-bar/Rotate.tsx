@@ -1,9 +1,10 @@
 import * as React from "react";
-import {StyleSheet, View, Text, Platform} from "react-native";
+import {StyleSheet, View, Platform} from "react-native";
 import * as ImageManipulator from "expo-image-manipulator";
 import {useRecoilState} from "recoil";
 import {IconButton} from "../icon";
 import {editingModeState, imageDataState, processingState} from "../../store";
+import {OperationBarSelectedFooter} from "../operation-bar-selected-footer";
 
 export function Rotate() {
     const [, setProcessing] = useRecoilState(processingState);
@@ -53,8 +54,11 @@ export function Rotate() {
     const onClose = () => {
         // If closing reset the image back to its original
         setImageData(originalImageData);
-        setEditingMode("operation-select");
     };
+
+    const onValidate = () => {
+        setEditingMode("operation-select");
+    }
 
     const rotate = (direction: "cw" | "ccw") => {
         const webDirection = Platform.OS === "web" ? 1 : -1;
@@ -70,27 +74,11 @@ export function Rotate() {
 
     return (
         <View style={styles.container}>
-            <View style={[styles.row, {paddingHorizontal: "20%"}]}>
-                <IconButton
-                    iconID="rotate-left"
-                    text="Rotate -90"
-                    onPress={() => rotate("ccw")}
-                />
-                <IconButton
-                    iconID="rotate-right"
-                    text="Rotate +90"
-                    onPress={() => rotate("cw")}
-                />
-            </View>
             <View style={styles.row}>
-                <IconButton iconID="close" text="Cancel" onPress={() => onClose()}/>
-                <Text style={styles.prompt}>Rotate</Text>
-                <IconButton
-                    iconID="check"
-                    text="Done"
-                    onPress={() => setEditingMode("operation-select")}
-                />
+                <IconButton iconID="rotate-left" onPress={() => rotate("ccw")}/>
+                <IconButton iconID="rotate-right" onPress={() => rotate("cw")}/>
             </View>
+            <OperationBarSelectedFooter onCancel={onClose} onValidate={onValidate} />
         </View>
     );
 }
@@ -101,17 +89,12 @@ const styles = StyleSheet.create({
         justifyContent: "space-between",
         alignItems: "center",
     },
-    prompt: {
-        color: "#fff",
-        fontSize: 21,
-        textAlign: "center",
-    },
     row: {
         width: "100%",
         height: 80,
         flexDirection: "row",
         justifyContent: "space-between",
         alignItems: "center",
-        paddingHorizontal: "2%",
+        paddingHorizontal: 8,
     },
 });
