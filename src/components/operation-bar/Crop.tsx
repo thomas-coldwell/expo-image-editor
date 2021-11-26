@@ -10,6 +10,7 @@ export function Crop() {
     const [ _, setRatio ] = useRecoilState(cropRatioState)
     const [, setEditingMode] = useRecoilState(editingModeState)
     const { availableAspectRatios, lockAspectRatio } = useContext(EditorContext)
+    const ratios = lockAspectRatio ? [ lockAspectRatio ] : availableAspectRatios
 
     const onPerformCrop = usePerformCrop();
 
@@ -25,7 +26,7 @@ export function Crop() {
                 onPress={() => setEditingMode("operation-select")}
             />
             <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                {availableAspectRatios.map((ratio, index) => (
+                {ratios.map((ratio, index) => (
                     <TouchableOpacity
                         key={index}
                         style={{

@@ -61,6 +61,9 @@ export const ImageCropOverlay = () => {
         let newSize = {width: 0, height: 0};
         const {width, height} = imageBounds;
         const imageAspectRatio = width / height;
+
+        // TODO: check if === 1.19 or < 0.8 else = 1
+
         // Then check if the cropping aspect ratio is smaller
         if (usedRatio < imageAspectRatio) {
             // If so calculate the size so its not greater than the image width
