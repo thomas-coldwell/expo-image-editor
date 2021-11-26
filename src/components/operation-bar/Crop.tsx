@@ -36,7 +36,7 @@ export function Crop() {
                     >
                         <View
                             style={{
-                                width: ratio !== 1.91 ? 30 / ratio : 30 * ratio,
+                                width: [1.91, 0.8].includes(ratio) ? 30 * ratio : 30 / ratio,
                                 height: 30,
                                 borderColor: 'white',
                                 borderWidth: 1,
