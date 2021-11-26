@@ -3,13 +3,13 @@ import {StyleSheet, Text, View, TouchableOpacity} from "react-native";
 import {useRecoilState} from "recoil";
 import {cropRatioState} from "../../store";
 import {usePerformCrop} from "../../hooks";
-import {EditorContext} from "../../constants";
+import {EditorContext, HumanReadabilityRatio} from "../../constants";
 import {OperationBarSelectedFooter} from "../operation-bar-selected-footer";
 
 export function Crop() {
-    const [ _, setRatio ] = useRecoilState(cropRatioState)
-    const { availableAspectRatios, lockAspectRatio } = useContext(EditorContext)
-    const ratios = lockAspectRatio ? [ lockAspectRatio ] : availableAspectRatios
+    const [_, setRatio] = useRecoilState(cropRatioState)
+    const {availableAspectRatios, lockAspectRatio} = useContext(EditorContext)
+    const ratios = lockAspectRatio ? [lockAspectRatio] : availableAspectRatios
 
     const onPerformCrop = usePerformCrop();
 
@@ -35,16 +35,19 @@ export function Crop() {
                         <View
                             style={[
                                 styles.ratio,
-                                { width: [1.91, 0.8].includes(ratio) ? 30 * ratio : 30 / ratio }
+                                {width: [1.91, 0.8].includes(ratio) ? 30 * ratio : 30 / ratio}
                             ]}
                         />
                         <Text style={styles.ratioText}>
-                            {ratio}
+                            {
+                                // @ts-ignore
+                                HumanReadabilityRatio[ratio]
+                            }
                         </Text>
                     </TouchableOpacity>
                 ))}
             </View>
-            <OperationBarSelectedFooter onValidate={onValidate} />
+            <OperationBarSelectedFooter onValidate={onValidate}/>
         </>
     );
 }
