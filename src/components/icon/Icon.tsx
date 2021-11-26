@@ -16,11 +16,6 @@ export function Icon(props: IIconProps) {
                 size={26}
                 color={props.disabled ? "grey" : "white"}
             />
-            {props.text && (
-                <Text style={[styles.text, props.disabled && {color: "grey"}]}>
-                    {props.text}
-                </Text>
-            )}
         </View>
     );
 }

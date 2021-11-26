@@ -70,7 +70,6 @@ export function OperationSelection() {
                     (item: Operation<EditingOperations>) => (
                         <IconButton
                             key={item.title}
-                            text={item.title}
                             iconID={item.iconID}
                             style={styles.modeButton}
                             onPress={() => setEditingMode(item.operationID)}
