@@ -2,7 +2,7 @@ import * as React from "react";
 import {View, StyleSheet, SafeAreaView} from "react-native";
 import {useContext, useEffect} from "react";
 import {useRecoilState} from "recoil";
-import {editingModeState, imageDataState, processingState} from "../../store";
+import {cropRatioState, editingModeState, imageDataState, processingState} from "../../store";
 import {IconButton} from "../icon";
 import {EditorContext} from "../../constants";
 import {usePerformCrop} from "../../hooks";
@@ -10,6 +10,7 @@ import {usePerformCrop} from "../../hooks";
 export function ControlBar() {
     const [editingMode, setEditingMode] = useRecoilState(editingModeState);
     const [imageData] = useRecoilState(imageDataState);
+    const [ratio] = useRecoilState(cropRatioState)
     const [processing, setProcessing] = useRecoilState(processingState);
     const {mode, onCloseEditor, onEditingComplete} = useContext(EditorContext);
 
@@ -30,7 +31,10 @@ export function ControlBar() {
     const onFinishEditing = async () => {
         if (mode === "full") {
             setProcessing(false);
-            onEditingComplete(imageData);
+            onEditingComplete({
+                ...imageData,
+                ratio,
+            });
             onCloseEditor();
         } else if (mode === "crop-only") {
             await usePerformCrop();
@@ -46,7 +50,7 @@ export function ControlBar() {
             imageData.uri &&
             editingMode === "operation-select"
         ) {
-            onEditingComplete(imageData);
+            onEditingComplete({...imageData, ratio});
             onCloseEditor();
         }
     }, [imageData, editingMode]);
