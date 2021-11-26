@@ -30,7 +30,7 @@ export const ImageCropOverlay = () => {
     const [accumulatedPan, setAccumluatedPan] = useRecoilState(accumulatedPanState);
 
     // Editor context
-    const {lockAspectRatio, minimumCropDimensions} = useContext(EditorContext);
+    const {lockAspectRatio} = useContext(EditorContext);
     const usedRatio = lockAspectRatio || ratio
 
     const [animatedCropSize] = React.useState({
@@ -236,52 +236,6 @@ export const ImageCropOverlay = () => {
         panX.current.setValue(0);
         panY.current.setValue(0);
         setAccumluatedPan({x: accDx, y: accDy});
-    };
-
-    const checkResizeBounds = ({
-                                   translationX,
-                                   translationY,
-                               }:
-                                   | PanGestureHandlerGestureEvent["nativeEvent"]
-                                   | { translationX: number; translationY: number }) => {
-        // Check we haven't gone out of bounds when resizing - allow it to be
-        // resized up to the appropriate bounds if so
-        const {width: maxWidth, height: maxHeight} = imageBounds;
-        const {width: minWidth, height: minHeight} = minimumCropDimensions;
-        const {x, y} = getTargetCropFrameBounds({translationX, translationY});
-        const animatedWidth = cropSize.width + x;
-        const animatedHeight = cropSize.height + y;
-        let finalHeight = animatedHeight;
-        let finalWidth = animatedWidth;
-        // Ensure the width / height does not exceed the boundaries -
-        // resize to the max it can be if so
-        if (animatedHeight > maxHeight) {
-            finalHeight = maxHeight;
-            if (lockAspectRatio) finalWidth = finalHeight * lockAspectRatio;
-        } else if (animatedHeight < minHeight) {
-            finalHeight = minHeight;
-            if (lockAspectRatio) finalWidth = finalHeight * lockAspectRatio;
-        }
-        if (animatedWidth > maxWidth) {
-            finalWidth = maxWidth;
-            if (lockAspectRatio) finalHeight = finalWidth / lockAspectRatio;
-        } else if (animatedWidth < minWidth) {
-            finalWidth = minWidth;
-            if (lockAspectRatio) finalHeight = finalWidth / lockAspectRatio;
-        }
-        // Update the accumulated pan with the delta from the pan refs
-        setAccumluatedPan({
-            x: accumulatedPan.x + (isLeft ? -x : 0),
-            y: accumulatedPan.y + (isTop ? -y : 0),
-        });
-        // Zero out the pan refs
-        panX.current.setValue(0);
-        panY.current.setValue(0);
-        // Update the crop size to the size after resizing
-        setCropSize({
-            height: finalHeight,
-            width: finalWidth,
-        });
     };
 
     return (

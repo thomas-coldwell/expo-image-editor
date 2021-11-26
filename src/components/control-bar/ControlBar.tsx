@@ -5,15 +5,17 @@ import {useRecoilState} from "recoil";
 import {cropRatioState, editingModeState, imageDataState, processingState} from "../../store";
 import {IconButton} from "../icon";
 import {EditorContext} from "../../constants";
+import {useResizeToDesiredDimensions} from "../../hooks";
 
 export function ControlBar() {
     const [editingMode, setEditingMode] = useRecoilState(editingModeState);
     const [imageData] = useRecoilState(imageDataState);
     const [ratio] = useRecoilState(cropRatioState)
     const [_, setProcessing] = useRecoilState(processingState);
-    const {mode, onCloseEditor, onEditingComplete} = useContext(EditorContext);
+    const {onCloseEditor, onEditingComplete} = useContext(EditorContext);
 
-    const shouldDisableDoneButton = editingMode !== "operation-select" && mode !== "crop-only";
+    const shouldDisableDoneButton = editingMode !== "operation-select";
+    const resizeToDesiredDimensions = useResizeToDesiredDimensions()
 
     const onPressBack = () => {
         if (editingMode === "operation-select") {
@@ -24,11 +26,11 @@ export function ControlBar() {
     };
 
     const onFinishEditing = async () => {
+        const data = await resizeToDesiredDimensions()
+
+
         setProcessing(false);
-        onEditingComplete({
-            ...imageData,
-            ratio,
-        });
+        onEditingComplete({...data, ratio,});
         onCloseEditor();
     };
 

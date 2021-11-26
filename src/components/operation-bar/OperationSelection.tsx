@@ -1,14 +1,12 @@
 import * as React from "react";
 import {StyleSheet, View,} from "react-native";
 import {useRecoilState} from "recoil";
-import {useContext, useMemo} from "react";
 import {Icon, IconButton} from "../icon";
 import {editingModeState} from "../../store";
 import {
     EditingOperations,
     TransformOperations,
 } from "../../types";
-import {EditorContext} from "../../constants";
 
 interface Operation<T> {
     title: string;
@@ -16,12 +14,7 @@ interface Operation<T> {
     operationID: T;
 }
 
-interface Operations {
-    transform: Operation<TransformOperations>[];
-}
-
-const operations: Operations = {
-    transform: [
+const operations: Operation<TransformOperations>[] = [
         {
             title: "Crop",
             iconID: "crop",
@@ -32,41 +25,15 @@ const operations: Operations = {
             iconID: "rotate-90-degrees-ccw",
             operationID: "rotate",
         },
-    ],
-};
+    ]
 
 export function OperationSelection() {
-    const {allowedTransformOperations} = useContext(EditorContext);
-
-    const isTransformOnly = allowedTransformOperations
-
-    const selectedOperationGroup = "transform"
     const [, setEditingMode] = useRecoilState(editingModeState);
-
-    const filteredOperations = useMemo(() => {
-        // If neither are specified then allow the full range of operations
-        if (!allowedTransformOperations) {
-            return operations;
-        }
-        const filteredTransforms = allowedTransformOperations
-            ? operations.transform.filter((op) =>
-                allowedTransformOperations.includes(op.operationID)
-            )
-            : operations.transform;
-        if (isTransformOnly) {
-            return {transform: filteredTransforms, adjust: []};
-        }
-        return {transform: filteredTransforms};
-    }, [
-        allowedTransformOperations,
-        isTransformOnly,
-    ]);
 
     return (
         <View style={styles.opRow}>
             {
-                //@ts-ignore
-                filteredOperations[selectedOperationGroup].map(
+                operations.map(
                     (item: Operation<EditingOperations>) => (
                         <IconButton
                             key={item.title}
