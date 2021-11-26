@@ -1,24 +1,14 @@
-import {ImageDimensions} from "../store/store";
-import {TransformOperations} from "./operation.type";
-import {Mode} from "./mode.type";
-
-type Result = {
-    ratio: number
-    height: number
-    width: number
-    uri: string
-}
+import {ImageDimensions} from "../store";
+import {Result} from "./result.type";
 
 export type EditorContextType = {
-    minimumCropDimensions: ImageDimensions;
     availableAspectRatios: number[];
     lockAspectRatio?: number;
-    mode: Mode;
-    onCloseEditor: () => void;
-    onEditingComplete: (result: Result) => void;
-    allowedTransformOperations?: TransformOperations[];
+    dimensionByAspectRatios: ImageDimensions[];
     translations?: {
         cancel?: string
         validate?: string
     }
+    onEditingComplete: (result: Result) => void;
+    onCloseEditor: () => void;
 };

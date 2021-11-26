@@ -12,7 +12,8 @@ import {ImageEditorView} from "./ImageEditorView";
 
 export const ImageEditorCore = (props: ImageEditorProps) => {
     const {
-        availableAspectRatios= [ 1 ],
+        availableAspectRatios = [ 1 ],
+        dimensionByAspectRatios = [ { height: 1600, width: 1600 } ],
         lockAspectRatio = undefined,
         translations = {
             cancel: 'Cancel',
@@ -80,6 +81,7 @@ export const ImageEditorCore = (props: ImageEditorProps) => {
             value={{
                 lockAspectRatio,
                 availableAspectRatios,
+                dimensionByAspectRatios,
                 translations,
                 onCloseEditor,
                 onEditingComplete: props.onEditingComplete,
