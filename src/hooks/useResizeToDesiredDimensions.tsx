@@ -10,7 +10,6 @@ export const useResizeToDesiredDimensions = () => {
     const [ ratio ] = useRecoilState(cropRatioState)
     const [imageData] = useRecoilState(imageDataState);
 
-
     return async () => {
         const ratioIndex = availableAspectRatios.findIndex(r => r === ratio);
         const desiredDimensions = dimensionByAspectRatios[ratioIndex]

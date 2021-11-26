@@ -9,7 +9,6 @@ import {useResizeToDesiredDimensions} from "../../hooks";
 
 export function ControlBar() {
     const [editingMode, setEditingMode] = useRecoilState(editingModeState);
-    const [imageData] = useRecoilState(imageDataState);
     const [ratio] = useRecoilState(cropRatioState)
     const [_, setProcessing] = useRecoilState(processingState);
     const {onCloseEditor, onEditingComplete} = useContext(EditorContext);
@@ -34,21 +33,23 @@ export function ControlBar() {
         onCloseEditor();
     };
 
-    return (
-        <SafeAreaView>
-            <View style={styles.container}>
-                <IconButton
-                    iconID="arrow-back"
-                    onPress={onPressBack}
-                />
-                <IconButton
-                    iconID="done"
-                    onPress={onFinishEditing}
-                    disabled={shouldDisableDoneButton}
-                />
-            </View>
-        </SafeAreaView>
-    );
+    return editingMode === "operation-select"
+        ? (
+            <SafeAreaView>
+                <View style={styles.container}>
+                    <IconButton
+                        iconID="arrow-back"
+                        onPress={onPressBack}
+                    />
+                    <IconButton
+                        iconID="done"
+                        onPress={onFinishEditing}
+                        disabled={shouldDisableDoneButton}
+                    />
+                </View>
+            </SafeAreaView>
+        )
+        : null
 }
 
 const styles = StyleSheet.create({
