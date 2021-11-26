@@ -17,6 +17,10 @@ export const ImageEditorCore = (props: ImageEditorProps) => {
         availableAspectRatios= [ 1 ],
         lockAspectRatio = undefined,
         allowedTransformOperations,
+        translations = {
+            cancel: 'Cancel',
+            validate: 'Validate'
+        }
     } = props;
 
     const [, setImageData] = useRecoilState(imageDataState);
@@ -88,6 +92,7 @@ export const ImageEditorCore = (props: ImageEditorProps) => {
                 lockAspectRatio,
                 availableAspectRatios,
                 allowedTransformOperations,
+                translations,
                 onCloseEditor,
                 onEditingComplete: props.onEditingComplete,
             }}

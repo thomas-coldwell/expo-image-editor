@@ -10,4 +10,8 @@ export type EditorContextType = {
     onCloseEditor: () => void;
     onEditingComplete: (result: any) => void;
     allowedTransformOperations?: TransformOperations[];
+    translations?: {
+        cancel?: string
+        validate?: string
+    }
 };

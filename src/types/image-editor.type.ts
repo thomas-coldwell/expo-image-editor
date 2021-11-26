@@ -6,13 +6,14 @@ export interface ImageEditorProps {
     onCloseEditor: () => void;
     imageUri: string | undefined;
     availableAspectRatios: number[]
-    minimumCropDimensions?: {
-        width: number;
-        height: number;
-    };
+    minimumCropDimensions?: { width: number; height: number; };
     onEditingComplete: (result: any) => void;
     lockAspectRatio?: number;
     mode?: Mode;
     allowedTransformOperations?: TransformOperations[];
     asView?: boolean;
+    translations?: {
+        cancel?: string;
+        validate?: string;
+    }
 }

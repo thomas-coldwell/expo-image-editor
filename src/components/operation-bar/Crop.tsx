@@ -9,7 +9,7 @@ import {Button} from "../button";
 export function Crop() {
     const [ _, setRatio ] = useRecoilState(cropRatioState)
     const [, setEditingMode] = useRecoilState(editingModeState)
-    const { availableAspectRatios, lockAspectRatio } = useContext(EditorContext)
+    const { availableAspectRatios, lockAspectRatio, translations } = useContext(EditorContext)
     const ratios = lockAspectRatio ? [ lockAspectRatio ] : availableAspectRatios
 
     const onPerformCrop = usePerformCrop();
@@ -51,13 +51,13 @@ export function Crop() {
             </View>
             <View style={styles.footer}>
                 <Button
-                    text={'Annuler'}
+                    text={translations?.cancel as string}
                     backgroundColor={'#FFF'}
                     textColor={'#0028FF'}
                     onPress={onCancel}
                 />
                 <Button
-                    text={'Valider'}
+                    text={translations?.validate  as string}
                     backgroundColor={'#0028FF'}
                     onPress={onValidate}
                 />

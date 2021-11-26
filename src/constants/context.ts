@@ -2,15 +2,14 @@ import * as React from "react";
 import {EditorContextType} from "../types";
 
 export const EditorContext = React.createContext<EditorContextType>({
-    minimumCropDimensions: {
-        width: 0,
-        height: 0,
-    },
+    minimumCropDimensions: {width: 0, height: 0,},
     availableAspectRatios: [ 1 ],
     lockAspectRatio: undefined,
     mode: "full",
-    onCloseEditor: () => {
+    translations: {
+        cancel: "Cancel",
+        validate: "Validate"
     },
-    onEditingComplete: () => {
-    },
+    onCloseEditor: () => {},
+    onEditingComplete: () => {},
 });
