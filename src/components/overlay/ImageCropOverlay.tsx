@@ -24,7 +24,7 @@ export const ImageCropOverlay = () => {
     const [selectedFrameSection, setSelectedFrameSection] = React.useState("");
 
     // Shared state and bits passed through recoil to avoid prop drilling
-    const [ ratio ] = useRecoilState(cropRatioState);
+    const [ratio] = useRecoilState(cropRatioState);
     const [cropSize, setCropSize] = useRecoilState(cropSizeState);
     const [imageBounds] = useRecoilState(imageBoundsState);
     const [accumulatedPan, setAccumluatedPan] = useRecoilState(accumulatedPanState);
@@ -78,51 +78,17 @@ export const ImageCropOverlay = () => {
         setCropSize(newSize);
     }, [imageBounds, usedRatio]);
 
-    // Function that sets which sections allow for translation when
-    // pressed
-    const isMovingSection = () => {
-        return (
-            selectedFrameSection == "topmiddle" ||
-            selectedFrameSection == "middleleft" ||
-            selectedFrameSection == "middleright" ||
-            selectedFrameSection == "middlemiddle" ||
-            selectedFrameSection == "bottommiddle"
-        );
-    };
-
-    // Check what resizing / translation needs to be performed based on which section was pressed
-    const isLeft = selectedFrameSection.endsWith("left");
-    const isTop = selectedFrameSection.startsWith("top");
-
     const onOverlayMove = ({nativeEvent}: PanGestureHandlerGestureEvent) => {
         if (selectedFrameSection !== "") {
-            // Check if the section pressed is one to translate the crop window or not
-            if (isMovingSection()) {
-                // If it is then use an animated event to directly pass the tranlation
-                // to the pan refs
-                Animated.event(
-                    [
-                        {
-                            translationX: panX.current,
-                            translationY: panY.current,
-                        },
-                    ],
-                    {useNativeDriver: false}
-                )(nativeEvent);
-            } else {
-                // Else its a scaling operation
-                /*const {x, y} = getTargetCropFrameBounds(nativeEvent);
-                if (isTop) {
-                    panY.current.setValue(-y);
-                }
-                if (isLeft) {
-                    panX.current.setValue(-x);
-                }
-                // Finally update the animated width to the values the crop
-                // window has been resized to
-                animatedCropSize.width.setValue(cropSize.width + x);
-                animatedCropSize.height.setValue(cropSize.height + y);*/
-            }
+            Animated.event(
+                [
+                    {
+                        translationX: panX.current,
+                        translationY: panY.current,
+                    },
+                ],
+                {useNativeDriver: false}
+            )(nativeEvent);
         } else {
             // We need to set which section has been pressed
             const {x, y} = nativeEvent;
@@ -148,40 +114,10 @@ export const ImageCropOverlay = () => {
         }
     };
 
-    const getTargetCropFrameBounds = ({
-                                          translationX,
-                                          translationY,
-                                      }: Partial<PanGestureHandlerGestureEvent["nativeEvent"]>) => {
-        let x = 0;
-        let y = 0;
-        if (translationX && translationY) {
-            if (translationX < translationY) {
-                x = (isLeft ? -1 : 1) * translationX;
-                if (lockAspectRatio) {
-                    y = x / lockAspectRatio;
-                } else {
-                    y = (isTop ? -1 : 1) * translationY;
-                }
-            } else {
-                y = (isTop ? -1 : 1) * translationY;
-                if (lockAspectRatio) {
-                    x = y * lockAspectRatio;
-                } else {
-                    x = (isLeft ? -1 : 1) * translationX;
-                }
-            }
-        }
-        return {x, y};
-    };
-
     const onOverlayRelease = (
         nativeEvent: PanGestureHandlerGestureEvent["nativeEvent"]
     ) => {
-        // Check if the section pressed is one to translate the crop window or not
-        if (isMovingSection()) {
-            // Ensure the cropping overlay has not been moved outside of the allowed bounds
-            checkCropBounds(nativeEvent);
-        }
+        checkCropBounds(nativeEvent)
         // Disable the pan responder so the section tiles can register being pressed again
         setSelectedFrameSection("");
     };
