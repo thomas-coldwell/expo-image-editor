@@ -34,15 +34,14 @@ export function EditingWindow() {
     const [cropSize] = useRecoilState(cropSizeState)
     const [accumulatedPan, setAccumulatedPan] = useRecoilState(accumulatedPanState);
 
+    const isCropping = editingMode === "crop";
     const imageRatio = imageData.width / imageData.height
     const imageHeightFromWidth = Dimensions.get("window").width / imageRatio;
+    const allowCropping = isCropping && imageLayout !== null;
 
     // Merge them into one object
     const panX = React.useRef(new Animated.Value(imageBounds.x));
     const panY = React.useRef(new Animated.Value(imageBounds.y));
-
-    // Get some readable boolean states
-    const isCropping = editingMode === "crop";
 
     const getImageFrame = (layout: {
         width: number;
@@ -98,21 +97,23 @@ export function EditingWindow() {
     }, [imageData])
 
     const onGestureEvent = ({ nativeEvent }: PanGestureHandlerGestureEvent) => {
-        Animated.event(
-            [
-                {
-                    translationX: panX.current,
-                    translationY: panY.current,
-                },
-            ],
-            { useNativeDriver: false }
-        )(nativeEvent);
+        if (allowCropping) {
+            Animated.event(
+                [
+                    {
+                        translationX: panX.current,
+                        translationY: panY.current,
+                    },
+                ],
+                { useNativeDriver: false }
+            )(nativeEvent);
+        }
     }
 
     const onHandlerStateChange = ({nativeEvent}: PanGestureHandlerGestureEvent) => {
         // Handle any state changes from the pan gesture handler
         // only looking at when the touch ends atm
-        if (nativeEvent.state === State.END) {
+        if (nativeEvent.state === State.END && allowCropping) {
             console.log("END", {cropSize, nativeEvent})
             const { translationX, translationY } = nativeEvent
 
@@ -132,7 +133,6 @@ export function EditingWindow() {
 
             // Check if the pan in the y direction exceeds the bounds
             let accDy = accumulatedPan.y + translationY;
-
             const cropAreaRangeY = [ cropSize.y, cropSize.y + cropSize.height ]
             const isAccDyInsideRangeY = accDy > cropAreaRangeY[0] && accDy < cropAreaRangeY[1]
             const isUnderZeroAndInsideRangeY = accDy < 0 && accDy + imageBounds.height < cropAreaRangeY[1]
@@ -180,7 +180,7 @@ export function EditingWindow() {
                             getImageFrame(event.nativeEvent.layout);
                         }}
                     />
-                    {isCropping && imageLayout != null ? <ImageCropOverlay/> : null}
+                    {allowCropping ? <ImageCropOverlay/> : null}
                 </View>
             </PanGestureHandler>
         </GestureHandlerRootView>
