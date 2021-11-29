@@ -1,7 +1,7 @@
 import * as React from "react";
 import {
     Animated,
-    StyleSheet,
+    StyleSheet, View,
 } from "react-native";
 import {
     PanGestureHandlerGestureEvent,
@@ -172,12 +172,45 @@ export const ImageCropOverlay = () => {
     };
 
     return (
-        <Animated.View style={[ animatedCropSize, { backgroundColor: 'yellow' } ]}>
-
+        <Animated.View style={[ animatedCropSize, styles.borderHorizontal, styles.borderVertical, styles.borderWhite ]}>
+            <View style={styles.row}>
+                <View style={[ styles.item ]} />
+                <View style={[ styles.item, styles.borderHorizontal ]} />
+                <View style={[ styles.item ]} />
+            </View>
+            <View style={styles.row}>
+                <View style={[ styles.item, styles.borderVertical ]} />
+                <View style={[ styles.item, styles.borderHorizontal, styles.borderVertical ]} />
+                <View style={[ styles.item, styles.borderVertical ]} />
+            </View>
+            <View style={styles.row}>
+                <View style={[ styles.item ]} />
+                <View style={[ styles.item, styles.borderHorizontal ]} />
+                <View style={[ styles.item ]} />
+            </View>
         </Animated.View>
     );
 };
 
 const styles = StyleSheet.create({
+    row: {
+        flex: 1,
+        flexDirection: 'row',
+    },
+    item: {
+        flex: 1,
+        borderColor: 'white',
+    },
+    borderWhite: {
+        borderColor: 'white',
+    },
+    borderVertical: {
+        borderTopWidth: .5,
+        borderBottomWidth: .5,
+    },
+    borderHorizontal: {
+        borderLeftWidth: .5,
+        borderRightWidth: .5,
+    },
 
 });

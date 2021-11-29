@@ -85,7 +85,7 @@ export function EditingWindow() {
         <View style={styles.container}>
             <View style={styles.imageContainer}>
                 <ImageBackground
-                    style={[{ width: Dimensions.get('window').width, height: imageHeightFromWidth, justifyContent: 'center', alignItems: 'center' }]}
+                    style={[{ width: Dimensions.get('window').width, height: imageHeightFromWidth, alignItems: 'center' }]}
                     source={{uri: imageData.uri}}
                     onLayout={(event) => {
                         getImageFrame(event.nativeEvent.layout);
