@@ -37,6 +37,7 @@ export function EditingWindow() {
     const imageRatio = imageData.width / imageData.height
     const imageHeightFromWidth = Dimensions.get("window").width / imageRatio;
 
+    // Merge them into one object
     const panX = React.useRef(new Animated.Value(imageBounds.x));
     const panY = React.useRef(new Animated.Value(imageBounds.y));
 
@@ -108,7 +109,7 @@ export function EditingWindow() {
         )(nativeEvent);
     }
 
-    const onHandlerStateChange = ({nativeEvent,}: PanGestureHandlerGestureEvent) => {
+    const onHandlerStateChange = ({nativeEvent}: PanGestureHandlerGestureEvent) => {
         // Handle any state changes from the pan gesture handler
         // only looking at when the touch ends atm
         if (nativeEvent.state === State.END) {
@@ -116,33 +117,32 @@ export function EditingWindow() {
             const { translationX, translationY } = nativeEvent
 
             let accDx = accumulatedPan.x + translationX;
-
             const cropAreaRangeX = [ cropSize.x, cropSize.x + cropSize.width ]
             const isAccDxInsideRangeX = accDx > cropAreaRangeX[0] && accDx < cropAreaRangeX[1]
             const isUnderZeroAndInsideRangeX = accDx < 0 && accDx + imageBounds.width < cropAreaRangeX[1]
 
+            // If the accumulated translation x is under 0 AND inside the crop area range
             if  (isUnderZeroAndInsideRangeX) {
                 accDx = -cropSize.x
+            // If the accumulated translation x is inside the crop area range
             } else if (isAccDxInsideRangeX) {
-                // Then set the x pos so the crop frame touches the right hand edge
                 accDx = cropSize.x;
-            } else {
-                // It's somewhere in between - no formatting required
             }
+
+
             // Check if the pan in the y direction exceeds the bounds
             let accDy = accumulatedPan.y + translationY;
-            // Is the new y pos less the top edge?
-            if (accDy <= imageBounds.y) {
-                // Then set it to be zero and set the pan to zero too
-                accDy = imageBounds.y;
-            }
-            // Is the new y pos plus crop height going to exceed the bottom bound
-            else if (accDy + cropSize.height > imageBounds.height + imageBounds.y) {
-                // Then set the y pos so the crop frame touches the bottom edge
-                let limitedYPos = imageBounds.y + imageBounds.height - cropSize.height;
-                accDy = limitedYPos;
-            } else {
-                // It's somewhere in between - no formatting required
+
+            const cropAreaRangeY = [ cropSize.y, cropSize.y + cropSize.height ]
+            const isAccDyInsideRangeY = accDy > cropAreaRangeY[0] && accDy < cropAreaRangeY[1]
+            const isUnderZeroAndInsideRangeY = accDy < 0 && accDy + imageBounds.height < cropAreaRangeY[1]
+
+            // If the accumulated translation y is under 0 AND inside the crop area range
+            if  (isUnderZeroAndInsideRangeY) {
+                accDy = -cropSize.y
+                // If the accumulated translation x is inside the crop area range
+            } else if (isAccDyInsideRangeY) {
+                accDy = cropSize.y;
             }
 
             // Record the accumulated pan and reset the pan refs to zero
@@ -151,6 +151,7 @@ export function EditingWindow() {
             setAccumulatedPan({ x: accDx, y: accDy });
         }
     };
+
 
     return (
         <GestureHandlerRootView style={styles.container}>
