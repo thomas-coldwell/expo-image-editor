@@ -20,19 +20,44 @@ export const usePerformCrop = () => {
     const [imageData, setImageData] = useRecoilState(imageDataState);
     const [, setEditingMode] = useRecoilState(editingModeState);
 
-    const onPerformCrop = async () => {
+    return async () => {
         try {
+            let originX: number
+
+            const {x, y} = accumulatedPan
+
+            const isXEqualToZero = x === 0
+            const isXEqualToCropAreaX = x === cropSize.x
+            const isXBetweenZeroAndCropAreaX = x > 0 && x < cropSize.x
+            const isEndOfImage = Math.abs(x) === cropSize.x
+
+            // The image hasn't moved at all
+            if (isXEqualToZero) {
+                originX = cropSize.x
+            // The image has moved to the limit of the crop area x
+            } else if (isXEqualToCropAreaX) {
+                originX = 0
+            // The image has moved between zero and the limit of the crop area x
+            } else if (isXBetweenZeroAndCropAreaX) {
+                originX = cropSize.x - x
+            // The image has moved and his end is at the right limit of the crop area x
+            } else if(isEndOfImage) {
+                originX = Math.abs(x) * 2
+            // The image has moved and x is negative, we get his absolute value + the crop area x value
+            } else {
+                originX = Math.abs(x) + cropSize.x
+            }
+
+            console.log(y)
+
             // Calculate cropping bounds
             const croppingBounds = {
-                originX: Math.round(
-                    (accumulatedPan.x - imageBounds.x) * imageScaleFactor
-                ),
-                originY: Math.round(
-                    (accumulatedPan.y - imageBounds.y) * imageScaleFactor
-                ),
+                originX: Math.round(originX * imageScaleFactor),
+                originY: 0,
                 width: Math.round(cropSize.width * imageScaleFactor),
                 height: Math.round(cropSize.height * imageScaleFactor),
             };
+
             // Set the editor state to processing and perform the crop
             setProcessing(true);
             const cropResult = await ImageManipulator.manipulateAsync(imageData.uri, [
@@ -44,7 +69,10 @@ export const usePerformCrop = () => {
             if (Platform.OS === "web") {
                 const webCorrection = await ImageManipulator.manipulateAsync(
                     cropResult.uri,
-                    [{crop: {...croppingBounds, originX: 0, originY: 0}}]
+                    [{
+                        resize: {  },
+                        crop: {...croppingBounds},
+                    }]
                 );
                 const {uri, width, height} = webCorrection;
                 setImageData({uri, width, height});
@@ -60,5 +88,4 @@ export const usePerformCrop = () => {
             Alert.alert("An error occurred while editing.");
         }
     };
-    return onPerformCrop;
 };

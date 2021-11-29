@@ -8,12 +8,12 @@ import {
 import {Animated, Dimensions, StyleSheet, View} from "react-native";
 import {useRecoilState} from "recoil";
 import {
-    accumulatedPanState,
+    accumulatedPanState, cropRatioState,
     cropSizeState,
     editingModeState,
     imageBoundsState,
     imageDataState,
-    imageScaleFactorState,
+    imageScaleFactorState, processingState,
 } from "../../store";
 import {ImageCropOverlay} from "../overlay";
 
@@ -26,12 +26,14 @@ type ImageLayout = {
 export function EditingWindow() {
     const [imageLayout, setImageLayout] = React.useState<ImageLayout>(null);
 
+    const [processing] = useRecoilState(processingState)
     const [imageBounds] = useRecoilState(imageBoundsState);
     const [imageData] = useRecoilState(imageDataState);
     const [, setImageBounds] = useRecoilState(imageBoundsState);
     const [, setImageScaleFactor] = useRecoilState(imageScaleFactorState);
     const [editingMode] = useRecoilState(editingModeState);
     const [cropSize] = useRecoilState(cropSizeState)
+    const [cropRatio] = useRecoilState(cropRatioState)
     const [accumulatedPan, setAccumulatedPan] = useRecoilState(accumulatedPanState);
 
     const isCropping = editingMode === "crop";
@@ -40,8 +42,14 @@ export function EditingWindow() {
     const allowCropping = isCropping && imageLayout !== null;
 
     // Merge them into one object
-    const panX = React.useRef(new Animated.Value(imageBounds.x));
-    const panY = React.useRef(new Animated.Value(imageBounds.y));
+    const panX = React.useRef(new Animated.Value(0));
+    const panY = React.useRef(new Animated.Value(0));
+    const animatedStyle = {
+        transform: [
+            {translateX: Animated.add(panX.current, accumulatedPan.x)},
+            {translateY: Animated.add(panY.current, accumulatedPan.y)},
+        ]
+    }
 
     const getImageFrame = (layout: {
         width: number;
@@ -95,6 +103,10 @@ export function EditingWindow() {
     React.useEffect(() => {
         onUpdateCropLayout(imageLayout);
     }, [imageData])
+
+    React.useEffect(() => {
+        reset()
+    }, [cropRatio, isCropping])
 
     const onGestureEvent = ({ nativeEvent }: PanGestureHandlerGestureEvent) => {
         if (allowCropping) {
@@ -152,6 +164,11 @@ export function EditingWindow() {
         }
     };
 
+    const reset = () => {
+        panY.current.setValue(0)
+        panX.current.setValue(0)
+        setAccumulatedPan({ x: 0, y: 0 })
+    }
 
     return (
         <GestureHandlerRootView style={styles.container}>
@@ -168,12 +185,7 @@ export function EditingWindow() {
                                 alignItems: 'center',
 
                             },
-                            {
-                                transform: [
-                                    { translateX: Animated.add(panX.current, accumulatedPan.x) },
-                                    { translateY: Animated.add(panY.current, accumulatedPan.y) },
-                                ],
-                            },
+                            isCropping ? animatedStyle : null
                         ]}
                         source={{ uri: imageData.uri }}
                         onLayout={(event) => {

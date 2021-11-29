@@ -5,7 +5,7 @@ import {
 } from "react-native";
 import {useRecoilState} from "recoil";
 import {useContext} from "react";
-import {cropSizeState, imageBoundsState, accumulatedPanState, cropRatioState} from "../../store";
+import {cropSizeState, imageBoundsState, cropRatioState} from "../../store";
 import {EditorContext} from "../../constants";
 
 export const ImageCropOverlay = () => {
