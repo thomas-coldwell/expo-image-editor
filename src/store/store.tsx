@@ -1,4 +1,5 @@
 import { atom } from "recoil";
+import {LayoutRectangle} from "react-native";
 import {EditingOperations} from "../types";
 
 export interface ImageData {
@@ -61,16 +62,13 @@ export const accumulatedPanState = atom<AccumulatedPan>({
   },
 });
 
-export interface ImageDimensions {
-  width: number;
-  height: number;
-}
-
-export const cropSizeState = atom<ImageDimensions>({
+export const cropSizeState = atom<LayoutRectangle>({
   key: "cropSizeState",
   default: {
     width: 0,
     height: 0,
+    x: 0,
+    y: 0,
   },
 });
 

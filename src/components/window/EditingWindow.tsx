@@ -1,11 +1,19 @@
 import * as React from "react";
-import {Dimensions, Image, ImageBackground, StyleSheet, View} from "react-native";
+import {
+    GestureHandlerRootView,
+    PanGestureHandler,
+    PanGestureHandlerGestureEvent,
+    State
+} from "react-native-gesture-handler";
+import {Animated, Dimensions, StyleSheet, View} from "react-native";
 import {useRecoilState} from "recoil";
 import {
-    imageDataState,
-    imageBoundsState,
-    imageScaleFactorState,
+    accumulatedPanState,
+    cropSizeState,
     editingModeState,
+    imageBoundsState,
+    imageDataState,
+    imageScaleFactorState,
 } from "../../store";
 import {ImageCropOverlay} from "../overlay";
 
@@ -14,16 +22,23 @@ type ImageLayout = {
     width: number;
 } | null;
 
+
 export function EditingWindow() {
     const [imageLayout, setImageLayout] = React.useState<ImageLayout>(null);
 
+    const [imageBounds] = useRecoilState(imageBoundsState);
     const [imageData] = useRecoilState(imageDataState);
     const [, setImageBounds] = useRecoilState(imageBoundsState);
     const [, setImageScaleFactor] = useRecoilState(imageScaleFactorState);
     const [editingMode] = useRecoilState(editingModeState);
+    const [cropSize] = useRecoilState(cropSizeState)
+    const [accumulatedPan, setAccumulatedPan] = useRecoilState(accumulatedPanState);
 
     const imageRatio = imageData.width / imageData.height
     const imageHeightFromWidth = Dimensions.get("window").width / imageRatio;
+
+    const panX = React.useRef(new Animated.Value(imageBounds.x));
+    const panY = React.useRef(new Animated.Value(imageBounds.y));
 
     // Get some readable boolean states
     const isCropping = editingMode === "crop";
@@ -79,22 +94,95 @@ export function EditingWindow() {
 
     React.useEffect(() => {
         onUpdateCropLayout(imageLayout);
-    }, [imageData]);
+    }, [imageData])
+
+    const onGestureEvent = ({ nativeEvent }: PanGestureHandlerGestureEvent) => {
+        Animated.event(
+            [
+                {
+                    translationX: panX.current,
+                    translationY: panY.current,
+                },
+            ],
+            { useNativeDriver: false }
+        )(nativeEvent);
+    }
+
+    const onHandlerStateChange = ({nativeEvent,}: PanGestureHandlerGestureEvent) => {
+        // Handle any state changes from the pan gesture handler
+        // only looking at when the touch ends atm
+        if (nativeEvent.state === State.END) {
+            console.log("END", {cropSize, nativeEvent})
+            const { translationX, translationY } = nativeEvent
+
+            let accDx = accumulatedPan.x + translationX;
+
+            const cropAreaRangeX = [ cropSize.x, cropSize.x + cropSize.width ]
+            const isAccDxInsideRangeX = accDx > cropAreaRangeX[0] && accDx < cropAreaRangeX[1]
+            const isUnderZeroAndInsideRangeX = accDx < 0 && accDx + imageBounds.width < cropAreaRangeX[1]
+
+            if  (isUnderZeroAndInsideRangeX) {
+                accDx = -cropSize.x
+            } else if (isAccDxInsideRangeX) {
+                // Then set the x pos so the crop frame touches the right hand edge
+                accDx = cropSize.x;
+            } else {
+                // It's somewhere in between - no formatting required
+            }
+            // Check if the pan in the y direction exceeds the bounds
+            let accDy = accumulatedPan.y + translationY;
+            // Is the new y pos less the top edge?
+            if (accDy <= imageBounds.y) {
+                // Then set it to be zero and set the pan to zero too
+                accDy = imageBounds.y;
+            }
+            // Is the new y pos plus crop height going to exceed the bottom bound
+            else if (accDy + cropSize.height > imageBounds.height + imageBounds.y) {
+                // Then set the y pos so the crop frame touches the bottom edge
+                let limitedYPos = imageBounds.y + imageBounds.height - cropSize.height;
+                accDy = limitedYPos;
+            } else {
+                // It's somewhere in between - no formatting required
+            }
+
+            // Record the accumulated pan and reset the pan refs to zero
+            panX.current.setValue(0);
+            panY.current.setValue(0);
+            setAccumulatedPan({ x: accDx, y: accDy });
+        }
+    };
 
     return (
-        <View style={styles.container}>
-            <View style={styles.imageContainer}>
-                <ImageBackground
-                    style={[{ width: Dimensions.get('window').width, height: imageHeightFromWidth, alignItems: 'center' }]}
-                    source={{uri: imageData.uri}}
-                    onLayout={(event) => {
-                        getImageFrame(event.nativeEvent.layout);
-                    }}
-                >
-                    {isCropping && imageLayout != null ? <ImageCropOverlay /> : null}
-                </ImageBackground>
-            </View>
-        </View>
+        <GestureHandlerRootView style={styles.container}>
+            <PanGestureHandler
+                onGestureEvent={onGestureEvent}
+                onHandlerStateChange={onHandlerStateChange}
+            >
+                <View style={styles.imageContainer}>
+                    <Animated.Image
+                        style={[
+                            {
+                                width: Dimensions.get('window').width,
+                                height: imageHeightFromWidth,
+                                alignItems: 'center',
+
+                            },
+                            {
+                                transform: [
+                                    { translateX: Animated.add(panX.current, accumulatedPan.x) },
+                                    { translateY: Animated.add(panY.current, accumulatedPan.y) },
+                                ],
+                            },
+                        ]}
+                        source={{ uri: imageData.uri }}
+                        onLayout={(event) => {
+                            getImageFrame(event.nativeEvent.layout);
+                        }}
+                    />
+                    {isCropping && imageLayout != null ? <ImageCropOverlay/> : null}
+                </View>
+            </PanGestureHandler>
+        </GestureHandlerRootView>
     );
 }
 

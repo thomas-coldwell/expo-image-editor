@@ -1,5 +1,9 @@
-import {ImageDimensions} from "../store";
 import {Result} from "./result.type";
+
+export type ImageDimensions = {
+    width: number;
+    height: number;
+}
 
 export interface ImageEditorProps {
     visible: boolean;
