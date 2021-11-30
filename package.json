@@ -36,14 +36,18 @@
   "dependencies": {
     "@miblanchard/react-native-slider": "^1.5.0",
     "@react-hook/throttle": "^2.2.0",
+    "expo-image-editor": "github:ko-platform/expo-image-editor#ko-image-editor",
+    "expo-image-picker": "^11.0.3",
     "modal-enhanced-react-native-web": "^0.2.0",
-    "no-scroll": "^2.1.1"
+    "no-scroll": "^2.1.1",
+    "react-native-gesture-handler": "^1.10.3",
+    "react-responsive": "^9.0.0-beta.5",
+    "recoil": "^0.0.10"
   },
   "peerDependencies": {
     "@expo/vector-icons": "*",
     "expo-asset": "*",
     "expo-file-system": "*",
-    "expo-gl": "*",
     "expo-gl-cpp": "*",
     "expo-image-manipulator": "*",
     "react": "*",
@@ -61,17 +65,14 @@
     "babel-preset-expo": "~8.1.0",
     "expo-asset": "^8.1.7",
     "expo-file-system": "^9.2.0",
-    "expo-gl": "^9.1.1",
     "expo-gl-cpp": "^9.1.2",
     "expo-image-manipulator": "^9.2.2",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
     "react-native": "https://github.com/expo/react-native/archive/sdk-42.0.0.tar.gz",
     "react-native-builder-bob": "^0.18.2",
-    "react-native-gesture-handler": "^1.10.3",
     "react-native-safe-area-context": "^3.2.0",
     "react-native-web": "~0.13.12",
-    "recoil": "^0.0.10",
     "release-it": "^14.11.6",
     "standard-version": "^9.2.0",
     "typescript": "^3.9.3"

@@ -16,6 +16,9 @@ example/.DS_Store
 
 example/lib/*
 
+.DS_Store
+src/.DS_Store
+.idea/
 
 # Local Netlify folder
 .netlify
