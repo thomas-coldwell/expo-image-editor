@@ -126,7 +126,6 @@ export function EditingWindow() {
         // Handle any state changes from the pan gesture handler
         // only looking at when the touch ends atm
         if (nativeEvent.state === State.END && allowCropping) {
-            console.log("END", {cropSize, nativeEvent})
             const { translationX, translationY } = nativeEvent
 
             let accDx = accumulatedPan.x + translationX;
