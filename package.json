@@ -3,7 +3,7 @@
   "version": "1.1.0",
   "description": "",
   "main": "lib/commonjs/index.js",
-  "types": "lib/typescript/src/index.d.ts",
+  "types": "lib/typescript/src/types/index.d.ts",
   "react-native": "src/index",
   "source": "src/index",
   "module": "lib/module/index.js",
