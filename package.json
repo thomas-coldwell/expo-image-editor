@@ -1,5 +1,5 @@
 {
-  "name": "expo-image-editor",
+  "name": "ko-image-editor",
   "version": "1.7.1",
   "description": "",
   "main": "lib/commonjs/index.js",
@@ -26,12 +26,12 @@
     "blur",
     "expo"
   ],
-  "author": "Thomas Coldwell",
+  "author": "adscud",
   "license": "MIT",
-  "homepage": "https://github.com/thomas-coldwell/expo-image-editor",
+  "homepage": "https://github.com/ko-platform/ko-image-editor",
   "repository": {
     "type": "git",
-    "url": "https://github.com/thomas-coldwell/expo-image-editor"
+    "url": "https://github.com/ko-platform/ko-image-editor"
   },
   "dependencies": {
     "@miblanchard/react-native-slider": "^1.5.0",
