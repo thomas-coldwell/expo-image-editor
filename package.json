@@ -1,6 +1,6 @@
 {
   "name": "@ko-platform/image-editor",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "",
   "main": "src/index.tsx",
   "types": "lib/typescript/src/index.d.ts",
