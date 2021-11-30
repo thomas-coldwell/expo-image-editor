@@ -5,8 +5,10 @@ import {useRecoilState} from "recoil";
 import {IconButton} from "../icon";
 import {editingModeState, imageDataState, processingState} from "../../store";
 import {OperationBarSelectedFooter} from "../operation-bar-selected-footer";
+import {EditorContext} from "../../constants";
 
 export function Rotate() {
+    const { rotateLeftIcon, rotateRightIcon } = React.useContext(EditorContext)
     const [, setProcessing] = useRecoilState(processingState);
     const [imageData, setImageData] = useRecoilState(imageDataState);
     const [, setEditingMode] = useRecoilState(editingModeState);
@@ -75,8 +77,8 @@ export function Rotate() {
     return (
         <View style={styles.container}>
             <View style={styles.row}>
-                <IconButton iconID="rotate-left" onPress={() => rotate("ccw")}/>
-                <IconButton iconID="rotate-right" onPress={() => rotate("cw")}/>
+                <IconButton iconID="rotate-left" icon={rotateLeftIcon} onPress={() => rotate("ccw")}/>
+                <IconButton iconID="rotate-right" icon={rotateRightIcon} onPress={() => rotate("cw")}/>
             </View>
             <OperationBarSelectedFooter onCancel={onClose} onValidate={onValidate} />
         </View>

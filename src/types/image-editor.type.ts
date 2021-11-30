@@ -8,6 +8,12 @@ export type ImageDimensions = {
 export interface ImageEditorProps {
     visible: boolean;
     imageUri: string;
+    backIcon?: Element
+    doneIcon?: Element
+    cropIcon?: Element
+    rotateIcon?: Element
+    rotateLeftIcon?: Element
+    rotateRightIcon?: Element
     availableAspectRatios: number[]
     lockAspectRatio?: number;
     dimensionByAspectRatios: ImageDimensions[]

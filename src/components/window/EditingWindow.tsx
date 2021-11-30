@@ -5,7 +5,7 @@ import {
     PanGestureHandlerGestureEvent,
     State
 } from "react-native-gesture-handler";
-import {Animated, Dimensions, StyleSheet, View} from "react-native";
+import {Animated, StyleSheet, View} from "react-native";
 import {useRecoilState} from "recoil";
 import {
     accumulatedPanState, cropRatioState,
@@ -16,6 +16,7 @@ import {
     imageScaleFactorState, processingState,
 } from "../../store";
 import {ImageCropOverlay} from "../overlay";
+import {DEVICE_WIDTH} from "../../constants";
 
 type ImageLayout = {
     height: number;
@@ -38,7 +39,7 @@ export function EditingWindow() {
 
     const isCropping = editingMode === "crop";
     const imageRatio = imageData.width / imageData.height
-    const imageHeightFromWidth = Dimensions.get("window").width / imageRatio;
+    const imageHeightFromWidth = DEVICE_WIDTH / imageRatio;
     const allowCropping = isCropping && imageLayout !== null;
 
     // Merge them into one object
@@ -179,10 +180,9 @@ export function EditingWindow() {
                     <Animated.Image
                         style={[
                             {
-                                width: Dimensions.get('window').width,
+                                width: DEVICE_WIDTH,
                                 height: imageHeightFromWidth,
                                 alignItems: 'center',
-
                             },
                             isCropping ? animatedStyle : null
                         ]}

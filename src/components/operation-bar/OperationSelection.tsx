@@ -7,6 +7,8 @@ import {
     EditingOperations,
     TransformOperations,
 } from "../../types";
+import {useContext} from "react";
+import {EditorContext} from "../../constants";
 
 interface Operation<T> {
     title: string;
@@ -28,7 +30,19 @@ const operations: Operation<TransformOperations>[] = [
     ]
 
 export function OperationSelection() {
+    const { cropIcon, rotateIcon } = useContext(EditorContext)
     const [, setEditingMode] = useRecoilState(editingModeState);
+
+    const getIcon = (operation: Operation<TransformOperations>) => {
+        switch (operation.operationID) {
+            case "crop":
+                return cropIcon
+            case "rotate":
+                return rotateIcon
+            default:
+                return undefined
+        }
+    }
 
     return (
         <View style={styles.opRow}>
@@ -37,6 +51,7 @@ export function OperationSelection() {
                     (item: Operation<EditingOperations>) => (
                         <IconButton
                             key={item.title}
+                            icon={getIcon(item)}
                             iconID={item.iconID}
                             style={styles.modeButton}
                             onPress={() => setEditingMode(item.operationID)}

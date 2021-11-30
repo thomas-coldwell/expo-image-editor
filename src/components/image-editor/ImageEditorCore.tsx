@@ -12,6 +12,12 @@ import {ImageEditorView} from "./ImageEditorView";
 
 export const ImageEditorCore = (props: ImageEditorProps) => {
     const {
+        cropIcon = undefined,
+        doneIcon = undefined,
+        backIcon = undefined,
+        rotateIcon = undefined,
+        rotateRightIcon = undefined,
+        rotateLeftIcon = undefined,
         availableAspectRatios = [ 1 ],
         dimensionByAspectRatios = [ { height: 1600, width: 1600 } ],
         lockAspectRatio = undefined,
@@ -79,6 +85,12 @@ export const ImageEditorCore = (props: ImageEditorProps) => {
     return (
         <EditorContext.Provider
             value={{
+                backIcon,
+                cropIcon,
+                doneIcon,
+                rotateIcon,
+                rotateLeftIcon,
+                rotateRightIcon,
                 lockAspectRatio,
                 availableAspectRatios,
                 dimensionByAspectRatios,
