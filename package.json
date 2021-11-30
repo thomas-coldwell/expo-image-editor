@@ -1,29 +1,18 @@
 {
   "name": "@ko-platform/image-editor",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "",
   "main": "lib/commonjs/index.js",
   "types": "lib/typescript/src/index.d.ts",
   "react-native": "src/index",
   "source": "src/index",
   "module": "lib/module/index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "sv:patch": "standard-version --release-as patch",
-    "sv:minor": "standard-version --release-as minor",
-    "sv:major": "standard-version --release-as major",
-    "prepare": "bob build",
-    "release": "release-it",
-    "example": "yarn --cwd example",
-    "bootstrap": "yarn example && yarn && yarn pods"
-  },
   "keywords": [
     "react",
     "react-native",
     "image",
     "image editor",
     "image cropping",
-    "blur",
     "expo"
   ],
   "author": "adscud",
@@ -34,9 +23,6 @@
     "url": "https://github.com/ko-platform/ko-image-editor"
   },
   "dependencies": {
-    "@miblanchard/react-native-slider": "^1.5.0",
-    "@react-hook/throttle": "^2.2.0",
-    "expo-image-editor": "github:ko-platform/expo-image-editor#ko-image-editor",
     "expo-image-picker": "^11.0.3",
     "modal-enhanced-react-native-web": "^0.2.0",
     "no-scroll": "^2.1.1",
@@ -56,8 +42,6 @@
   "devDependencies": {
     "@babel/core": "^7.8.6",
     "@expo/vector-icons": "^12.0.5",
-    "@expo/webpack-config": "^0.12.11",
-    "@release-it/conventional-changelog": "^3.3.0",
     "@types/lodash": "^4.14.157",
     "@types/react": "~16.9.35",
     "@types/react-dom": "^16.9.8",
@@ -65,7 +49,6 @@
     "babel-preset-expo": "~8.1.0",
     "expo-asset": "^8.1.7",
     "expo-file-system": "^9.2.0",
-    "expo-gl-cpp": "^9.1.2",
     "expo-image-manipulator": "^9.2.2",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
