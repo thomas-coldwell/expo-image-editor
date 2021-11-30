@@ -2,11 +2,19 @@
   "name": "@ko-platform/image-editor",
   "version": "1.0.3",
   "description": "",
-  "main": "src/index.tsx",
+  "main": "lib/commonjs/index.js",
   "types": "lib/typescript/src/index.d.ts",
   "react-native": "src/index",
   "source": "src/index",
   "module": "lib/module/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "sv:patch": "standard-version --release-as patch",
+    "sv:minor": "standard-version --release-as minor",
+    "sv:major": "standard-version --release-as major",
+    "prepare": "bob build",
+    "release": "release-it"
+  },
   "keywords": [
     "react",
     "react-native",
@@ -23,6 +31,7 @@
     "url": "https://github.com/ko-platform/ko-image-editor"
   },
   "dependencies": {
+    "@release-it/conventional-changelog": "^3.3.0",
     "expo-image-picker": "^11.0.3",
     "modal-enhanced-react-native-web": "^0.2.0",
     "no-scroll": "^2.1.1",
@@ -49,6 +58,7 @@
     "babel-preset-expo": "~8.1.0",
     "expo-asset": "^8.1.7",
     "expo-file-system": "^9.2.0",
+    "expo-gl-cpp": "^9.1.2",
     "expo-image-manipulator": "^9.2.2",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
