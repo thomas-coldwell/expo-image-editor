@@ -1,5 +1,5 @@
 {
-  "name": "ko-image-editor",
+  "name": "@ko-platform/image-editor",
   "version": "1.0.0",
   "description": "",
   "main": "lib/commonjs/index.js",
