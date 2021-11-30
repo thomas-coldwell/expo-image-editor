@@ -2,7 +2,7 @@
   "name": "@ko-platform/image-editor",
   "version": "1.0.2",
   "description": "",
-  "main": "lib/commonjs/index.js",
+  "main": "src/index.tsx",
   "types": "lib/typescript/src/index.d.ts",
   "react-native": "src/index",
   "source": "src/index",
