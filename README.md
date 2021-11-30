@@ -7,13 +7,13 @@ A super simple image cropping and rotation tool for Expo that runs on iOS, Andro
 To get started install the package in your Expo project by running:
 
 ```
-yarn add expo-image-editor
+yarn add @ko-platform/image-editor
 ```
 
 or
 
 ```
-npm i expo-image-editor
+npm i @ko-platform/image-editor
 ```
 
 ## Usage
