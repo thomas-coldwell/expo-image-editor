@@ -13,10 +13,11 @@ import {
     editingModeState,
     imageBoundsState,
     imageDataState,
-    imageScaleFactorState, processingState,
+    imageScaleFactorState,
 } from "../../store";
 import {ImageCropOverlay} from "../overlay";
 import {DEVICE_WIDTH} from "../../constants";
+import {useFoundCropRatio} from "../../hooks";
 
 type ImageLayout = {
     height: number;
@@ -25,9 +26,10 @@ type ImageLayout = {
 
 
 export function EditingWindow() {
+    const foundCropRatio = useFoundCropRatio()
+
     const [imageLayout, setImageLayout] = React.useState<ImageLayout>(null);
 
-    const [processing] = useRecoilState(processingState)
     const [imageBounds] = useRecoilState(imageBoundsState);
     const [imageData] = useRecoilState(imageDataState);
     const [, setImageBounds] = useRecoilState(imageBoundsState);
@@ -63,11 +65,12 @@ export function EditingWindow() {
     const onUpdateCropLayout = (layout: ImageLayout) => {
         // Check layout is not null
         if (layout) {
+            foundCropRatio()
             // Find the start point of the photo on the screen and its
             // width / height from there
             const editingWindowAspectRatio = layout.height / layout.width;
             //
-            const imageAspectRatio = imageData.height / imageData.width;
+            const imageAspectRatio = imageData.height / imageData.width
 
             let bounds = {x: 0, y: 0, width: 0, height: 0};
             let imageScaleFactor = 1;
