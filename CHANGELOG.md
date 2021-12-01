@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.2.6](https://github.com/ko-platform/ko-image-editor/compare/v1.2.5...v1.2.6) (2021-12-01)
+
+
+### Bug Fixes
+
+* return bad ratio on complete ([fcbfb5d](https://github.com/ko-platform/ko-image-editor/commit/fcbfb5d360c3fa21d4e5ff3248aa3a0a52d553a9))
+
 ### [1.2.5](https://github.com/ko-platform/ko-image-editor/compare/v1.2.4...v1.2.5) (2021-11-30)
 
 ### [1.2.4](https://github.com/ko-platform/ko-image-editor/compare/v1.2.3...v1.2.4) (2021-11-30)
