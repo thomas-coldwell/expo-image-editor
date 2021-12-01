@@ -33,7 +33,7 @@ const styles = StyleSheet.create({
     button: {
         flex: 1,
         marginHorizontal: 4,
-        height: 48,
+        height: 40,
         borderRadius: 12,
         justifyContent: 'center',
         alignItems: 'center'

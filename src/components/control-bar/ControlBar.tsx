@@ -45,7 +45,7 @@ export function ControlBar() {
 const styles = StyleSheet.create({
     container: {
         paddingTop: 8,
-        paddingHorizontal: 8,
+        paddingBottom: 16,
         height: 40,
         flexDirection: "row",
         justifyContent: "space-between",
