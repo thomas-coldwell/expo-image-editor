@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.4.0](https://github.com/ko-platform/ko-image-editor/compare/v1.3.1...v1.4.0) (2021-12-01)
+
+
+### Bug Fixes
+
+* padding ([6412dd2](https://github.com/ko-platform/ko-image-editor/commit/6412dd2f61e8cf116e0676d23d35d087dc8f4ab7))
+
 ## [1.3.0](https://github.com/ko-platform/ko-image-editor/compare/v1.2.7...v1.3.0) (2021-12-01)
 
 
