@@ -34,22 +34,17 @@
     "url": "https://github.com/ko-platform/ko-image-editor"
   },
   "dependencies": {
+    "react": "*",
+    "react-native": "*",
     "@release-it/conventional-changelog": "^3.3.0",
     "expo-image-picker": "^11.0.3",
     "modal-enhanced-react-native-web": "^0.2.0",
     "no-scroll": "^2.1.1",
     "react-native-gesture-handler": "^1.10.3",
     "react-responsive": "^9.0.0-beta.5",
-    "recoil": "^0.0.10"
-  },
-  "peerDependencies": {
-    "@expo/vector-icons": "*",
-    "expo-asset": "*",
-    "expo-file-system": "*",
-    "expo-gl-cpp": "*",
+    "recoil": "^0.0.10",
     "expo-image-manipulator": "*",
-    "react": "*",
-    "react-native": "*"
+    "@expo/vector-icons": "*"
   },
   "devDependencies": {
     "@babel/core": "^7.8.6",
@@ -59,9 +54,6 @@
     "@types/react-dom": "^16.9.8",
     "@types/react-native": "~0.63.2",
     "babel-preset-expo": "~8.1.0",
-    "expo-asset": "^8.1.7",
-    "expo-file-system": "^9.2.0",
-    "expo-gl-cpp": "^9.1.2",
     "expo-image-manipulator": "^9.2.2",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
