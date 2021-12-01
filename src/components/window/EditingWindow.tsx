@@ -65,7 +65,9 @@ export function EditingWindow() {
     const onUpdateCropLayout = (layout: ImageLayout) => {
         // Check layout is not null
         if (layout) {
-            foundCropRatio()
+            if (isCropping) {
+                foundCropRatio()
+            }
             // Find the start point of the photo on the screen and its
             // width / height from there
             const editingWindowAspectRatio = layout.height / layout.width;

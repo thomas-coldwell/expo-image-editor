@@ -9,6 +9,7 @@ export const useFoundCropRatio = () => {
     const [imageData] = useRecoilState(imageDataState);
 
     return () => {
+        console.log('calcul ratio')
         let ratio: number
         if (imageData.width > imageData.height) {
             ratio = imageData.width / imageData.height
@@ -18,6 +19,7 @@ export const useFoundCropRatio = () => {
         const usedRatio = availableAspectRatios.reduce(function(prev, curr) {
             return (Math.abs(curr - ratio) < Math.abs(prev - ratio) ? curr : prev);
         })
+
         setCropRatio(usedRatio)
     }
 }

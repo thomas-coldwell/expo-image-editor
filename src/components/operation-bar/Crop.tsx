@@ -2,7 +2,7 @@ import React, {useContext} from "react";
 import {StyleSheet, Text, View, TouchableOpacity} from "react-native";
 import {useRecoilState} from "recoil";
 import {cropRatioState} from "../../store";
-import {usePerformCrop} from "../../hooks";
+import {useFinishEditing, usePerformCrop} from "../../hooks";
 import {EditorContext, HumanReadabilityRatio} from "../../constants";
 import {OperationBarSelectedFooter} from "../operation-bar-selected-footer";
 
@@ -11,13 +11,13 @@ export function Crop() {
     const {availableAspectRatios, lockAspectRatio} = useContext(EditorContext)
     const ratios = lockAspectRatio ? [lockAspectRatio] : availableAspectRatios
 
-    const onPerformCrop = usePerformCrop();
+    const onPerformCrop = usePerformCrop()
 
     const onPressRatio = (ratio: number) => {
         setRatio(ratio)
     }
 
-    const onValidate = () => {
+    const onValidate = async () => {
         return onPerformCrop()
     }
 

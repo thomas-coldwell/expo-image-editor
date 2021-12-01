@@ -13,7 +13,6 @@ import {
 
 export const usePerformCrop = () => {
     const [accumulatedPan] = useRecoilState(accumulatedPanState);
-    const [imageBounds] = useRecoilState(imageBoundsState);
     const [imageScaleFactor] = useRecoilState(imageScaleFactorState);
     const [cropSize] = useRecoilState(cropSizeState);
     const [, setProcessing] = useRecoilState(processingState);
@@ -22,6 +21,7 @@ export const usePerformCrop = () => {
 
     return async () => {
         try {
+            setEditingMode("operation-select");
             let originX, originY: number
 
             const {x, y} = accumulatedPan
@@ -99,7 +99,6 @@ export const usePerformCrop = () => {
                 setImageData({uri, width, height});
             }
             setProcessing(false);
-            setEditingMode("operation-select");
         } catch (error) {
             // If there's an error dismiss the the editor and alert the user
             setProcessing(false);
