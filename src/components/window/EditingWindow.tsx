@@ -114,6 +114,12 @@ export function EditingWindow() {
         reset()
     }, [cropRatio, isCropping])
 
+    React.useEffect(() => {
+        if (isCropping) {
+            foundCropRatio()
+        }
+    }, [isCropping])
+
     const onGestureEvent = ({ nativeEvent }: PanGestureHandlerGestureEvent) => {
         if (allowCropping) {
             Animated.event(
