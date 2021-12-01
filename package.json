@@ -1,6 +1,6 @@
 {
   "name": "@ko-platform/image-editor",
-  "version": "1.4.0",
+  "version": "1.4.1",
   "description": "",
   "main": "lib/commonjs/index.js",
   "module": "lib/module/index.js",
