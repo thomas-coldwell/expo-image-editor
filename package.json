@@ -103,6 +103,6 @@
     }
   },
   "publishConfig": {
-    "registry": "https://npm.pkg.github.com/@ko-platform"
+    "@ko-platform:registry": "https://npm.pkg.github.com"
   }
 }
