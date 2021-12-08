@@ -1,12 +1,9 @@
-const noScroll = require("no-scroll");
-
 import * as React from "react";
-import {Platform, StatusBar} from "react-native";
+import {Modal, StatusBar} from "react-native";
 import {useRecoilState} from "recoil";
 import * as ImageManipulator from "expo-image-manipulator";
 import {imageDataState, readyState} from "../../store";
 import {EditorContext} from "../../constants";
-import {UniversalModal} from "../modal";
 import {ImageEditorProps} from "../../types";
 import {ImageEditorView} from "./ImageEditorView";
 
@@ -18,8 +15,8 @@ export const ImageEditorCore = (props: ImageEditorProps) => {
         rotateIcon = undefined,
         rotateRightIcon = undefined,
         rotateLeftIcon = undefined,
-        availableAspectRatios = [ 1 ],
-        dimensionByAspectRatios = [ { height: 1600, width: 1600 } ],
+        availableAspectRatios = [1],
+        dimensionByAspectRatios = [{height: 1600, width: 1600}],
         lockAspectRatio = undefined,
         translations = {
             cancel: 'Cancel',
@@ -34,33 +31,12 @@ export const ImageEditorCore = (props: ImageEditorProps) => {
     React.useEffect(() => {
         const initialise = async () => {
             if (props.imageUri) {
-                const enableEditor = () => {
-                    setReady(true);
-                    // Set no-scroll to on
-                    noScroll.on();
-                };
-                // Platform check
-                if (Platform.OS === "web") {
-                    let img = document.createElement("img");
-                    img.onload = () => {
-                        setImageData({
-                            uri: props.imageUri ?? "",
-                            height: img.height,
-                            width: img.width,
-                        });
-                        enableEditor();
-                    };
-                    img.src = props.imageUri;
-                } else {
-                    const {width: pickerWidth, height: pickerHeight} =
-                        await ImageManipulator.manipulateAsync(props.imageUri, []);
-                    setImageData({
-                        uri: props.imageUri,
-                        width: pickerWidth,
-                        height: pickerHeight,
-                    });
-                    enableEditor();
-                }
+                const {
+                    width: pickerWidth,
+                    height: pickerHeight
+                } = await ImageManipulator.manipulateAsync(props.imageUri, []);
+                setImageData({uri: props.imageUri, width: pickerWidth, height: pickerHeight,});
+                setReady(true);
             }
         };
         if (props.imageUri) {
@@ -69,8 +45,6 @@ export const ImageEditorCore = (props: ImageEditorProps) => {
     }, [props.imageUri, props.visible]);
 
     const onCloseEditor = () => {
-        // Set no-scroll to off
-        noScroll.off();
         props.onCloseEditor();
     };
 
@@ -100,14 +74,14 @@ export const ImageEditorCore = (props: ImageEditorProps) => {
             }}
         >
             <StatusBar hidden={props.visible}/>
-            <UniversalModal
+            <Modal
                 visible={props.visible}
                 animationType={"slide"}
                 presentationStyle="fullScreen"
                 statusBarTranslucent
             >
                 <ImageEditorView />
-            </UniversalModal>
+            </Modal>
         </EditorContext.Provider>
     );
 }

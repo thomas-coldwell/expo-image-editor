@@ -2,7 +2,7 @@ import React, {useContext} from "react";
 import {StyleSheet, Text, View, TouchableOpacity} from "react-native";
 import {useRecoilState} from "recoil";
 import {cropRatioState} from "../../store";
-import {useFinishEditing, usePerformCrop} from "../../hooks";
+import {usePerformCrop} from "../../hooks";
 import {EditorContext, HumanReadabilityRatio} from "../../constants";
 import {OperationBarSelectedFooter} from "../operation-bar-selected-footer";
 

@@ -5,7 +5,7 @@ enum Ratios {
 }
 
 export const HumanReadabilityRatio = {
-    [Ratios.r1_91]: '1:1.91',
+    [Ratios.r1_91]: '1:91',
     [Ratios.r1]: '1:1',
     [Ratios.r0_8]: '4:5'
 }

@@ -2,10 +2,10 @@ import * as React from "react";
 import {View, StyleSheet, SafeAreaView} from "react-native";
 import {useContext} from "react";
 import {useRecoilState} from "recoil";
-import {cropRatioState, editingModeState, processingState} from "../../store";
+import {editingModeState} from "../../store";
 import {IconButton} from "../icon";
 import {EditorContext} from "../../constants";
-import {useFinishEditing, useResizeToDesiredDimensions} from "../../hooks";
+import {useFinishEditing} from "../../hooks";
 
 export function ControlBar() {
     const [editingMode, setEditingMode] = useRecoilState(editingModeState);
