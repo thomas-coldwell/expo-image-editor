@@ -21,8 +21,15 @@ export interface Ratio {
     exampleSize: { width: number, height: number }
 }
 
-export interface Image {
+export interface ImageLayout {
     height: number
     width: number
-    uri: string
+    x?: number
+    y?: number
+    uri?: string
+}
+
+export type AnimatedContext = {
+    startX: number
+    startY: number
 }

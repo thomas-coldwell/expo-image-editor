@@ -62,7 +62,8 @@ const styles = StyleSheet.create({
         height: 24,
         width: 79,
         backgroundColor: '#0028FF',
-         borderRadius: 50,
+        borderRadius: 50,
+        alignItems: 'center',
     },
     validateLabel: {
         color: '#FFFFFF',

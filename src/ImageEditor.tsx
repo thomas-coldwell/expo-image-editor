@@ -1,17 +1,31 @@
+import {useGesture} from "./use-gesture";
+
+const noScroll = require('no-scroll')
+
 import React from "react";
 import {
-    Image,
-    LayoutChangeEvent,
-    LayoutRectangle,
+    Image, LayoutChangeEvent, LayoutRectangle,
     Modal,
     SafeAreaView,
     StatusBar,
     StyleSheet,
     View
 } from "react-native";
+import {
+    GestureHandlerRootView,
+    PanGestureHandler,
+} from "react-native-gesture-handler";
+import Animated from 'react-native-reanimated'
 import * as ImageManipulator from 'expo-image-manipulator';
-import {ImageEditorProps, Ratio, Image as ImageType} from "./ImageEditor.type";
-import {DEVICE_WIDTH, RATIOS} from "./ImageEditor.constant";
+import {
+    ImageEditorProps,
+    Ratio,
+    ImageLayout,
+} from "./ImageEditor.type";
+import {
+    DEVICE_WIDTH,
+    RATIOS
+} from "./ImageEditor.constant";
 import {Footer} from "./Footer";
 import {Header} from "./Header";
 
@@ -24,11 +38,20 @@ export const ImageEditor = (props: ImageEditorProps) => {
         uri = '',
     } = props
 
+    const [cropAreaLayout, setCropAreaLayout] = React.useState<LayoutRectangle>()
     const [usedRatio, setUsedRatio] = React.useState<Ratio>(RATIOS[1])
-    const [image, setImage] = React.useState<ImageType>()
+    const [image, setImage] = React.useState<ImageLayout>()
     const [scale, setScale] = React.useState<number>(1)
-    const [layout, setLayout] = React.useState<LayoutRectangle>()
-    const [factor, setFactor] = React.useState<number>(1)
+
+    const {gestureHandler, animatedStyle} = useGesture(scale, image as ImageLayout, cropAreaLayout as LayoutRectangle)
+
+    React.useEffect(() => {
+        if (props.visible) {
+            noScroll.on()
+        } else {
+            noScroll.off()
+        }
+    }, [props.visible])
 
     React.useEffect(() => {
         if (!!uri) {
@@ -50,14 +73,13 @@ export const ImageEditor = (props: ImageEditorProps) => {
                         resize: {width: DEVICE_WIDTH, height: DEVICE_WIDTH / ratio}
                     }])
                     .then((data) => {
-                        console.log(data)
-                        setImage(data)
+                        setImage(prev => ({...prev, ...data}))
                     })
 
                 setUsedRatio(nextRatio)
             })
         }
-    }, [ uri ])
+    }, [uri])
 
     const onUsedRatioChange = React.useCallback((ratio: Ratio) => {
         setUsedRatio(ratio)
@@ -72,71 +94,96 @@ export const ImageEditor = (props: ImageEditorProps) => {
 
     React.useEffect(() => {
         if (image) {
-            console.log(cropArea, image)
-            if (image?.height < cropArea.height) {
-                setScale(cropArea.height / image?.height)
+            if (image.height < cropArea.height) {
+                setScale(cropArea.height / image.height)
             } else {
                 setScale(1)
             }
         }
     }, [cropArea])
 
+    const onCropAreaLayout = (event: LayoutChangeEvent) => {
+        event.persist()
+        if (!!event?.nativeEvent?.layout) {
+            setCropAreaLayout(event.nativeEvent.layout)
+        }
+    }
+
+    const onImageLayout = (event: LayoutChangeEvent) => {
+        event.persist()
+        if (!!event?.nativeEvent?.layout) {
+            setImage(prev => ({...prev, ...event?.nativeEvent?.layout}))
+        }
+    }
+
     return (
-        <>
-            <StatusBar hidden={props.visible}/>
-            <Modal
-                visible={props.visible}
-                animationType={"slide"}
-                presentationStyle="pageSheet"
-                statusBarTranslucent
-                onRequestClose={props.onClose}
-            >
-                <SafeAreaView style={styles.container}>
-                    <Header
-                        translations={translations}
-                        RenderBackIcon={RenderBackIcon}
-                        RenderCheckIcon={RenderCheckIcon}
-                        onClose={props.onClose}
-                    />
-                    <View
-                        style={styles.imageContainer}
-                    >
-                        {!!image && (
-                            <>
-                                <Image
-                                    source={{uri: image.uri}}
-                                    style={[
-                                        styles.image,
-                                        {
-                                            height: image.height,
-                                            width: image.width,
-                                            transform: [
+        <GestureHandlerRootView>
+            <>
+                <StatusBar hidden={props.visible}/>
+                <Modal
+                    visible={props.visible}
+                    animationType={"slide"}
+                    presentationStyle="pageSheet"
+                    statusBarTranslucent
+                    onRequestClose={props.onClose}
+                >
+                    <SafeAreaView style={styles.container}>
+                        <Header
+                            translations={translations}
+                            RenderBackIcon={RenderBackIcon}
+                            RenderCheckIcon={RenderCheckIcon}
+                            onClose={props.onClose}
+                        />
+                        <View
+                            collapsable={false}
+                            style={styles.imageContainer}
+                        >
+                            {!!image && (
+                                <>
+                                    <PanGestureHandler onGestureEvent={gestureHandler} >
+                                        <Animated.Image
+                                            onLayout={onImageLayout}
+                                            source={{uri: image.uri}}
+                                            style={[
+                                                styles.image,
                                                 {
-                                                    scale
-                                                }
-                                            ]
-                                        }
-                                    ]}
-                                />
-                                <View style={[styles.cropArea, cropArea]}/>
-                            </>
-                        )}
-                    </View>
-                    <Footer
-                        usedRatio={usedRatio}
-                        onChangeUsedRatio={onUsedRatioChange}
-                        RenderRotateComponent={RenderRotateComponent}
-                    />
-                </SafeAreaView>
-            </Modal>
-        </>
+                                                    height: image.height,
+                                                    width: image.width,
+                                                    transform: [
+                                                        {
+                                                            scale
+                                                        }
+                                                    ]
+                                                },
+                                                animatedStyle
+                                            ]}
+                                        />
+                                    </PanGestureHandler>
+                                    <View
+                                        pointerEvents={'none'}
+                                        onLayout={onCropAreaLayout}
+                                        style={[styles.cropArea, cropArea]}
+                                    />
+                                </>
+                            )}
+                        </View>
+                        <Footer
+                            usedRatio={usedRatio}
+                            onChangeUsedRatio={onUsedRatioChange}
+                            RenderRotateComponent={RenderRotateComponent}
+                        />
+                    </SafeAreaView>
+                </Modal>
+            </>
+        </GestureHandlerRootView>
     )
 }
 
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#000000'
+        backgroundColor: '#000000',
+        overflow: 'hidden'
     },
     imageContainer: {
         overflow: 'hidden',
@@ -145,9 +192,7 @@ const styles = StyleSheet.create({
         width: '100%',
         justifyContent: 'center',
     },
-    image: {
-        position: 'absolute'
-    },
+    image: {},
     cropArea: {
         position: 'absolute',
         backgroundColor: 'transparent',

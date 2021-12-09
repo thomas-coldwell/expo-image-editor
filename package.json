@@ -34,7 +34,11 @@
     "url": "git+https://github.com/ko-platform/ko-image-editor"
   },
   "dependencies": {
-    "expo-image-manipulator": "^10.1.2"
+    "expo-image-manipulator": "^10.1.2",
+    "no-scroll": "^2.1.1",
+    "react-native-gesture-handler": "^1.10.3",
+    "react-native-reanimated": "^2.2.0",
+    "recoil": "^0.0.10"
   },
   "devDependencies": {
     "@babel/core": "^7.8.6",
@@ -50,8 +54,6 @@
     "react-dom": "^16.13.1",
     "react-native": "0.66.3",
     "react-native-builder-bob": "^0.18.2",
-    "react-native-gesture-handler": "^1.10.3",
-    "recoil": "^0.0.10",
     "release-it": "^14.11.6",
     "standard-version": "^9.2.0",
     "typescript": "^3.9.3"
