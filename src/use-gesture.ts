@@ -36,7 +36,7 @@ export const useGesture = (scale: number, imageLayout: ImageLayout, cropAreaLayo
         x.value = 0
         y.value = 0
         pinchScale.value = 1
-    }, [scale])
+    }, [scale, imageLayout, cropAreaLayout])
 
     const verifyImagePosition = () => {
         'worklet'

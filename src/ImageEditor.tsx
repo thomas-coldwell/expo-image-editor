@@ -16,7 +16,6 @@ import {
     PanGestureHandler, PinchGestureHandler,
 } from "react-native-gesture-handler";
 import Animated from 'react-native-reanimated'
-import * as ImageManipulator from 'expo-image-manipulator';
 import {
     ImageEditorProps,
     Ratio,
@@ -28,6 +27,8 @@ import {
 } from "./ImageEditor.constant";
 import {Footer} from "./Footer";
 import {Header} from "./Header";
+import {useRotate} from "./use-rotate";
+import {useResize} from "./components/use-resize";
 
 export const ImageEditor = (props: ImageEditorProps) => {
     const {
@@ -41,9 +42,14 @@ export const ImageEditor = (props: ImageEditorProps) => {
     const panRef = React.createRef()
     const pinchRef = React.createRef()
 
-    const [cropAreaLayout, setCropAreaLayout] = React.useState<LayoutRectangle>({ width: DEVICE_WIDTH, height: DEVICE_WIDTH, x: 0, y: 0 })
+    const [cropAreaLayout, setCropAreaLayout] = React.useState<LayoutRectangle>({
+        width: DEVICE_WIDTH,
+        height: DEVICE_WIDTH,
+        x: 0,
+        y: 0
+    })
     const [usedRatio, setUsedRatio] = React.useState<Ratio>(RATIOS[1])
-    const [image, setImage] = React.useState<ImageLayout>({ width: DEVICE_WIDTH, height: DEVICE_WIDTH })
+    const [image, setImage] = React.useState<ImageLayout>({width: DEVICE_WIDTH, height: DEVICE_WIDTH})
     const [scale, setScale] = React.useState<number>(1)
 
     const {
@@ -51,6 +57,8 @@ export const ImageEditor = (props: ImageEditorProps) => {
         pinchHandler,
         animatedStyle
     } = useGesture(scale, image as ImageLayout, cropAreaLayout as LayoutRectangle)
+    const onRotate = useRotate(image)
+    const onResize = useResize(image.uri || props.uri, setImage)
 
     React.useEffect(() => {
         if (props.visible) {
@@ -62,7 +70,7 @@ export const ImageEditor = (props: ImageEditorProps) => {
 
     React.useEffect(() => {
         if (!!uri) {
-            Image.getSize(uri, (width, height) => {
+            Image.getSize(props.uri, (width, height) => {
                 const ratio = width / height
 
                 let nextRatio: Ratio
@@ -73,17 +81,9 @@ export const ImageEditor = (props: ImageEditorProps) => {
                 } else {
                     nextRatio = RATIOS.find(item => item.value === 1.91) as Ratio
                 }
-
-                ImageManipulator.manipulateAsync(
-                    uri,
-                    [{
-                        resize: {width: DEVICE_WIDTH, height: DEVICE_WIDTH / ratio}
-                    }])
-                    .then((data) => {
-                        setImage(prev => ({...prev, ...data}))
-                    })
-
                 setUsedRatio(nextRatio)
+
+                void onResize({width: DEVICE_WIDTH, height: DEVICE_WIDTH / ratio})
             })
         }
     }, [uri])
@@ -107,7 +107,7 @@ export const ImageEditor = (props: ImageEditorProps) => {
                 setScale(1)
             }
         }
-    }, [cropArea])
+    }, [cropArea, image?.uri])
 
     const onCropAreaLayout = (event: LayoutChangeEvent) => {
         event.persist()
@@ -121,6 +121,20 @@ export const ImageEditor = (props: ImageEditorProps) => {
         if (!!event?.nativeEvent?.layout) {
             setImage(prev => ({...prev, ...event?.nativeEvent?.layout}))
         }
+    }
+
+    // TODO: count rotate times, and reset to 0 when rotate times is 3
+    // We loose quality after rotate x resize sevral times
+    // To get the rotate value we will do 90 * X
+    // Like that we will keep the image quality at the beginning
+
+    const onRotateEvent = async () => {
+        const rotate = await onRotate()
+        setImage(prev => ({...prev, ...rotate}))
+        Image.getSize(rotate.uri as string, (width, height) => {
+            const ratio = width / height
+            void onResize({width: DEVICE_WIDTH, height: DEVICE_WIDTH / ratio, uri: rotate.uri})
+        })
     }
 
     return (
@@ -147,24 +161,20 @@ export const ImageEditor = (props: ImageEditorProps) => {
                         >
                             {!!image && (
                                 <>
-                                    <PanGestureHandler ref={panRef} onGestureEvent={gestureHandler} simultaneousHandlers={pinchRef}>
+                                    <PanGestureHandler ref={panRef} onGestureEvent={gestureHandler}
+                                                       simultaneousHandlers={pinchRef}>
                                         <Animated.View>
-                                            <PinchGestureHandler ref={pinchRef} onGestureEvent={pinchHandler} simultaneousHandlers={panRef}>
+                                            <PinchGestureHandler ref={pinchRef} onGestureEvent={pinchHandler}
+                                                                 simultaneousHandlers={panRef}>
                                                 <Animated.Image
                                                     onLayout={onImageLayout}
                                                     source={{uri: image.uri}}
                                                     style={[
-                                                        styles.image,
                                                         {
                                                             height: image.height,
                                                             width: image.width,
-                                                            transform: [
-                                                                {
-                                                                    scale
-                                                                }
-                                                            ]
                                                         },
-                                                        animatedStyle
+                                                        animatedStyle,
                                                     ]}
                                                 />
                                             </PinchGestureHandler>
@@ -182,6 +192,7 @@ export const ImageEditor = (props: ImageEditorProps) => {
                             usedRatio={usedRatio}
                             onChangeUsedRatio={onUsedRatioChange}
                             RenderRotateComponent={RenderRotateComponent}
+                            onRotate={onRotateEvent}
                         />
                     </SafeAreaView>
                 </Modal>
@@ -203,7 +214,6 @@ const styles = StyleSheet.create({
         width: '100%',
         justifyContent: 'center',
     },
-    image: {},
     cropArea: {
         position: 'absolute',
         backgroundColor: 'transparent',

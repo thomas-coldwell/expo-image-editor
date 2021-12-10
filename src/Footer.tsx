@@ -1,56 +1,57 @@
 import React, {ReactElement} from "react";
-import {Ratio} from "./ImageEditor.type";
 import {StyleSheet, Text, TouchableHighlight, View} from "react-native";
+import {Ratio} from "./ImageEditor.type";
 import {RATIOS} from "./ImageEditor.constant";
 
 interface Props {
     usedRatio: Ratio,
     onChangeUsedRatio: (ratio: Ratio) => void,
     RenderRotateComponent: ReactElement | null
+    onRotate: () => void
 }
 
-export const Footer = React.memo(({ usedRatio, onChangeUsedRatio, RenderRotateComponent }: Props) => (
-    <View style={styles.footer}>
-        <View style={styles.ratioWrapper}>
-            {RATIOS.map((ratio, index) => {
-                return (
-                    <TouchableHighlight
-                        key={'ratio-' + index}
-                        style={styles.ratioItem}
-                        underlayColor={'#000000'}
-                        onPress={() => onChangeUsedRatio(ratio)}
-                    >
-                        <>
-                            <Text
-                                style={[
-                                    styles.label,
-                                    {...(ratio.value === usedRatio.value && styles.selectedLabel)}
-                                ]}
-                            >
-                                {ratio.label}
-                            </Text>
-                            <View
-                                style={[
-                                    styles.ratio,
-                                    ratio.exampleSize,
-                                    {...(ratio.value === usedRatio.value && styles.selectedRatio)}
-                                ]}
-                            />
-                        </>
-                    </TouchableHighlight>
-                )
-            })}
+export const Footer = React.memo(
+    ({usedRatio, onChangeUsedRatio, RenderRotateComponent, onRotate}: Props) => (
+        <View style={styles.footer}>
+            <View style={styles.ratioWrapper}>
+                {RATIOS.map((ratio, index) => {
+                    return (
+                        <TouchableHighlight
+                            key={'ratio-' + index}
+                            style={styles.ratioItem}
+                            underlayColor={'#000000'}
+                            onPress={() => onChangeUsedRatio(ratio)}
+                        >
+                            <>
+                                <Text
+                                    style={[
+                                        styles.label,
+                                        {...(ratio.value === usedRatio.value && styles.selectedLabel)}
+                                    ]}
+                                >
+                                    {ratio.label}
+                                </Text>
+                                <View
+                                    style={[
+                                        styles.ratio,
+                                        ratio.exampleSize,
+                                        {...(ratio.value === usedRatio.value && styles.selectedRatio)}
+                                    ]}
+                                />
+                            </>
+                        </TouchableHighlight>
+                    )
+                })}
+            </View>
+            <TouchableHighlight
+                underlayColor={'#000000'}
+                onPress={onRotate}
+            >
+                {RenderRotateComponent}
+            </TouchableHighlight>
         </View>
-        <TouchableHighlight
-            underlayColor={'#000000'}
-            onPress={() => {
-                console.log('ROTATE IMAGE')
-            }}
-        >
-            {RenderRotateComponent}
-        </TouchableHighlight>
-    </View>
-))
+    )
+)
 
 const styles = StyleSheet.create({
     footer: {
