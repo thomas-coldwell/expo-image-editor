@@ -13,7 +13,7 @@ import {
 } from "react-native";
 import {
     GestureHandlerRootView,
-    PanGestureHandler,
+    PanGestureHandler, PinchGestureHandler,
 } from "react-native-gesture-handler";
 import Animated from 'react-native-reanimated'
 import * as ImageManipulator from 'expo-image-manipulator';
@@ -38,12 +38,19 @@ export const ImageEditor = (props: ImageEditorProps) => {
         uri = '',
     } = props
 
+    const panRef = React.createRef()
+    const pinchRef = React.createRef()
+
     const [cropAreaLayout, setCropAreaLayout] = React.useState<LayoutRectangle>()
     const [usedRatio, setUsedRatio] = React.useState<Ratio>(RATIOS[1])
     const [image, setImage] = React.useState<ImageLayout>()
     const [scale, setScale] = React.useState<number>(1)
 
-    const {gestureHandler, animatedStyle} = useGesture(scale, image as ImageLayout, cropAreaLayout as LayoutRectangle)
+    const {
+        gestureHandler,
+        pinchHandler,
+        animatedStyle
+    } = useGesture(scale, image as ImageLayout, cropAreaLayout as LayoutRectangle)
 
     React.useEffect(() => {
         if (props.visible) {
@@ -140,24 +147,28 @@ export const ImageEditor = (props: ImageEditorProps) => {
                         >
                             {!!image && (
                                 <>
-                                    <PanGestureHandler onGestureEvent={gestureHandler} >
-                                        <Animated.Image
-                                            onLayout={onImageLayout}
-                                            source={{uri: image.uri}}
-                                            style={[
-                                                styles.image,
-                                                {
-                                                    height: image.height,
-                                                    width: image.width,
-                                                    transform: [
+                                    <PanGestureHandler ref={panRef} onGestureEvent={gestureHandler} simultaneousHandlers={pinchRef}>
+                                        <Animated.View>
+                                            <PinchGestureHandler ref={pinchRef} onGestureEvent={pinchHandler} simultaneousHandlers={panRef}>
+                                                <Animated.Image
+                                                    onLayout={onImageLayout}
+                                                    source={{uri: image.uri}}
+                                                    style={[
+                                                        styles.image,
                                                         {
-                                                            scale
-                                                        }
-                                                    ]
-                                                },
-                                                animatedStyle
-                                            ]}
-                                        />
+                                                            height: image.height,
+                                                            width: image.width,
+                                                            transform: [
+                                                                {
+                                                                    scale
+                                                                }
+                                                            ]
+                                                        },
+                                                        animatedStyle
+                                                    ]}
+                                                />
+                                            </PinchGestureHandler>
+                                        </Animated.View>
                                     </PanGestureHandler>
                                     <View
                                         pointerEvents={'none'}

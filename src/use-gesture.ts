@@ -1,51 +1,71 @@
-import {useAnimatedGestureHandler, useAnimatedStyle, useSharedValue, withSpring,} from "react-native-reanimated";
+import {
+    runOnJS,
+    useAnimatedGestureHandler,
+    useAnimatedStyle,
+    useDerivedValue,
+    useSharedValue,
+    withTiming,
+} from "react-native-reanimated";
 import {AnimatedContext, ImageLayout} from "./ImageEditor.type";
 import {LayoutRectangle} from "react-native";
 import React from "react";
 import {clamp} from "./clamp";
-import {GestureEvent, PinchGestureHandlerGestureEvent} from "react-native-gesture-handler";
-
-type Gesture = PinchGestureHandlerGestureEvent & GestureEvent
+import {PanGestureHandlerGestureEvent, PinchGestureHandlerGestureEvent} from "react-native-gesture-handler";
 
 export const useGesture = (scale: number, imageLayout: ImageLayout, cropAreaLayout: LayoutRectangle) => {
     const x = useSharedValue(0)
     const y = useSharedValue(0)
+    const pinchScale = useSharedValue(1)
+
+    const usedScale = useDerivedValue(() => {
+        return pinchScale.value !== 1 ? pinchScale.value : scale
+    })
 
     React.useEffect(() => {
         x.value = 0
         y.value = 0
+        pinchScale.value = 1
     }, [ scale ])
 
-    const gestureHandler = useAnimatedGestureHandler<
-        Gesture,
-        AnimatedContext
-        >({
+    const verifyImagePosition = () => {
+        'worklet'
+
+        console.log(x.value, y.value)
+    }
+
+    const gestureHandler = useAnimatedGestureHandler<PanGestureHandlerGestureEvent, AnimatedContext>({
         onStart: (_, ctx) => {
-            console.log(_)
             ctx.startX = x.value;
             ctx.startY = y.value;
         },
         onActive: (event, ctx) => {
             if (imageLayout && cropAreaLayout) {
 
-                // @ts-ignore
                 const nextX = ctx.startX + event.translationX
-                // @ts-ignore
                 const nextY = ctx.startY + event.translationY
 
-                const minX = ((imageLayout.width * scale) - cropAreaLayout.width) / 2
+                const minX = ((imageLayout.width * usedScale.value) - cropAreaLayout.width) / 2
                 const maxX = -minX
 
-                const minY = ((imageLayout.height * scale) - cropAreaLayout.height) / 2
+                const minY = ((imageLayout.height * usedScale.value) - cropAreaLayout.height) / 2
                 const maxY =  -minY
 
                 x.value = clamp(nextX, maxX, minX) // max < 0, min > 0
                 y.value = clamp(nextY, maxY, minY) // max < 0, min > 0
             }
         },
-        onEnd: (_) => {
-        },
+        onEnd: verifyImagePosition
     });
+
+    const pinchHandler = useAnimatedGestureHandler<PinchGestureHandlerGestureEvent>({
+        onStart: (_) => {
+            pinchScale.value = usedScale.value
+        },
+        onActive: (event) => {
+            pinchScale.value = clamp((event.scale / 2) * pinchScale.value, scale, 5)
+        },
+        onEnd: verifyImagePosition
+    })
 
     const animatedStyle = useAnimatedStyle(() => {
         return {
@@ -57,11 +77,11 @@ export const useGesture = (scale: number, imageLayout: ImageLayout, cropAreaLayo
                     translateY: y.value,
                 },
                 {
-                    scale,
+                    scale: usedScale.value,
                 }
             ],
         };
     });
 
-    return {gestureHandler, animatedStyle}
+    return {gestureHandler, pinchHandler, animatedStyle}
 }
