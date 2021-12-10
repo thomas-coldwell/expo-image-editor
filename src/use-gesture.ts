@@ -1,5 +1,4 @@
 import {
-    runOnJS,
     useAnimatedGestureHandler,
     useAnimatedStyle,
     useDerivedValue,
@@ -21,16 +20,29 @@ export const useGesture = (scale: number, imageLayout: ImageLayout, cropAreaLayo
         return pinchScale.value !== 1 ? pinchScale.value : scale
     })
 
+    const threshold = useDerivedValue(() => {
+        const x = ((imageLayout.width * usedScale.value) - cropAreaLayout.width) / 2
+        const y = ((imageLayout.height * usedScale.value) - cropAreaLayout.height) / 2
+
+        return {
+            minX: x,
+            maxX: -x,
+            minY: y,
+            maxY: -y
+        }
+    })
+
     React.useEffect(() => {
         x.value = 0
         y.value = 0
         pinchScale.value = 1
-    }, [ scale ])
+    }, [scale])
 
     const verifyImagePosition = () => {
         'worklet'
 
-        console.log(x.value, y.value)
+        x.value = withTiming(clamp(x.value, threshold.value.maxX, threshold.value.minX), {duration: 250})
+        y.value = withTiming(clamp(y.value, threshold.value.maxY, threshold.value.minY), {duration: 250})
     }
 
     const gestureHandler = useAnimatedGestureHandler<PanGestureHandlerGestureEvent, AnimatedContext>({
@@ -39,20 +51,11 @@ export const useGesture = (scale: number, imageLayout: ImageLayout, cropAreaLayo
             ctx.startY = y.value;
         },
         onActive: (event, ctx) => {
-            if (imageLayout && cropAreaLayout) {
+            const nextX = ctx.startX + event.translationX
+            const nextY = ctx.startY + event.translationY
 
-                const nextX = ctx.startX + event.translationX
-                const nextY = ctx.startY + event.translationY
-
-                const minX = ((imageLayout.width * usedScale.value) - cropAreaLayout.width) / 2
-                const maxX = -minX
-
-                const minY = ((imageLayout.height * usedScale.value) - cropAreaLayout.height) / 2
-                const maxY =  -minY
-
-                x.value = clamp(nextX, maxX, minX) // max < 0, min > 0
-                y.value = clamp(nextY, maxY, minY) // max < 0, min > 0
-            }
+            x.value = nextX // max < 0, min > 0
+            y.value = nextY // max < 0, min > 0
         },
         onEnd: verifyImagePosition
     });
@@ -62,7 +65,7 @@ export const useGesture = (scale: number, imageLayout: ImageLayout, cropAreaLayo
             pinchScale.value = usedScale.value
         },
         onActive: (event) => {
-            pinchScale.value = clamp((event.scale / 2) * pinchScale.value, scale, 5)
+            pinchScale.value = clamp((event.scale) * pinchScale.value, scale, 5)
         },
         onEnd: verifyImagePosition
     })

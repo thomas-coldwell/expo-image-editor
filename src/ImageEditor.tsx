@@ -41,9 +41,9 @@ export const ImageEditor = (props: ImageEditorProps) => {
     const panRef = React.createRef()
     const pinchRef = React.createRef()
 
-    const [cropAreaLayout, setCropAreaLayout] = React.useState<LayoutRectangle>()
+    const [cropAreaLayout, setCropAreaLayout] = React.useState<LayoutRectangle>({ width: DEVICE_WIDTH, height: DEVICE_WIDTH, x: 0, y: 0 })
     const [usedRatio, setUsedRatio] = React.useState<Ratio>(RATIOS[1])
-    const [image, setImage] = React.useState<ImageLayout>()
+    const [image, setImage] = React.useState<ImageLayout>({ width: DEVICE_WIDTH, height: DEVICE_WIDTH })
     const [scale, setScale] = React.useState<number>(1)
 
     const {
