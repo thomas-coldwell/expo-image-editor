@@ -115,11 +115,6 @@ export const ImageEditor = (props: ImageEditorProps) => {
         }
     }
 
-    // TODO: count rotate times, and reset to 0 when rotate times is 3
-    // We loose quality after rotate x resize sevral times
-    // To get the rotate value we will do 90 * X
-    // Like that we will keep the image quality at the beginning
-
     const onRotateEvent = async () => {
         let next: RotateValues
 
