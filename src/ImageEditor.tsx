@@ -1,6 +1,6 @@
 import React from "react";
 import {
-    Image,
+    Image as ImageProvider,
     LayoutChangeEvent,
     LayoutRectangle,
     Modal,
@@ -9,11 +9,8 @@ import {
     View,
     SafeAreaView
 } from "react-native";
-import Animated from 'react-native-reanimated'
 import {
     GestureHandlerRootView,
-    PanGestureHandler,
-    PinchGestureHandler,
 } from "react-native-gesture-handler";
 import {
     ImageEditorProps,
@@ -26,10 +23,13 @@ import {
     PRESENTATION_STYLE,
     RATIOS
 } from "./ImageEditor.constant";
-import {Footer} from "./Footer";
-import {Header} from "./Header";
 import {
-    useGesture,
+    Footer,
+    Header,
+    CropArea,
+    Image
+} from "./components";
+import {
     useResize,
     useRotate
 } from "./hooks";
@@ -45,21 +45,12 @@ export const ImageEditor = (props: ImageEditorProps) => {
         uri = '',
     } = props
 
-    const panRef = React.createRef()
-    const pinchRef = React.createRef()
-
-    const [cropAreaWrapperLayout, setCropAreaWrapperLayout] = React.useState<LayoutRectangle>(INITIAL_LAYOUT)
     const [cropAreaLayout, setCropAreaLayout] = React.useState<LayoutRectangle>(INITIAL_LAYOUT)
     const [usedRatio, setUsedRatio] = React.useState<Ratio>(RATIOS[1])
     const [image, setImage] = React.useState<ImageLayout>({width: DEVICE_WIDTH, height: DEVICE_WIDTH})
     const [scale, setScale] = React.useState<number>(1)
     const [rotate, setRotate] = React.useState<RotateValues>(RotateValues.ROTATE_0)
 
-    const {
-        gestureHandler,
-        pinchHandler,
-        animatedStyle
-    } = useGesture(scale, image as ImageLayout, cropAreaLayout as LayoutRectangle)
     const onRotate = useRotate()
     const onResize = useResize(image.uri || props.uri, setImage)
 
@@ -75,7 +66,7 @@ export const ImageEditor = (props: ImageEditorProps) => {
 
     React.useEffect(() => {
         if (!!uri) {
-            Image.getSize(props.uri, (width, height) => {
+            ImageProvider.getSize(props.uri, (width, height) => {
                 const ratio = width / height
 
                 let nextRatio: Ratio
@@ -104,13 +95,6 @@ export const ImageEditor = (props: ImageEditorProps) => {
         }
     }, [usedRatio])
 
-    const opaqueArea = React.useMemo(() => {
-        return {
-            height: (cropAreaWrapperLayout.height - cropArea.height) / 2,
-            width: DEVICE_WIDTH
-        }
-    }, [ cropArea, cropAreaWrapperLayout ])
-
     React.useEffect(() => {
         if (image) {
             if (image.height < cropArea.height) {
@@ -121,12 +105,6 @@ export const ImageEditor = (props: ImageEditorProps) => {
         }
     }, [cropArea, image?.uri])
 
-    const onCropAreaWrapperLayout = (event: LayoutChangeEvent) => {
-        event.persist()
-        if (!!event?.nativeEvent?.layout) {
-            setCropAreaWrapperLayout(event.nativeEvent.layout)
-        }
-    }
 
     const onCropAreaLayout = (event: LayoutChangeEvent) => {
         event.persist()
@@ -163,7 +141,7 @@ export const ImageEditor = (props: ImageEditorProps) => {
         const result = await onRotate(props.uri, next)
         setRotate(next)
         setImage(prev => ({...prev, ...result}))
-        Image.getSize(result.uri as string, (width, height) => {
+        ImageProvider.getSize(result.uri as string, (width, height) => {
             const ratio = width / height
             void onResize({width: DEVICE_WIDTH, height: DEVICE_WIDTH / ratio, uri: result.uri})
         })
@@ -192,37 +170,16 @@ export const ImageEditor = (props: ImageEditorProps) => {
                         >
                             {!!image && (
                                 <>
-                                    <PanGestureHandler ref={panRef} onGestureEvent={gestureHandler}
-                                                       simultaneousHandlers={pinchRef}>
-                                        <Animated.View>
-                                            <PinchGestureHandler ref={pinchRef} onGestureEvent={pinchHandler}
-                                                                 simultaneousHandlers={panRef}>
-                                                <Animated.Image
-                                                    onLayout={onImageLayout}
-                                                    source={{uri: image.uri}}
-                                                    style={[
-                                                        {
-                                                            height: image.height,
-                                                            width: image.width,
-                                                        },
-                                                        animatedStyle,
-                                                    ]}
-                                                />
-                                            </PinchGestureHandler>
-                                        </Animated.View>
-                                    </PanGestureHandler>
-                                    <View
-                                        pointerEvents={'none'}
-                                        style={styles.cropAreaWrapper}
-                                        onLayout={onCropAreaWrapperLayout}
-                                    >
-                                        <View style={[ styles.opaqueArea, opaqueArea]} />
-                                        <View
-                                            onLayout={onCropAreaLayout}
-                                            style={[styles.cropArea, cropArea]}
-                                        />
-                                        <View style={[ styles.opaqueArea, opaqueArea]} />
-                                    </View>
+                                    <Image
+                                        image={image}
+                                        scale={scale}
+                                        cropAreaLayout={cropAreaLayout}
+                                        onImageLayout={onImageLayout}
+                                    />
+                                    <CropArea
+                                        cropArea={cropArea}
+                                        onCropAreaLayout={onCropAreaLayout}
+                                    />
                                 </>
                             )}
                         </View>
@@ -251,20 +208,5 @@ const styles = StyleSheet.create({
         flex: 1,
         width: '100%',
         justifyContent: 'center',
-    },
-    cropAreaWrapper: {
-        position: 'absolute',
-        top: 0,
-        left: 0,
-        right: 0,
-        bottom: 0,
-    },
-    opaqueArea: {
-        backgroundColor: 'rgba(0, 0, 0, 0.5)'
-    },
-    cropArea: {
-        backgroundColor: 'transparent',
-        borderWidth: 0.5,
-        borderColor: '#FFFFFF',
     }
 })

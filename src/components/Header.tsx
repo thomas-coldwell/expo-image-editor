@@ -1,6 +1,6 @@
 import React, {ReactElement} from "react";
 import {StyleSheet, Text, TouchableHighlight, View} from "react-native";
-import {Translations} from "./ImageEditor.type";
+import {Translations} from "../ImageEditor.type";
 
 interface Props {
     translations: Translations
