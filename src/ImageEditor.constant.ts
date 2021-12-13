@@ -5,17 +5,20 @@ export const RATIOS: Ratio[] = [
     {
         value: 0.8,
         label: '4:5',
-        exampleSize: { height: 30, width: 24 }
+        exampleSize: { height: 30, width: 24 },
+        finalSize: { width: 1280, height: 1600 },
     },
     {
         value: 1,
         label: '1:1',
-        exampleSize: { height: 24, width: 24}
+        exampleSize: { height: 24, width: 24},
+        finalSize: { width: 1600, height: 1600 },
     },
     {
         value: 1.91,
         label: '1.91:1',
-        exampleSize: { height: 16, width: 34 }
+        exampleSize: { height: 16, width: 34 },
+        finalSize: { width: 1600, height: 837}
     }
 ]
 

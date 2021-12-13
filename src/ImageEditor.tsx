@@ -30,6 +30,7 @@ import {
     Image
 } from "./components";
 import {
+    useCrop, useGesture,
     useResize,
     useRotate
 } from "./hooks";
@@ -51,8 +52,17 @@ export const ImageEditor = (props: ImageEditorProps) => {
     const [scale, setScale] = React.useState<number>(1)
     const [rotate, setRotate] = React.useState<RotateValues>(RotateValues.ROTATE_0)
 
+    const {
+        gestureHandler,
+        pinchHandler,
+        animatedStyle,
+        x,
+        y,
+        usedScale,
+    } = useGesture(scale, image as ImageLayout, cropAreaLayout as LayoutRectangle)
     const onRotate = useRotate()
     const onResize = useResize(image.uri || props.uri, setImage)
+    const onCrop = useCrop(props.uri, image, cropAreaLayout, usedRatio, x, y, usedScale)
 
     React.useEffect(() => {
         if (props.visible) {
@@ -163,6 +173,7 @@ export const ImageEditor = (props: ImageEditorProps) => {
                             RenderBackIcon={RenderBackIcon}
                             RenderCheckIcon={RenderCheckIcon}
                             onClose={props.onClose}
+                            onCrop={onCrop}
                         />
                         <View
                             collapsable={false}
@@ -171,6 +182,9 @@ export const ImageEditor = (props: ImageEditorProps) => {
                             {!!image && (
                                 <>
                                     <Image
+                                        gestureHandler={gestureHandler}
+                                        pinchHandler={pinchHandler}
+                                        animatedStyle={animatedStyle}
                                         image={image}
                                         scale={scale}
                                         cropAreaLayout={cropAreaLayout}

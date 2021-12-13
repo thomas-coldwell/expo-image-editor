@@ -1,4 +1,5 @@
 import {ReactElement} from "react";
+import Animated from "react-native-reanimated";
 
 export type Translations = {
     [key: string]: string;
@@ -19,6 +20,7 @@ export interface Ratio {
     value: number
     label: string
     exampleSize: { width: number, height: number }
+    finalSize: { width: number, height: number }
 }
 
 export interface ImageLayout {
@@ -40,3 +42,5 @@ export enum RotateValues {
     ROTATE_180 = -180,
     ROTATE_270 = -270
 }
+
+export type GestureCoordinate = Animated.SharedValue<number>

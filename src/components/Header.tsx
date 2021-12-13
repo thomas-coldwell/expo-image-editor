@@ -7,9 +7,10 @@ interface Props {
     RenderBackIcon: ReactElement | null
     RenderCheckIcon: ReactElement | null
     onClose: () => void
+    onCrop: () => void
 }
 
-export const Header = ({ translations, RenderBackIcon, RenderCheckIcon, onClose }: Props) => {
+export const Header = ({ translations, RenderBackIcon, RenderCheckIcon, onClose, onCrop }: Props) => {
     return (
         <View style={styles.header}>
             <TouchableHighlight
@@ -27,6 +28,7 @@ export const Header = ({ translations, RenderBackIcon, RenderCheckIcon, onClose 
             <TouchableHighlight
                 style={[styles.button, styles.validate]}
                 underlayColor={'#000000'}
+                onPress={onCrop}
             >
                 <>
                     <Text style={styles.validateLabel}>

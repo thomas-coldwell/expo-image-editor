@@ -86,5 +86,5 @@ export const useGesture = (scale: number, imageLayout: ImageLayout, cropAreaLayo
         };
     });
 
-    return {gestureHandler, pinchHandler, animatedStyle}
+    return {x, y, gestureHandler, pinchHandler, animatedStyle, usedScale}
 }
