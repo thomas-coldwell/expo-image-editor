@@ -13,7 +13,7 @@ import {
 import {GestureHandlerRootView, PanGestureHandler, PinchGestureHandler,} from "react-native-gesture-handler";
 import Animated from 'react-native-reanimated'
 import {ImageEditorProps, ImageLayout, Ratio, RotateValues,} from "./ImageEditor.type";
-import {DEVICE_WIDTH, RATIOS} from "./ImageEditor.constant";
+import {DEVICE_WIDTH, PRESENTATION_STYLE, RATIOS} from "./ImageEditor.constant";
 import {Footer} from "./Footer";
 import {Header} from "./Header";
 import {useRotate} from "./use-rotate";
@@ -55,8 +55,10 @@ export const ImageEditor = (props: ImageEditorProps) => {
     React.useEffect(() => {
         if (props.visible) {
             noScroll.on()
+            StatusBar.setHidden(true)
         } else {
             noScroll.off()
+            StatusBar.setHidden(false)
         }
     }, [props.visible])
 
@@ -144,11 +146,10 @@ export const ImageEditor = (props: ImageEditorProps) => {
 
     return (
         <>
-            <StatusBar hidden={props.visible} translucent/>
             <Modal
                 visible={props.visible}
                 animationType={"slide"}
-                presentationStyle="pageSheet"
+                presentationStyle={PRESENTATION_STYLE}
                 statusBarTranslucent
                 onRequestClose={props.onClose}
             >

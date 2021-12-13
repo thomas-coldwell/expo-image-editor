@@ -1,5 +1,5 @@
 import {Ratio} from "./ImageEditor.type";
-import {Dimensions} from "react-native";
+import {Dimensions, Platform} from "react-native";
 
 export const RATIOS: Ratio[] = [
     {
@@ -20,3 +20,5 @@ export const RATIOS: Ratio[] = [
 ]
 
 export const DEVICE_WIDTH = Dimensions.get('window').width;
+export const IS_IOS = Platform.OS === 'ios';
+export const PRESENTATION_STYLE = IS_IOS ? 'pageSheet' : 'overFullScreen'
