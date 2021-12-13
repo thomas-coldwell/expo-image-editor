@@ -1512,11 +1512,6 @@
   dependencies:
     "@types/node" "*"
 
-"@types/lodash@^4.14.157":
-  "integrity" "sha512-XmdEOrKQ8a1Y/yxQFOMbC47G/V2VDO1GvMRnl4O75M4GW/abC5tnfzadQYkqEveqRM1dEJGFFegfPNA2vvx2iw=="
-  "resolved" "https://registry.npmjs.org/@types/lodash/-/lodash-4.14.175.tgz"
-  "version" "4.14.175"
-
 "@types/minimist@^1.2.0":
   "integrity" "sha512-jhuKLIRrhvCPLqwPcx6INqmKeiA5EWrsCOPhrlFSrbrmU4ZMPjj5Ul/oLCMDO98XRUIwVm78xICz4EPCektzeQ=="
   "resolved" "https://registry.npmjs.org/@types/minimist/-/minimist-1.2.2.tgz"
@@ -6131,11 +6126,6 @@
   "version" "0.6.2"
   dependencies:
     "resolve" "^1.1.6"
-
-"recoil@^0.0.10":
-  "integrity" "sha512-+9gRqehw3yKETmoZbhSnWu4GO10HDb5xYf1CjLF1oXGK2uT6GX5Lu9mfTXwjxV/jXxEKx8MIRUUbgPxvbJ8SEw=="
-  "resolved" "https://registry.npmjs.org/recoil/-/recoil-0.0.10.tgz"
-  "version" "0.0.10"
 
 "redent@^3.0.0":
   "integrity" "sha512-6tDA8g98We0zd0GvVeMT9arEOnTw9qM03L9cJXaCjrip1OO764RDBLBfrB4cwzNGDj5OA5ioymC9GkizgWJDUg=="

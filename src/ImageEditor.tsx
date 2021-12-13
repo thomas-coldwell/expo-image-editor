@@ -1,4 +1,3 @@
-import {useGesture} from "./use-gesture";
 import React from "react";
 import {
     Image,
@@ -10,14 +9,30 @@ import {
     View,
     SafeAreaView
 } from "react-native";
-import {GestureHandlerRootView, PanGestureHandler, PinchGestureHandler,} from "react-native-gesture-handler";
 import Animated from 'react-native-reanimated'
-import {ImageEditorProps, ImageLayout, Ratio, RotateValues,} from "./ImageEditor.type";
-import {DEVICE_WIDTH, PRESENTATION_STYLE, RATIOS} from "./ImageEditor.constant";
+import {
+    GestureHandlerRootView,
+    PanGestureHandler,
+    PinchGestureHandler,
+} from "react-native-gesture-handler";
+import {
+    ImageEditorProps,
+    ImageLayout,
+    Ratio,
+    RotateValues,
+} from "./ImageEditor.type";
+import {
+    DEVICE_WIDTH,
+    PRESENTATION_STYLE,
+    RATIOS
+} from "./ImageEditor.constant";
 import {Footer} from "./Footer";
 import {Header} from "./Header";
-import {useRotate} from "./use-rotate";
-import {useResize} from "./components/use-resize";
+import {
+    useGesture,
+    useResize,
+    useRotate
+} from "./hooks";
 
 const noScroll = require('no-scroll')
 

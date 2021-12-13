@@ -5,10 +5,10 @@ import {
     useSharedValue,
     withTiming,
 } from "react-native-reanimated";
-import {AnimatedContext, ImageLayout} from "./ImageEditor.type";
+import {AnimatedContext, ImageLayout} from "../ImageEditor.type";
 import {LayoutRectangle} from "react-native";
 import React from "react";
-import {clamp} from "./clamp";
+import {clamp} from "../utils/clamp";
 import {PanGestureHandlerGestureEvent, PinchGestureHandlerGestureEvent} from "react-native-gesture-handler";
 
 export const useGesture = (scale: number, imageLayout: ImageLayout, cropAreaLayout: LayoutRectangle) => {
