@@ -22,3 +22,9 @@ export const RATIOS: Ratio[] = [
 export const DEVICE_WIDTH = Dimensions.get('window').width;
 export const IS_IOS = Platform.OS === 'ios';
 export const PRESENTATION_STYLE = IS_IOS ? 'pageSheet' : 'overFullScreen'
+export const INITIAL_LAYOUT = {
+    width: 0,
+    height: 0,
+    x: 0,
+    y: 0
+}

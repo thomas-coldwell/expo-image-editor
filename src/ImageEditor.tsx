@@ -22,7 +22,7 @@ import {
     RotateValues,
 } from "./ImageEditor.type";
 import {
-    DEVICE_WIDTH,
+    DEVICE_WIDTH, INITIAL_LAYOUT,
     PRESENTATION_STYLE,
     RATIOS
 } from "./ImageEditor.constant";
@@ -48,12 +48,8 @@ export const ImageEditor = (props: ImageEditorProps) => {
     const panRef = React.createRef()
     const pinchRef = React.createRef()
 
-    const [cropAreaLayout, setCropAreaLayout] = React.useState<LayoutRectangle>({
-        width: DEVICE_WIDTH,
-        height: DEVICE_WIDTH,
-        x: 0,
-        y: 0
-    })
+    const [cropAreaWrapperLayout, setCropAreaWrapperLayout] = React.useState<LayoutRectangle>(INITIAL_LAYOUT)
+    const [cropAreaLayout, setCropAreaLayout] = React.useState<LayoutRectangle>(INITIAL_LAYOUT)
     const [usedRatio, setUsedRatio] = React.useState<Ratio>(RATIOS[1])
     const [image, setImage] = React.useState<ImageLayout>({width: DEVICE_WIDTH, height: DEVICE_WIDTH})
     const [scale, setScale] = React.useState<number>(1)
@@ -108,6 +104,13 @@ export const ImageEditor = (props: ImageEditorProps) => {
         }
     }, [usedRatio])
 
+    const opaqueArea = React.useMemo(() => {
+        return {
+            height: (cropAreaWrapperLayout.height - cropArea.height) / 2,
+            width: DEVICE_WIDTH
+        }
+    }, [ cropArea, cropAreaWrapperLayout ])
+
     React.useEffect(() => {
         if (image) {
             if (image.height < cropArea.height) {
@@ -117,6 +120,13 @@ export const ImageEditor = (props: ImageEditorProps) => {
             }
         }
     }, [cropArea, image?.uri])
+
+    const onCropAreaWrapperLayout = (event: LayoutChangeEvent) => {
+        event.persist()
+        if (!!event?.nativeEvent?.layout) {
+            setCropAreaWrapperLayout(event.nativeEvent.layout)
+        }
+    }
 
     const onCropAreaLayout = (event: LayoutChangeEvent) => {
         event.persist()
@@ -203,9 +213,16 @@ export const ImageEditor = (props: ImageEditorProps) => {
                                     </PanGestureHandler>
                                     <View
                                         pointerEvents={'none'}
-                                        onLayout={onCropAreaLayout}
-                                        style={[styles.cropArea, cropArea]}
-                                    />
+                                        style={styles.cropAreaWrapper}
+                                        onLayout={onCropAreaWrapperLayout}
+                                    >
+                                        <View style={[ styles.opaqueArea, opaqueArea]} />
+                                        <View
+                                            onLayout={onCropAreaLayout}
+                                            style={[styles.cropArea, cropArea]}
+                                        />
+                                        <View style={[ styles.opaqueArea, opaqueArea]} />
+                                    </View>
                                 </>
                             )}
                         </View>
@@ -235,11 +252,19 @@ const styles = StyleSheet.create({
         width: '100%',
         justifyContent: 'center',
     },
-    cropArea: {
+    cropAreaWrapper: {
         position: 'absolute',
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+    },
+    opaqueArea: {
+        backgroundColor: 'rgba(0, 0, 0, 0.5)'
+    },
+    cropArea: {
         backgroundColor: 'transparent',
         borderWidth: 0.5,
         borderColor: '#FFFFFF',
-        marginTop: 'auto'
     }
 })
