@@ -1,8 +1,11 @@
 import React from "react";
 import {LayoutChangeEvent, LayoutRectangle, StyleSheet, View} from "react-native";
-import {DEVICE_WIDTH, INITIAL_LAYOUT} from "../ImageEditor.constant";
+import {BORDER_WIDTH, DEVICE_WIDTH, INITIAL_LAYOUT} from "../ImageEditor.constant";
+import {Ratio} from "../ImageEditor.type";
+import {CropAreaRow} from "./CropAreaRow";
 
 interface Props {
+    ratio: Ratio
     cropArea: { height: number, width: number };
     onCropAreaLayout: (event: LayoutChangeEvent) => void
 }
@@ -36,7 +39,11 @@ export const CropArea = (props: Props) => {
             <View
                 onLayout={props.onCropAreaLayout}
                 style={[styles.cropArea, cropArea]}
-            />
+            >
+                <CropAreaRow ratio={props.ratio} withoutTBorder />
+                <CropAreaRow ratio={props.ratio} withoutVBorder />
+                <CropAreaRow ratio={props.ratio} withoutBBorder />
+            </View>
             <View style={[ styles.opaqueArea, opaqueArea]} />
         </View>
     )
@@ -55,7 +62,7 @@ const styles = StyleSheet.create({
     },
     cropArea: {
         backgroundColor: 'transparent',
-        borderWidth: 0.5,
+        borderWidth: BORDER_WIDTH,
         borderColor: '#FFFFFF',
     }
 })

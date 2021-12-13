@@ -177,6 +177,7 @@ export const ImageEditor = (props: ImageEditorProps) => {
                                         onImageLayout={onImageLayout}
                                     />
                                     <CropArea
+                                        ratio={usedRatio}
                                         cropArea={cropArea}
                                         onCropAreaLayout={onCropAreaLayout}
                                     />

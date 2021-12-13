@@ -28,3 +28,5 @@ export const INITIAL_LAYOUT = {
     x: 0,
     y: 0
 }
+export const CROP_AREA_CELL_SIZE = DEVICE_WIDTH / 3
+export const BORDER_WIDTH = 0.5
