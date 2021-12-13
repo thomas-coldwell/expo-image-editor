@@ -1,16 +1,15 @@
 import * as ImageManipulator from 'expo-image-manipulator';
-import {ImageLayout} from "./ImageEditor.type";
 
-export const useRotate = (image: ImageLayout) => {
-    return async () => {
+export const useRotate = () => {
+    return async (uri: string, rotate: number) => {
         const actions: ImageManipulator.Action[] = [
             {
-                rotate: 90,
+                rotate,
             },
         ]
 
         const resultRotate = await ImageManipulator.manipulateAsync(
-            image.uri as string,
+            uri,
             actions,
             { compress: 1, format: ImageManipulator.SaveFormat.JPEG }
         )

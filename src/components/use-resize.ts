@@ -10,7 +10,6 @@ export const useResize = (baseUri: string, callback: SetStateAction<any>) => {
             [{
                 resize: {width, height}
             }],
-            { compress: 1, format: ImageManipulator.SaveFormat.JPEG }
         )
             .then((result) => {
                 callback((prev: ImageLayout) => ({ ...prev, ...result }))

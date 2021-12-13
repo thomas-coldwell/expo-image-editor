@@ -1,34 +1,25 @@
 import {useGesture} from "./use-gesture";
-
-const noScroll = require('no-scroll')
-
 import React from "react";
 import {
-    Image, LayoutChangeEvent, LayoutRectangle,
+    Image,
+    LayoutChangeEvent,
+    LayoutRectangle,
     Modal,
     SafeAreaView,
     StatusBar,
     StyleSheet,
     View
 } from "react-native";
-import {
-    GestureHandlerRootView,
-    PanGestureHandler, PinchGestureHandler,
-} from "react-native-gesture-handler";
+import {GestureHandlerRootView, PanGestureHandler, PinchGestureHandler,} from "react-native-gesture-handler";
 import Animated from 'react-native-reanimated'
-import {
-    ImageEditorProps,
-    Ratio,
-    ImageLayout,
-} from "./ImageEditor.type";
-import {
-    DEVICE_WIDTH,
-    RATIOS
-} from "./ImageEditor.constant";
+import {ImageEditorProps, ImageLayout, Ratio, RotateValues,} from "./ImageEditor.type";
+import {DEVICE_WIDTH, RATIOS} from "./ImageEditor.constant";
 import {Footer} from "./Footer";
 import {Header} from "./Header";
 import {useRotate} from "./use-rotate";
 import {useResize} from "./components/use-resize";
+
+const noScroll = require('no-scroll')
 
 export const ImageEditor = (props: ImageEditorProps) => {
     const {
@@ -51,13 +42,14 @@ export const ImageEditor = (props: ImageEditorProps) => {
     const [usedRatio, setUsedRatio] = React.useState<Ratio>(RATIOS[1])
     const [image, setImage] = React.useState<ImageLayout>({width: DEVICE_WIDTH, height: DEVICE_WIDTH})
     const [scale, setScale] = React.useState<number>(1)
+    const [rotate, setRotate] = React.useState<RotateValues>(RotateValues.ROTATE_0)
 
     const {
         gestureHandler,
         pinchHandler,
         animatedStyle
     } = useGesture(scale, image as ImageLayout, cropAreaLayout as LayoutRectangle)
-    const onRotate = useRotate(image)
+    const onRotate = useRotate()
     const onResize = useResize(image.uri || props.uri, setImage)
 
     React.useEffect(() => {
@@ -129,11 +121,29 @@ export const ImageEditor = (props: ImageEditorProps) => {
     // Like that we will keep the image quality at the beginning
 
     const onRotateEvent = async () => {
-        const rotate = await onRotate()
-        setImage(prev => ({...prev, ...rotate}))
-        Image.getSize(rotate.uri as string, (width, height) => {
+        let next: RotateValues
+
+        switch (rotate) {
+            case RotateValues.ROTATE_0:
+                next = RotateValues.ROTATE_90
+                break
+            case RotateValues.ROTATE_90:
+                next = RotateValues.ROTATE_180
+                break
+            case RotateValues.ROTATE_180:
+                next = RotateValues.ROTATE_270
+                break
+            case RotateValues.ROTATE_270:
+                next = RotateValues.ROTATE_0
+                break
+        }
+
+        const result = await onRotate(props.uri, next)
+        setRotate(next)
+        setImage(prev => ({...prev, ...result}))
+        Image.getSize(result.uri as string, (width, height) => {
             const ratio = width / height
-            void onResize({width: DEVICE_WIDTH, height: DEVICE_WIDTH / ratio, uri: rotate.uri})
+            void onResize({width: DEVICE_WIDTH, height: DEVICE_WIDTH / ratio, uri: result.uri})
         })
     }
 
