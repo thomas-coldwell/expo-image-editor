@@ -5,10 +5,10 @@ import {
     LayoutChangeEvent,
     LayoutRectangle,
     Modal,
-    SafeAreaView,
     StatusBar,
     StyleSheet,
-    View
+    View,
+    SafeAreaView
 } from "react-native";
 import {GestureHandlerRootView, PanGestureHandler, PinchGestureHandler,} from "react-native-gesture-handler";
 import Animated from 'react-native-reanimated'
@@ -143,16 +143,16 @@ export const ImageEditor = (props: ImageEditorProps) => {
     }
 
     return (
-        <GestureHandlerRootView>
-            <>
-                <StatusBar hidden={props.visible}/>
-                <Modal
-                    visible={props.visible}
-                    animationType={"slide"}
-                    presentationStyle="pageSheet"
-                    statusBarTranslucent
-                    onRequestClose={props.onClose}
-                >
+        <>
+            <StatusBar hidden={props.visible} translucent/>
+            <Modal
+                visible={props.visible}
+                animationType={"slide"}
+                presentationStyle="pageSheet"
+                statusBarTranslucent
+                onRequestClose={props.onClose}
+            >
+                <GestureHandlerRootView style={styles.container}>
                     <SafeAreaView style={styles.container}>
                         <Header
                             translations={translations}
@@ -200,9 +200,9 @@ export const ImageEditor = (props: ImageEditorProps) => {
                             onRotate={onRotateEvent}
                         />
                     </SafeAreaView>
-                </Modal>
-            </>
-        </GestureHandlerRootView>
+                </GestureHandlerRootView>
+            </Modal>
+        </>
     )
 }
 
