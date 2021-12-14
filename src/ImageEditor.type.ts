@@ -1,5 +1,6 @@
 import {ReactElement} from "react";
 import Animated from "react-native-reanimated";
+import {ImageResult} from "expo-image-manipulator";
 
 export type Translations = {
     [key: string]: string;
@@ -13,7 +14,7 @@ export interface ImageEditorProps {
     RenderBackIcon: ReactElement
     RenderCheckIcon: ReactElement
     RenderRotateComponent: ReactElement
-
+    onComplete: (data: ImageResult) => void
 }
 
 export interface Ratio {

@@ -157,6 +157,17 @@ export const ImageEditor = (props: ImageEditorProps) => {
         })
     }
 
+    const onCropEvent = async () => {
+        try {
+            const data = await onCrop()
+
+            props.onClose()
+            props.onComplete(data)
+        } catch (error) {
+            console.error(error)
+        }
+    }
+
     return (
         <>
             <Modal
@@ -173,7 +184,7 @@ export const ImageEditor = (props: ImageEditorProps) => {
                             RenderBackIcon={RenderBackIcon}
                             RenderCheckIcon={RenderCheckIcon}
                             onClose={props.onClose}
-                            onCrop={onCrop}
+                            onCrop={onCropEvent}
                         />
                         <View
                             collapsable={false}
