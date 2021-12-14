@@ -1,12 +1,6 @@
-/**
- TODO:
- - calculate origins
- - set dimensions from ratio
- */
 import {Image, LayoutRectangle} from "react-native";
 import Animated from "react-native-reanimated";
 import * as ImageManipulator from "expo-image-manipulator";
-import {useRotate} from "./use-rotate";
 import {GestureCoordinate, ImageLayout, Ratio} from "../ImageEditor.type";
 
 export const useCrop = (
@@ -18,14 +12,12 @@ export const useCrop = (
     y: GestureCoordinate,
     scale: Animated.DerivedValue<number>
 ) => {
-    const rotate = useRotate()
-
     return async () => {
-        Image.getSize(uri,
-            async (width: number, height: number) => {
-                // Calculer taille réduit (device)
-                // Multiplier vers taille réelle
-                // Bulk manipulation ?
+        Image.getSize(
+            uri,
+            async (width: number) => {
+                const factor = width / (image.width * scale.value)
+
                 let originX: number
                 let originY: number
 
@@ -49,22 +41,27 @@ export const useCrop = (
                 }
 
                 const request = {
-                    originX: Math.round(originX),
-                    originY: Math.round(originY),
-                    width: crop.width,
-                    height: crop.height,
+                    originX: Math.round(originX * factor),
+                    originY: Math.round(originY * factor),
+                    width: crop.width * factor,
+                    height: crop.height * factor,
                 }
 
-                const fromCrop = await ImageManipulator.manipulateAsync(image.uri as string, [
-                    {resize: {width: image.width * scale.value, height: image.height * scale.value}},
+                const actions = [
                     {crop: request},
                     {resize: ratio.finalSize}
-                ])
+                ]
 
-                console.log('Result uri:', fromCrop.uri)
+                const fromCrop = await ImageManipulator.manipulateAsync(
+                    uri as string,
+                    actions,
+                    {format: ImageManipulator.SaveFormat.JPEG, compress: 0.75}
+                )
+
+                console.log('Result uri:', fromCrop)
             },
             (error) => {
-                console.error('Failed to get image size', error)
+                console.error(error)
             }
         )
     }
