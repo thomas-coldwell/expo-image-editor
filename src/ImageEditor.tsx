@@ -62,7 +62,7 @@ export const ImageEditor = (props: ImageEditorProps) => {
     } = useGesture(scale, image as ImageLayout, cropAreaLayout as LayoutRectangle)
     const onRotate = useRotate()
     const onResize = useResize(image.uri || props.uri, setImage)
-    const onCrop = useCrop(props.uri, image, cropAreaLayout, usedRatio, x, y, usedScale)
+    const onCrop = useCrop(props.uri, image, cropAreaLayout, usedRatio, x, y, usedScale, rotate)
 
     React.useEffect(() => {
         if (props.visible) {

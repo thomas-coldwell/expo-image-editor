@@ -1,7 +1,7 @@
 import {Image, LayoutRectangle} from "react-native";
 import Animated from "react-native-reanimated";
 import * as ImageManipulator from "expo-image-manipulator";
-import {GestureCoordinate, ImageLayout, Ratio} from "../ImageEditor.type";
+import {GestureCoordinate, ImageLayout, Ratio, RotateValues} from "../ImageEditor.type";
 
 export const useCrop = (
     uri: string,
@@ -10,11 +10,13 @@ export const useCrop = (
     ratio: Ratio,
     x: GestureCoordinate,
     y: GestureCoordinate,
-    scale: Animated.DerivedValue<number>
+    scale: Animated.DerivedValue<number>,
+    rotate: RotateValues
 ) => {
     return async () => {
+        const fromRotate = await ImageManipulator.manipulateAsync(uri, [{ rotate }])
         Image.getSize(
-            uri,
+            fromRotate.uri,
             async (width: number) => {
                 const factor = width / (image.width * scale.value)
 
@@ -53,7 +55,7 @@ export const useCrop = (
                 ]
 
                 const fromCrop = await ImageManipulator.manipulateAsync(
-                    uri as string,
+                    fromRotate.uri as string,
                     actions,
                     {format: ImageManipulator.SaveFormat.JPEG, compress: 0.75}
                 )
