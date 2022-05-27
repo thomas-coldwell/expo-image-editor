@@ -36,6 +36,7 @@
   "dependencies": {
     "@miblanchard/react-native-slider": "^1.5.0",
     "@react-hook/throttle": "^2.2.0",
+    "expo-gl": "~11.3.0",
     "modal-enhanced-react-native-web": "^0.2.0",
     "no-scroll": "^2.1.1",
     "react-native-gesture-handler": "~2.2.1",
