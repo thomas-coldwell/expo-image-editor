@@ -20,6 +20,15 @@ or
 ```
 npm i expo-image-editor
 ```
+> **Warning**
+> Also required:
+> *@expo/vector-icons*
+> *expo-asset expo-file-system*
+> *expo-gl*
+> *expo-gl-cpp*
+> *expo-image-manipulator*
+> *recoil*
+> *react-native-gesture-handler@~2.5.0*
 
 ## Usage
 
